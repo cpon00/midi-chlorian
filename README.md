@@ -45,24 +45,14 @@ MAX_SAFE_INT : AnakinsMidichlorianCount: 27700
 
 > if statement
 
-### Example Programs
+# Example Programs
 
-```
-// Searches for element in Tome
-Order Cred searchTome(Tome a, Cred b){
-    Cred counter = 0;
-    for(counter until a.length()){
-        should(b oneWith a[counter]){
-            execute counter
-        }
-    }
-    execute -1
-}
-Execute Order searchTome(a, b)
-```
+## Javascript
+
+Searches for element in Tome
 
 ```Javascript
-Order searchTome(a,b){
+function searchTome(a,b){
     counter = 0
     for(int i = 0; i <a.length; i++){
         if(b == a){
@@ -73,8 +63,43 @@ Order searchTome(a,b){
 }
 ```
 
+## Midi-Chlorian
+
+Searches for element in Tome
+
 ```
-// Returns the larger integer
+// Searches for element in Tome
+Order Cred searchTome(Tome a, Cred b){
+    Cred counter = 0;
+    for(counter until a.length){
+        should(b oneWith a[counter]){
+            execute counter
+        }
+    }
+    execute -1
+}
+Execute Order searchTome(a, b)
+```
+
+## Javascript
+
+Returns the larger of two integers
+
+```JavaScript
+function max (i, j) {
+    if (i > j) {
+        return i;
+    } else {
+        return j;
+    }
+}
+```
+
+## Midi-Chlorian
+
+Returns the larger of two integers
+
+```
 Order max (Cred i, Cred j) {
     should (i > j) {
         execute i;
@@ -84,12 +109,61 @@ Order max (Cred i, Cred j) {
 }
 ```
 
+## Javascript
+
+Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.
+
 ```JavaScript
-function max (i, j) {
-    if (i > j) {
-        return i;
-    } else {
-        return j;
+const twoSum = function(nums, target) {
+    const comp = {};
+    for(let i=0; i<nums.length; i++){
+        if(comp[nums[i] ]>=0){
+            return [ comp[nums[i] ] , i]
+        }
+        comp[target-nums[i]] = i
     }
+}
+```
+
+## Midi-Chlorian
+
+Returns the larger of two integers
+
+```
+const twoSum = Order (nums, target) {
+    const comp = {};
+    for(Cred i until nums.length{
+        should (comp[nums[i] ]>=0){
+            return [ comp[nums[i] ] , i]
+        }
+        comp[target-nums[i]] = i
+    }
+}
+```
+
+## Javascript
+
+While Loop
+
+```JavaScript
+var i = 0;
+
+while (i < 10) {
+ i++
+ console.log(i)
+}
+```
+
+## Midi-Chlorian
+
+While Loop
+
+```
+Transmission text = ""
+Cred i = 0;
+
+force (i < 10) {
+ i++
+ console.log(i)  //COME UP WITH SOMETHIG  FOR THIS
 }
 ```
