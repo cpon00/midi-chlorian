@@ -9,7 +9,6 @@ Midichlorian {
   midichlorian = "\\n"
                | "\\'"
                | "\\\""
-               | "\\\\""
                | "\\u{" hexDigit+ "}"          --hex
                |  ~"\"" ~"\\" any
 }

@@ -25,11 +25,11 @@ const droidCommunications = [
 describe('Say the line, Luke: ', () => {
     for (const line of starWarsLines) {
         it(`Luke says: ${line}`, () => {
-            assert.ok(parse(program))
+            assert.ok(parse(line))
         })
     }
     for (const line of droidCommunications) {
-        it(`I've got a bad feeling about: ${program}`, () => {
+        it(`I've got a bad feeling about: ${line}`, () => {
             assert.ok(!parse(line))
         })
     }
