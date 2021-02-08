@@ -1,7 +1,7 @@
 # Midi-chlorian
 
 <div align="center">
-<img src="https://raw.githubusercontent.com/cpon00/midi-chlorian/main/midichlorian%20title.png" />
+<img src="https://raw.githubusercontent.com/cpon00/midi-chlorian/main/docs/midichlorian%20title.png" />
 </div>
 
 ### Introductions

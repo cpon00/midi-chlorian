@@ -1,0 +1,34 @@
+{
+  "name": "midi-chlorian",
+  "version": "1.0.0",
+  "description": "Midi-chlorian is\u0016 a compiler inspired by the mind of George Lucas. One of our team members had just finished five hours of reading Star Wars wiki articles, and proposed the name SkywalkerScript. After a bit of deliberation, our team settled on Midi-chlorian, named after the \"intelligent microscopic life-forms that lived symbiotically inside the cells of all living things\"\u001b[D.\"",
+  "main": "index.js",
+  "type": "module",
+  "directories": {
+    "doc": "docs",
+    "test": "test"
+  },
+  "dependencies": {
+    "c8": "^7.5.0",
+    "eslint-config-prettier": "^7.2.0",
+    "ohm-js": "^15.4.1",
+    "prettier": "^2.2.1"
+  },
+  "devDependencies": {
+    "c8": "^7.5.0",
+    "mocha": "^8.2.1"
+  },
+  "scripts": {
+    "test": "c8 node_modules/.bin/mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cpon00/midi-chlorian.git"
+  },
+  "author": "Isaiah Anyimi, Jason Kalili, Adrian Leung, Carter Pon",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cpon00/midi-chlorian/issues"
+  },
+  "homepage": "https://github.com/cpon00/midi-chlorian#readme"
+}
