@@ -132,8 +132,9 @@ Returns the larger of two integers
 ```
 const twoSum = Order (nums, target) {
     const comp = {};
-    for(Cred i until nums.length{
-        should (comp[nums[i] ]>=0){
+    Cred i = 0;
+    for (i until nums.length) {
+        should (comp[nums[i] >=0 ){
             return [ comp[nums[i] ] , i]
         }
         comp[target-nums[i]] = i
