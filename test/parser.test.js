@@ -11,6 +11,7 @@ const starWarsLines = [
     `"'Fear is the path to the dark side. Fear leads to anger; anger leads to hate; hate leads to suffering. I sense much fear in you.' — Yoda"`,
     `"'I’m just a simple man trying to make my way in the universe.' — Jango Fett"`,
     `"'So this is how liberty dies. With thunderous applause.' — Padmé Amidala"`,
+    `""`,
 ]
 
 const droidCommunications = [
@@ -21,11 +22,14 @@ const droidCommunications = [
     0x526f67657220726f676572,
     0x47454e4552414c204b454e4f4249,
     12345678910,
+    '\\c',
+    66,
+    27000,
 ]
 
-describe('Say the line, Luke: ', () => {
+describe('Say the line, C-3P0! ', () => {
     for (const line of starWarsLines) {
-        it(`Luke says: ${line}`, () => {
+        it(`C-3P0 says: ${line}`, () => {
             assert.ok(parse(line), line)
         })
     }
