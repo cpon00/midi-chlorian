@@ -9,13 +9,16 @@ Midichlorian {
   midichlorian = "\\n"
                | "\\'"
                | "\\\""
-               | "\\u{" hexDigit+ "}"          --hex
-               |  ~"\"" ~"\\" any
-}
-
-`)
+               | "\\\\"
+               | "\\u{" hexDigit+ "}"         --hex
+               | ~"\"" ~"\\" any
+}`)
 
 export default function parse(source) {
-    const match = midiChlorianGrammar.match(source)
+  const match = midiChlorianGrammar.match(source)
+  if (!match.succeeded()) {
+    console.log(match)
+  } else {
     return match.succeeded()
+  }
 }
