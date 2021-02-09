@@ -20,6 +20,7 @@ const droidCommunications = [
     0x5765206e656564206d6f7265206261636b757021,
     0x526f67657220726f676572,
     0x47454e4552414c204b454e4f4249,
+    12345678910,
 ]
 
 describe('Say the line, Luke: ', () => {
