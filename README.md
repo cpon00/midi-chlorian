@@ -18,8 +18,9 @@ This repository is the home of Midi-chlorian, a compiler inspired by the mind of
 |      long        |  parsec     |          Parsec b = 900000         |
 |      double      |  ket        |            ket c = 0.5             |
 |      boolean     |  absolute   |          absolute d = true         |
-|      string      |transmission |    transmission e = "Hello There"  |
-|      array       |tome         | tome f = ["Execute","Order","66"]  |
+|      char        | midichlorian|          midichlorian e = "s"      |
+|      string      |transmission |    transmission f = "Hello There"  |
+|      array       |tome         | tome g = ["Execute","Order","66"]  |
 </br>
 
 >## Operational Logic
