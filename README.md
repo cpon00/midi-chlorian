@@ -2,10 +2,16 @@
 <img src="https://raw.githubusercontent.com/cpon00/midi-chlorian/main/docs/midichlorianlogo.png" />
 </div>
 
+<<<<<<< HEAD
 # Introduction
 This repository is the home of Midi-Chlorian, a language inspired by the mind of George Lucas. One of our team members had just finished five hours of reading Star Wars wiki articles, and proposed the name SkywalkerScript. After a bit of deliberation, our team settled on Midi-Chlorian, named after the "intelligent microscopic life-forms that lived symbiotically inside the cells of all living things"[[1]](https://starwars.fandom.com/wiki/Midi-chlorian). 
 
 Midi-Chlorian is created by [Carter Pon](https://github.com/cpon00), [Adrian Leung](https://github.com/AdrianLearn), [Isaiah Anyimi](https://github.com/ianyimi), and [Jason Kalili](https://github.com/jkalili).
+=======
+### Introduction
+
+This repository is the home of Midi-chlorian, a language inspired by the mind of George Lucas. One of our team members had just finished five hours of reading Star Wars wiki articles, and proposed the name SkywalkerScript. After a bit of deliberation, our team settled on Midi-chlorian, named after the "intelligent microscopic life-forms that lived symbiotically inside the cells of all living things"[[1]](https://starwars.fandom.com/wiki/Midi-chlorian). As such, features of our compiler include:\
+>>>>>>> 6dbfddcdba5e7f44b112d7372616f98f7fa40417
 </br>
 
 # Shortcuts
@@ -163,8 +169,13 @@ order max (cred i, cred j) {
 ```JavaScript
 function twoSum(nums, target) {
     const comp = {};
+<<<<<<< HEAD
     for (let i = 0; i < nums.length; i++) {
         if (comp[nums[i]] >= 0) {
+=======
+    for (let i = 0; i<nums.length; i++){
+        if(comp[nums[i]] >=0){
+>>>>>>> 6dbfddcdba5e7f44b112d7372616f98f7fa40417
             return [comp[nums[i]], i]
         }
         comp[target-nums[i]] = i
@@ -175,11 +186,19 @@ function twoSum(nums, target) {
 >### Midi-Chlorian
 
 ```
+<<<<<<< HEAD
 order twoSum (tome nums, cred target) {
     const comp = {};
     cred i = 0;
     force (i until nums.length) {
         should (comp[nums[i]] >= 0) {
+=======
+const twoSum = (nums, target) => {
+    const comp = {}
+    Cred i = 0
+    for (i until nums.length) {
+        should(comp[nums[i]] >=0){
+>>>>>>> 6dbfddcdba5e7f44b112d7372616f98f7fa40417
             execute [comp[nums[i]], i]
         }
         comp[target-nums[i]] = i
