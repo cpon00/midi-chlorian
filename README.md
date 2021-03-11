@@ -1,12 +1,12 @@
 # Midi-chlorian
 
 <div align="center">
-<img src="https://raw.githubusercontent.com/cpon00/midi-chlorian/main/docs/midichlorian%20title.png" />
+<img src="https://raw.githubusercontent.com/cpon00/midi-chlorian/main/docs/midichlorianlogo.png" />
 </div>
 
 ### Introductions
 
-This repository is the home of Midi-chlorian, a compiler inspired by the mind of George Lucas. One of our team members had just finished five hours of reading Star Wars wiki articles, and proposed the name SkywalkerScript. After a bit of deliberation, our team settled on Midi-chlorian, named after the "intelligent microscopic life-forms that lived symbiotically inside the cells of all living things"[[1]](https://starwars.fandom.com/wiki/Midi-chlorian). As such, features of our compiler include:\
+This repository is the home of Midi-chlorian, a language inspired by the mind of George Lucas. One of our team members had just finished five hours of reading Star Wars wiki articles, and proposed the name SkywalkerScript. After a bit of deliberation, our team settled on Midi-chlorian, named after the "intelligent microscopic life-forms that lived symbiotically inside the cells of all living things"[[1]](https://starwars.fandom.com/wiki/Midi-chlorian). As such, features of our compiler include:\
 </br>
 
 
@@ -86,9 +86,9 @@ searchTome(a, b)
 ```JavaScript
 function max (i, j) {
     if (i > j) {
-        return i;
+        return i
     } else {
-        return j;
+        return j
     }
 }
 ```
@@ -97,9 +97,9 @@ function max (i, j) {
 ```
 Order max (Cred i, Cred j) {
     should (i > j) {
-        execute i;
+        execute i
     } orElse {
-        execute j;
+        execute j
     }
 }
 ```
@@ -111,7 +111,7 @@ Order max (Cred i, Cred j) {
 ```JavaScript
 const twoSum = (nums, target) => {
     const comp = {};
-    for(let i=0; i<nums.length; i++){
+    for (let i = 0; i<nums.length; i++){
         if(comp[nums[i]] >=0){
             return [comp[nums[i]], i]
         }
@@ -124,8 +124,8 @@ const twoSum = (nums, target) => {
 
 ```
 const twoSum = (nums, target) => {
-    const comp = {};
-    Cred i = 0;
+    const comp = {}
+    Cred i = 0
     for (i until nums.length) {
         should(comp[nums[i]] >=0){
             execute [comp[nums[i]], i]
