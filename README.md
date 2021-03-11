@@ -169,13 +169,8 @@ order max (cred i, cred j) {
 ```JavaScript
 function twoSum(nums, target) {
     const comp = {};
-<<<<<<< HEAD
     for (let i = 0; i < nums.length; i++) {
         if (comp[nums[i]] >= 0) {
-=======
-    for (let i = 0; i<nums.length; i++){
-        if(comp[nums[i]] >=0){
->>>>>>> 6dbfddcdba5e7f44b112d7372616f98f7fa40417
             return [comp[nums[i]], i]
         }
         comp[target-nums[i]] = i
@@ -186,19 +181,11 @@ function twoSum(nums, target) {
 >### Midi-Chlorian
 
 ```
-<<<<<<< HEAD
 order twoSum (tome nums, cred target) {
     const comp = {};
     cred i = 0;
     force (i until nums.length) {
         should (comp[nums[i]] >= 0) {
-=======
-const twoSum = (nums, target) => {
-    const comp = {}
-    Cred i = 0
-    for (i until nums.length) {
-        should(comp[nums[i]] >=0){
->>>>>>> 6dbfddcdba5e7f44b112d7372616f98f7fa40417
             execute [comp[nums[i]], i]
         }
         comp[target-nums[i]] = i
