@@ -59,11 +59,35 @@ export class Midichlorian {
     }
 }
 
-// export class BinaryExpression {
-//     constructor(op, left, right) {
-//         Object.assign(this, { op, left, right })
-//     }
-// }
+export class ForceLoop {
+    constructor(initializer, test, inc, body) {
+        Object.assign(this, { initializer, test, inc, body })
+    }
+}
+
+export class Emit {
+    constructor(arg) {
+        this.argument = arg
+    }
+}
+
+export class Arguments {
+    constructor(args) {
+        this.args = args
+    }
+}
+
+export class Parameter {
+    constructor(names, types) {
+        Object.assign(this, { names, types })
+    }
+}
+
+export class BinaryExpression {
+    constructor(operation, left, right) {
+        Object.assign(this, { operation, left, right })
+    }
+}
 
 // export class UnaryExpression {
 //     constructor(op, operand) {
