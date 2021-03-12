@@ -14,92 +14,80 @@
 
 import util from 'util'
 
-export class Directive {
-    constructor(statements) {
-        this.statements = statements
+export class Program {
+    constructor(directives) {
+        this.directives = directives
     }
     [util.inspect.custom]() {
         return prettied(this)
     }
 }
 
-// export class VariableDeclaration {
-//     constructor(name, initializer) {
-//         Object.assign(this, { name, initializer })
-//     }
-// }
-
-// export class Variable {
-//     constructor(name) {
-//         this.name = name
-//     }
-// }
-
-// export class Assignment {
-//     constructor(target, source) {
-//         Object.assign(this, { target, source })
-//     }
-// }
+export class Command {
+    constructor(variables, initializers) {
+        Object.assign(this, { variables, initializers })
+    }
+}
 
 export class Order {
-    constructor(type, parameters, block) {
-        Object.assign(this, { type, parameters, block })
+    constructor(id, parameters, body) {
+        Object.assign(this, { id, parameters, body })
     }
 }
 
-export class Transmission {
-    constructor(type, parameters, block) {
-        Object.assign(this, { type, parameters, block })
+export class Designation {
+    constructor(targets, sources) {
+        Object.assign(this, { targets, sources })
     }
 }
 
-export class Midichlorian {
+export class WhileLoop {
+    constructor(test, body) {
+        Object.assign(this, { test, body })
+    }
+}
+
+export class Param {
+    constructor(name, type) {
+        Object.assign(this, { name, type })
+    }
+}
+
+export class ForLoop {
+    constructor(iterator, range, body) {
+        Object.assign(this, { iterator, range, body })
+    }
+}
+
+export class PrintStatement {
     constructor(argument) {
         this.argument = argument
     }
 }
 
-export class ForceLoop {
-    constructor(initializer, test, inc, body) {
-        Object.assign(this, { initializer, test, inc, body })
+export class ReturnStatement {
+    constructor(returnValue) {
+        this.returnValue = returnValue
     }
 }
 
-export class Emit {
-    constructor(arg) {
-        this.argument = arg
-    }
-}
-
-export class Arguments {
-    constructor(args) {
-        this.args = args
-    }
-}
-
-export class Parameter {
-    constructor(names, types) {
-        Object.assign(this, { names, types })
+export class IfStatement {
+    constructor(condition, execution) {
+        Object.assign(this, { condition, execution })
     }
 }
 
 export class BinaryExpression {
-    constructor(operation, left, right) {
-        Object.assign(this, { operation, left, right })
+    constructor(op, left, right) {
+        Object.assign(this, { op, left, right })
     }
 }
 
-// export class UnaryExpression {
-//     constructor(op, operand) {
-//         Object.assign(this, { op, operand })
-//     }
-// }
-
-// export class IdentifierExpression {
-//     constructor(name) {
-//         this.name = name
-//     }
-// }
+export class UnaryExpression {
+    constructor(op, operand) {
+        Object.assign(this, { op, operand })
+    }
+}
 
 function prettied(node) {
     // Return a compact and pretty string representation of the node graph,
