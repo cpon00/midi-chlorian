@@ -2,47 +2,40 @@
 <img src="https://raw.githubusercontent.com/cpon00/midi-chlorian/main/docs/midichlorianlogo.png" />
 </div>
 
-<<<<<<< HEAD
 # Introduction
-This repository is the home of Midi-Chlorian, a language inspired by the mind of George Lucas. One of our team members had just finished five hours of reading Star Wars wiki articles, and proposed the name SkywalkerScript. After a bit of deliberation, our team settled on Midi-Chlorian, named after the "intelligent microscopic life-forms that lived symbiotically inside the cells of all living things"[[1]](https://starwars.fandom.com/wiki/Midi-chlorian). 
+
+This repository is the home of Midi-Chlorian, a language inspired by the mind of George Lucas. One of our team members had just finished five hours of reading Star Wars wiki articles, and proposed the name SkywalkerScript. After a bit of deliberation, our team settled on Midi-Chlorian, named after the "intelligent microscopic life-forms that lived symbiotically inside the cells of all living things"[[1]](https://starwars.fandom.com/wiki/Midi-chlorian).
 
 Midi-Chlorian is created by [Carter Pon](https://github.com/cpon00), [Adrian Leung](https://github.com/AdrianLearn), [Isaiah Anyimi](https://github.com/ianyimi), and [Jason Kalili](https://github.com/jkalili).
-=======
-### Introduction
 
-This repository is the home of Midi-chlorian, a language inspired by the mind of George Lucas. One of our team members had just finished five hours of reading Star Wars wiki articles, and proposed the name SkywalkerScript. After a bit of deliberation, our team settled on Midi-chlorian, named after the "intelligent microscopic life-forms that lived symbiotically inside the cells of all living things"[[1]](https://starwars.fandom.com/wiki/Midi-chlorian). As such, features of our compiler include:\
->>>>>>> 6dbfddcdba5e7f44b112d7372616f98f7fa40417
 </br>
 
 # Shortcuts
-- [ Types ](#types)
-- [ Operational Logic ](#operational-logic)
-    - [ Unary Operators](#unary-operators) 
-    
-- [ Comments ](#comments)
-- [ Midi-Chlorian Examples ](#examples)
-    - [Print](#print)
-    - [Variabale Declaration](#variable-declaration)
-    - [If Statements](#if-statements)
-    - [For Loop](#for-loop)
-    - [While Loop](#while-loop)
-- [Example Programs](#example-programs)
 
-
-
-
+-   [ Types ](#types)
+-   [ Operational Logic ](#operational-logic)
+    -   [ Unary Operators](#unary-operators)
+-   [ Comments ](#comments)
+-   [ Midi-Chlorian Examples ](#examples)
+    -   [Print](#print)
+    -   [Variabale Declaration](#variable-declaration)
+    -   [If Statements](#if-statements)
+    -   [For Loop](#for-loop)
+    -   [While Loop](#while-loop)
+-   [Example Programs](#example-programs)
 
 # Types
 
-|Type in Javascript|Midi-chlorian|           Declaration              |
-|:----------------:|:-----------:| :-------------------------------:  |
-|      int         |  cred       |            Cred a = 9              |
-|      long        |  parsec     |          Parsec b = 900000         |
-|      double      |  ket        |            ket c = 0.5             |
-|      boolean     |  absolute   |          absolute d = true         |
-|      char        | midichlorian|          midichlorian e = "s"      |
-|      string      |transmission |    transmission f = "Hello There"  |
-|      array       |tome         | tome g = ["Execute","Order","66"]  |
+| Type in Javascript | Midi-chlorian |            Declaration            |
+| :----------------: | :-----------: | :-------------------------------: |
+|        int         |     cred      |            Cred a = 9             |
+|        long        |    parsec     |         Parsec b = 900000         |
+|       double       |      ket      |            ket c = 0.5            |
+|      boolean       |   absolute    |         absolute d = true         |
+|        char        | midichlorian  |       midichlorian e = "s"        |
+|       string       | transmission  |  transmission f = "Hello There"   |
+|       array        |     tome      | tome g = ["Execute","Order","66"] |
+
 </br>
 
 # Operational Logic
@@ -53,6 +46,7 @@ This repository is the home of Midi-chlorian, a language inspired by the mind of
 |   a - b    |     a - b     |
 |   a \_ b   |    a \_ b     |
 |   a / b    |     a / b     |
+|   a \* b   |    a \* b     |
 |   a % b    |     a % b     |
 |   a == b   |  a oneWith b  |
 |   a != b   | a !oneWith b  |
@@ -61,47 +55,54 @@ This repository is the home of Midi-chlorian, a language inspired by the mind of
 |   a <= b   |    a <= b     |
 |   a && b   |    a and b    |
 |   a or b   |    a or b     |
+
 </br>
 
 ### Unary Operators
 
-| Operation      |  Compatability |
-| -------------- | ------------------ |
-| increment: `++` | `Numbers`          |
-| decrement: `--` | `Numbers`          |
-| negative: `-`   | `Numbers`          |
-| negation: `darth` | `Booleans`         |
+| Operation         | Compatability |
+| ----------------- | ------------- |
+| increment: `++`   | `Numbers`     |
+| decrement: `--`   | `Numbers`     |
+| negative: `-`     | `Numbers`     |
+| negation: `darth` | `Booleans`    |
 
 <br/>
 
-
 # Comments
-- Single Line: ```>< comment goes here```
-- Block: ```>> comment goes here << ```
 
-<br/> 
+-   Single Line: `>< comment goes here`
+-   Block: `>> comment goes here << `
+
+<br/>
 
 # Examples
 
 ## Print
+
 ```
 emit ("May the force be with you.")
 ```
 
 ## Variable Declaration
+
 ```
 cred numberOfSith = 9
 
 ```
+
 ## If Statements
+
 ```
 should (i > j) {
     execute i
 } orElse {
     execute j
 }
-```   
+```
+
 ## For Loop
+
 ```
 force (cred i = 0; i < 5; i++) {
     should (i oneWith 3) {
@@ -111,6 +112,7 @@ force (cred i = 0; i < 5; i++) {
 ```
 
 ## While Loop
+
 ```
 while (i < 3) {
     unleash >< break from loop
@@ -118,17 +120,19 @@ while (i < 3) {
 
 ```
 
-# Example Programs 
+# Example Programs
 
 ## Fibonacci
-``` Javascript
-function fibonacci(n){
+
+```Javascript
+function fibonacci(n) {
     if (n <= 1){
         return 1
     }
     return fibonacci(n-1) + fibonacci(n-2)
 }
 ```
+
 ```
 Order fibonacci(cred count) {
     should(count <= 1) {
@@ -139,7 +143,8 @@ Order fibonacci(cred count) {
 ```
 
 ## Returns the Larger of Two Integers
->### Javascript
+
+> ### Javascript
 
 ```JavaScript
 function max (i, j) {
@@ -151,7 +156,8 @@ function max (i, j) {
 }
 ```
 
->### Midi-Chlorian
+> ### Midi-Chlorian
+
 ```
 order max (cred i, cred j) {
     should (i > j) {
@@ -163,8 +169,8 @@ order max (cred i, cred j) {
 ```
 
 ## Two Sum Leetcode Problem
->### Javscript
 
+> ### Javscript
 
 ```JavaScript
 function twoSum(nums, target) {
@@ -178,7 +184,7 @@ function twoSum(nums, target) {
 }
 ```
 
->### Midi-Chlorian
+> ### Midi-Chlorian
 
 ```
 order twoSum (tome nums, cred target) {
@@ -192,4 +198,3 @@ order twoSum (tome nums, cred target) {
     }
 }
 ```
-
