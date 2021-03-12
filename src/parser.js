@@ -3,54 +3,80 @@ import ohm from 'ohm-js'
 //import * as ast from './ast.js'
 
 const midiChlorianGrammar = ohm.grammar(String.raw`Midichlorian {
-	Directive = Statement+
-    Statement = Declaration | Assignment | Loop | Print | Break | Return
-    Declaration = VarDecl | FunDecl
-    VarDecl = lifeform IdList "=" ExpList
-    FunDecl = order id Params Body
-    Params = "(" Param* ")"
-    Param = id ":" typename
-    typename = cred | parsec | ket | absolute | midichlorian | transmission | tome
-    Body = "{" Statement* "}"
-    ExpList = Exp ("," Exp)*
-    Assignment =  IdList "=" ExpList
-    Loop = ForLoop | WhileLoop
-    ForLoop = force id in Exp Body
-    WhileLoop = while Exp Body
-	Print = emit "(" Exp ")"
-    Break = unleash
-    IdList =  id ("," id)*
-    Return = execute Exp
-    cred = "cred" ~idchar
-    parsec = "parsec" ~idchar
-    ket = "ket" ~idchar
-    absolute = "absolute" ~idchar
-    midichlorian = "midichlorian" ~idchar
-    transmission = "transmission" ~idchar
-    tome = "tome" ~idchar
-    lifeform = "lifeform" ~idchar
-    order = "order" ~idchar
-    force = "force" ~idchar
-    in = "in" ~idchar
-    while = "as" ~idchar
-    emit = "emit" ~idchar
-    unleash = "unleash" ~idchar
-    execute = "execute" ~idchar
-    keyword = cred | parsec | ket | absolute | midichlorian
-    		| transmission | tome
-    Exp = Exp ("+" | "<") Term             --add
-    	| Term
-   	Term = num | id | Call | string
-    string = "\"" char* "\""
-    char = ~"\"" any
-    Call = id "(" ExpList ")"
-    num = digit+
-    idchar = letter | digit | "~"
-    id = ~keyword letter idchar*
-    Comment     = ">>" (~"\n" any)* "<<"                 --multiLine
-                | "><" (~"\n" any)* ("\n" | end)         --singleLine
-}`)
-
+    Program   = Directive+
+    Directive = Command 
+              | Order
+              | Designation "=" Exp                         --assign
+              | Exp6_call
+              | emit Exp                           --print
+              | as
+              | should
+              | unleash
+              | endure
+              | execute Exp?                         --return
+    Command   = lifeform id "=" Exp
+    lifeform = | "cred" | "ket" | "parsec" | "absolute" | "midichlorian" | "transmission"
+                       | "tome" "<" lifeform ">"			                   		  --arraytype
+                       | "holocron" "<" lifeform "," lifeform ">"		   --dicttype
+    Order   = order id Params (":" TypeExp)? Block
+    Params    = "(" ListOf<Param, ","> ")"
+    Param     = id ":" TypeExp
+    TypeExp   = "[" TypeExp "]"                     --array
+              | TypeExps "->" TypeExp               --function
+              | id                                  --named
+    TypeExps  = "(" ListOf<TypeExp, ","> ")"
+    WhileStmt = as Exp Block
+    IfStmt    = should Exp Block else (Block | IfStmt)  --long
+              | should Exp Block                        --short
+    Block     = "{" Command* "}"
+    Exp       = Exp1 ("or" Exp1)+                   --or
+              | Exp1 ("and" Exp1)+                   --and
+              | Exp1
+    Exp1      = Exp2 relop Exp2                     --binary
+              | Exp2
+    Exp2      = Exp2 ("+" | "-") Exp3               --binary
+              | Exp3
+    Exp3      = Exp3 ("*"| "/") Exp4                --binary
+              | Exp4
+    Exp4      = Exp5 "**" Exp4                      --binary
+              | Exp5
+              | "-" Exp5                            --unary
+    Exp5      = Exp6
+              | Exp7
+    Exp6      = Exp6 "(" Args ")"                   --call
+              | Exp6 "[" Exp "]"                    --subscript
+              | id                                  --id
+    Exp7 = absolute
+              | cred
+              | transmission
+              | TypeExp_array "(" Args ")"          --arraylit
+              | "(" Exp ")"                         --parens
+    Designation       = Exp6_subscript
+              | Exp6_id
+    Args      = ListOf<Exp, ",">
+    relop     = "<=" | "<" | "==" | "!=" | ">=" | ">"
+    cred       = digit+ ("." digit+)? (("E" | "e") ("+" | "-")? digit+)?
+    transmission = "\"" midichlorian* "\""
+    midichlorian      = ~"\n" ~"\r" ~"\\" ~"\"" any
+              | "\\" ("n" | "t" | "\"" | "\\")      --escape
+              | "\\u{" h h? h? h? h? h? "}"         --codepoint
+    h         = hexDigit
+    designation       = "designation" ~alnum
+    const     = "const" ~alnum
+    order  = "order" ~alnum
+    emit     = "emit" ~alnum
+    should        = "should" ~alnum
+    else      = "else" ~alnum
+    as     = "as" ~alnum
+    unleash     = "unleash" ~alnum
+    endure  = "endure" ~alnum
+    execute    = "execute" ~alnum
+    absolute = ("light" | "dark") ~alnum
+    keyword   = designation | const | order | emit | should | else 
+              | as | execute | unleash | endure | absolute
+    id        = ~keyword letter alnum*
+    space     += "//" (~"\n" any)* ("\n" | end)   --comment
+  }`)
 // const astBuilder = midiChlorianGrammar.createSemantics().addOperation('ast', {
 //     Directive(body) {
 //         return new ast.Directive(body.ast())

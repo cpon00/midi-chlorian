@@ -9,13 +9,27 @@ describe('The parser', () => {
 
 const goodPrograms = [
     `emit("May the force be with you.")`,
-    `order fibonacci(n: cred) {
-        lifeform a, b = 0, 1
-        as b < n {
+    `
+    order cred fibonacci (cred c) {
+        cred a = 0
+        cred b = 1
+        as b < c {
             a, b = b, a + b
         }
         execute b
-    }`,
+    }
+    
+    fibonacci (c: 20)`,
+    `tome <cred> b = [3, 6 ,9]`,
+    `cred x = 500
+    ket y = 100
+    order cred f(cred q, ket p) { p = 20 }
+    f(q: 2, p: 5)`,
+    `absolute orderSixtySix = light`,
+    ``,
+    ``,
+    ``,
+    ``,
 ]
 
 // const starWarsLines = [
