@@ -32,6 +32,7 @@ const midiChlorianGrammar = ohm.grammar(String.raw`Midichlorian {
     WhileStmt = as Exp Body
     IfStmt    = should Exp Body else (Body | IfStmt)  --long
     Body      = "{" Directive* "}"
+
     Exp       = Exp1 ("or" Exp1)+                   --or
               | Exp1 ("and" Exp1)+                   --and
               | Exp1
@@ -48,7 +49,7 @@ const midiChlorianGrammar = ohm.grammar(String.raw`Midichlorian {
               | Exp7
     Exp6      = Exp6 "(" Args ")"                   --call
               | Exp6 "[" Exp "]"                    --subscript
-              | id                                  --id
+              | id
     Exp7      = absolute
               | digit+ ("." digit+)?                --numLit
               | letter+
@@ -78,12 +79,11 @@ const midiChlorianGrammar = ohm.grammar(String.raw`Midichlorian {
     endure  = "endure" ~alnum
     execute    = "execute" ~alnum
     absolute = ("light" | "dark") ~alnum
-    keyword   = designation | order | emit | should | else 
+    keyword   = designation | order | emit | should | else
               | as | execute | unleash | endure | absolute
     id        = ~keyword letter alnum*
     space     += "//" (~"\n" any)* ("\n" | end)   --comment
   }`)
-
 //add some interesting feature beacause we are dynamically typed
 //functions as types
 
