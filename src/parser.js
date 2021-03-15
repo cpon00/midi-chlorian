@@ -2,555 +2,292 @@
 import ohm from 'ohm-js'
 import * as ast from './ast.js'
 
-const midiChlorianGrammar = ohm.grammar(String.raw`Midichlorian {
-    Program   = Directive+
-    Directive = Command 
-              | Order
-              | Designation "=" Exp                --assign
-              | emit Exp                           --print
-              | WhileStmt
-              | Call
-              | IfStmt
-              | unleash
-              | endure
-              | execute Exp?                       --return
-              | Class
-    Command   = lifeform id "=" Exp
-    Designation = id "=" Exp
-    Params    = "(" ListOf<Param, ","> ")"
-    Param     = lifeform id
-    Call      = id "(" Args ")"
-    Args = ListOf<Arg, ",">
-    lifeform = | "cred" | "ket" | "parsec" | "absolute" | "midichlorian" | "transmission"
-                        | "tome" "<" lifeform ">"			       		  --arraytype
-                        | "holocron" "<" lifeform "," lifeform ">"		      --dicttype
-    Order   = "order" lifeform id Params Body
-    Class     = "squadron" id "{" (Constructor | Method | Field )* "}"
-    Constructor = "imprint" "(" Params? ")" Body
-    Method = "method"
-    Field = Command
-    
-    WhileStmt = as Exp Body
-    IfStmt    = should Exp Body else (Body | IfStmt)  --long
-    Body      = "{" Directive* "}"
-
-    Exp       = Exp1 ("or" Exp1)+                   --or
-              | Exp1 ("and" Exp1)+                   --and
-              | Exp1
-    Exp1      = Exp2 relop Exp2                     --binary
-              | Exp2
-    Exp2      = Exp2 ("+" | "-") Exp3               --binary
-              | Exp3
-    Exp3      = Exp3 ("*"| "/") Exp4                --binary
-              | Exp4
-    Exp4      = Exp5 "**" Exp4                      --binary
-              | Exp5
-              | "-" Exp5                            --unary
-    Exp5      = Exp6
-              | Exp7
-    Exp6      = Exp6 "(" Args ")"                   --call
-              | Exp6 "[" Exp "]"                    --subscript
-              | id
-    Exp7      = absolute
-              | digit+ ("." digit+)?                --numLit
-              | letter+
-              | transmission+
-              | "(" Exp ")"                         --parens
-              | "[" ListOf<Exp, ","> "]"            --array
-              | "{" ListOf<Exp, ":"> "}"            --dict
-    Arg      = id ":" Exp
-    relop     = "<=" | "<" | "oneWith" | "!oneWith" | ">=" | ">"
-    cred       = digit+
-    ket = digit+ ("." digit+)? 
-    parsec = digit+ ("." digit+)? 
-    transmission = "\"" midichlorian* "\""
-    midichlorian      = ~"\n" ~"\r" ~"\\" ~"\"" any
-              | "\\" ("n" | "t" | "\"" | "\\")      --escape
-              | "\\u{" h h? h? h? h? h? "}"         --codepoint
-    h         = hexDigit
-    designation       = "designation" ~alnum
-    order  = "order" ~alnum
-    emit     = "emit" ~alnum
-    should        = "should" ~alnum
-    else      = "else" ~alnum
-    as     = "as" ~alnum
-    unleash     = "unleash" ~alnum
-    endure  = "endure" ~alnum
-    execute    = "execute" ~alnum
-    absolute = ("light" | "dark") ~alnum
-    keyword   = designation | order | emit | should | else
-              | as | execute | unleash | endure | absolute
-    id        = ~keyword letter alnum*
-    space     += "//" (~"\n" any)* ("\n" | end)   --comment
-  }`)
+const midiChlorianGrammar = ohm.grammar(String.raw`
+Midichlorian {
+  Program         = Directive*
+   Directive       = Command                      --vardec
+                   | Function
+                   | Designation "=" Exp          --assign                
+                   | WhileLoop
+                   | ForLoop
+                   | Call                         --call
+                   | IfStmt
+                   | Print
+                   | Return                       --return
+                   | Increment                    --increment
+                   | Break                        --break
+   Command         = lifeform id "=" Exp
+   Designation     = id "=" Exp
+   IfStmt          = should Exp Body (altshould Exp Body)*
+                     (elseshould Body)?
+   WhileLoop       = as Exp Body
+   ForLoop         = force Designation ";" Exp ";" Increment Body 
+   Body            = "{"Directive*"}"
+   Function        = order lifeform id "(" Params ")" Body
+   Print           = emit Exp
+   Return          = execute Exp?
+   Break           = unleash
+   Call            = id "(" Args ")"
+   Args            = ListOf<Arg, ",">
+   Arg             = id ":" Exp
+   Params          = "(" ListOf<Param, ","> ")"
+   Param           = lifeform id
+   LitList         = "<" ListOf<Literal, ","> ">"
+   HolocronObj     = "<" ListOf<HolocronContent, ","> ">"
+   HolocronContent = Literal ":" Exp
+   Exp             = Exp or Exp1                   --binary
+                   | Exp1
+   Exp1            = Exp1 and Exp2                 --binary
+                   | Exp2
+   Exp2            = Exp2 relop Exp3               --binary
+                   | Exp3
+   Exp3            = Exp3 addop Exp4               --binary
+                   | Exp4
+   Exp4            = Exp4 mulop Exp5               --binary
+                   | Exp5
+   Exp5            = Exp5 absolutepower Exp6  --binary
+                   | Exp6
+   Exp6            = prefix Exp7                   --unary
+                   | Exp7
+   Exp7            = Call
+                   | Literal
+                   | HolocronObj
+                   | LitList
+                   | id
+                   | "(" Exp ")"                    --parens
+                   | "[" ListOf<Exp, ","> "]"       --subscript
+   Increment       = id ("++" | "--")
+   relop           = "<=" | ">=" | "<" | ">" | "onewith"
+   addop           = "+" | "-"
+   mulop           = "*" | "/" | "%"
+   absolutepower   = "**"
+   prefix          = "-" | "darth"
+   Literal         = transmissionLit
+                   | ketLit
+                   | credLit
+                   | absoluteLit
+   lifeform        = primitive
+                   | tome "<"lifeform">"             --arraytype
+                   | holocron "<"lifeform", " lifeform ">" --dicttype
+   primitive       = transmission
+                   | ket
+                   | cred
+                   | absolute
+   transmissionLit = "\'" midichlorian* "\'" | "\"" midichlorian* "\""
+   midichlorian    = ~"\n" ~"\r" ~"\\" ~"\'" ~"\""  any
+   credLit         = digit+
+   ketLit          = digit+ "." digit+
+   absoluteLit     = "light" | "dark"
+   order           = "order" ~alnum
+   emit            = "emit" ~alnum
+   execute         = "execute" ~alnum
+   unleash         = "unleash" ~alnum
+   tome            = "tome" ~alnum
+   holocron        = "holocron" ~alnum
+   should          = "should" ~alnum
+   altshould       = "altshould" ~alnum
+   elseshould      = "elseshould" ~alnum
+   as              = "as" ~alnum
+   force           = "force" ~alnum
+   transmission    = "transmission" ~alnum
+   ket             = "ket" ~alnum
+   cred            = "cred" ~alnum
+   absolute        = "absolute" ~alnum
+   or              = "or" ~alnum
+   and             = "and" ~alnum
+   keyword         = order
+                   | emit
+                   | execute
+                   | unleash
+                   | tome
+                   | holocron
+                   | should
+                   | altshould
+                   | elseshould
+                   | as
+                   | force
+                   | transmission
+                   | ket
+                   | cred
+                   | absolute
+   id              = ~keyword letter alnum*
+   comment         = "><" (~"\n" any)* ("\n" | end)   --singleLine
+   space           += comment
+ }`)
 //add some interesting feature beacause we are dynamically typed
 //functions as types
+//ASK ABOUT MULTILINE COMMENTS
 
-const astBuilder = carlosGrammar.createSemantics().addOperation('ast', {
+const astBuilder = midiChlorianGrammar.createSemantics().addOperation('ast', {
     Program(body) {
         return new ast.Program(body.ast())
     },
-    Command(kind, id, _eq, initializer) {
-        const [name, readOnly] = [id.sourceString, kind.sourceString == 'const']
-        return new ast.VariableDeclaration(name, readOnly, initializer.ast())
+    Directive_vardec(_lifeform, id, _eq, expression) {
+        return new ast.VariableDeclaration(id.sourceString, expression.ast())
     },
-    FunDecl(_fun, id, parameters, _colons, returnType, body) {
-        const returnTypeTree = returnType.ast()
-        return new ast.FunctionDeclaration(
-            id.sourceString,
-            parameters.ast(),
-            returnTypeTree.length === 0 ? null : returnTypeTree[0],
-            body.ast()
-        )
+    Directive_assign(id, _eq, expression) {
+      return new ast.Assignment(id.ast(), expression.ast())
     },
-    Params(_left, bindings, _right) {
-        return bindings.asIteration().ast()
+    Directive_call(id, _left, args, _right) {
+      return new ast.Call(id.ast(), args.ast())
     },
-    Param(id, _colon, type) {
-        return new ast.Parameter(id.sourceString, type.ast())
+    Directive_return(_execute, expression) {
+      const returnValueTree = expression.ast()
+      if (returnValueTree.length === 0) {
+        return new ast.ShortReturnStatement()
+      }
+      return new ast.ReturnStatement(returnValueTree[0])
     },
-    TypeExp_array(_left, baseType, _right) {
-        return new ast.ArrayType(baseType.ast())
+    Directive_break(_unleash) {
+      return new ast.Break()
     },
-    TypeExp_function(inputType, _arrow, outputType) {
-        return new ast.FunctionType(inputType.ast(), outputType.ast())
+    Function(_order, _lifeform, id, parameters, _semicolons, body) {
+      const returnTypeTree = returnType.ast()
+      return new ast.FunctionDeclaration(
+        id.sourceString,
+        parameters.ast(),
+        returnTypeTree.length === 0 ? null : returnTypeTree[0],
+        body.ast()
+      )
     },
-    TypeExp_named(id) {
-        return new ast.TypeName(id.sourceString)
+    Directive_increment(id, operation) {
+      return new ast.Increment(id.ast(), operation.ast())
     },
-    TypeExps(_left, memberTypeList, _right) {
-        return memberTypeList.asIteration().ast()
+    
+    WLoop(_as, expression, body) {
+      return new ast.WLoop(expression.ast(), body.ast())
     },
-    Statement_assign(variable, _eq, expression) {
-        return new ast.Assignment(variable.ast(), expression.ast())
+    FLoop(
+      _force,
+      assignment,
+      _semicolon,
+      expression,
+      _semicolon,
+      increment,
+      body
+    ) {
+      return new ast.FLoop(
+        assignment.ast(),
+        expression.ast(),
+        increment.ast(),
+        body.ast()
+      )
     },
-    Statement_print(_print, expression) {
-        return new ast.PrintStatement(expression.ast())
+    
+    IfStmt(
+      _should,
+      expression1,
+      body1,
+      _altshould,
+      expression2,
+      body2,
+      _elseshould,
+      body3
+    ) {
+      return new ast.IfStmt(
+        expression1.ast(),
+        body1.ast(),
+        expression2.ast(),
+        body2.ast(),
+        body3.ast()
+      )
     },
-    WhileStmt(_while, test, body) {
-        return new ast.WhileStatement(test.ast(), body.ast())
+    Directive_print(_emit, expression) {
+      return new ast.PrintStatement(expression.ast())
     },
-    IfStmt_long(_if, test, consequent, _else, alternative) {
-        return new ast.IfStatement(
-            test.ast(),
-            consequent.ast(),
-            alternative.ast()
-        )
+    Body(_left, body, _right) {
+      return body.ast()
     },
-    unleash(_) {
-        return new ast.BreakStatement()
+    Params(_left, param, _right) {
+      return param.asIteration().ast()
     },
-    endure(_) {
-        return new ast.ContinueStatement()
+    Param(lifeform, id) {
+      return new ast.Parameter(id.sourceString, lifeform.ast())
     },
-    execute(_return, expression) {
-        const returnValueTree = expression.ast()
-        if (returnValueTree.length === 0) {
-            return new ast.ShortReturnStatement()
-        }
-        return new ast.ReturnStatement(returnValueTree[0])
+    
+    Args(expressions) {
+      return new ast.Arguments(expressions.asIteration().ast())
     },
-    Body(_open, body, _close) {
-        // This one is fun, don't wrap the statements, just return the list
-        return body.ast()
+    Arg(id, _colon, expression) {
+      return new ast.Argument(id.sourceString, expression.ast())
     },
-    Exp_or(first, _ors, rest) {
-        return new ast.OrExpression([first.ast(), ...rest.ast()])
+    id(_first, _rest) {
+        return new ast.IdentifierExpression(this.sourceString)
     },
-    Exp_and(first, _ors, rest) {
-        return new ast.AndExpression([first.ast(), ...rest.ast()])
+    
+    ArrayType(_tome, _semicolon, lifeform, _semicolon) {
+        return new ast.ArrayType(lifeform.ast())
     },
-    Exp1_binary(left, op, right) {
-        return new ast.BinaryExpression(
-            op.sourceString,
-            left.ast(),
-            right.ast()
-        )
+    DictType(_holocron, _tilde1, keytype, _comma, valuetype, _tilde4) {
+        return new ast.Dictionary(keytype.ast(), valuetype.ast())
     },
-    Exp2_binary(left, op, right) {
-        return new ast.BinaryExpression(
-            op.sourceString,
-            left.ast(),
-            right.ast()
-        )
+    LitList(_tilde1, content, _tilde2) {
+        return new ast.LiteralList(content.asIteration().ast())
     },
-    Exp3_binary(left, op, right) {
-        return new ast.BinaryExpression(
-            op.sourceString,
-            left.ast(),
-            right.ast()
-        )
+    DictObj(_tilde1, content, _tilde2) {
+        return new ast.DictionaryList(content.asIteration().ast())
     },
-    Exp4_binary(left, op, right) {
-        return new ast.BinaryExpression(
-            op.sourceString,
-            left.ast(),
-            right.ast()
-        )
+    DictContent(literal, _comma, expression) {
+        return new ast.DictContent(literal.sourceString, expression.ast())
     },
-    Exp4_unary(op, operand) {
-        return new ast.UnaryExpression(op.sourceString, operand.ast())
-    },
-    Exp6_call(callee, _left, args, _right) {
-        return new ast.Call(callee.ast(), args.ast())
-    },
-    Exp6_subscript(array, _left, subscript, _right) {
-        return new ast.SubscriptExpression(array.ast(), subscript.ast())
-    },
-    Exp6_id(id) {
-        return new ast.IdentifierExpression(id.sourceString)
-    },
-    Exp7_array(arrayType, _left, args, _right) {
-        return new ast.ArrayLiteral(arrayType.ast(), args.ast())
-    },
-    Exp7_parens(_open, expression, _close) {
-        return expression.ast()
+    Call(id, _left, args, _right) {
+      return new ast.Call(id.ast(), args.ast())
     },
     Args(expressions) {
-        return expressions.asIteration().ast()
+      return new ast.Arguments(expressions.asIteration().ast())
     },
-    true(_) {
-        return true
+    Params(type1, id1, _comma, type2, id2) {
+      return new ast.Params(type1.ast(), id1.ast(), type2.ast(), id2.ast())
     },
-    false(_) {
-        return false
+    Increment(id, sign) {
+      return new ast.Increment(id.ast(), sign.ast())
     },
-    num(_whole, _point, _fraction, _e, _sign, _exponent) {
-        return Number(this.sourceString)
+    Literal(type) {
+      return new ast.Literal(type.ast())
     },
-    stringlit(_open, chars, _close) {
-        return chars.sourceString
+    primitive(typename) {
+      return typename.sourceString
     },
+    transmissionLit(_open, midichlorians, _close) {
+      return midichlorians.sourceString
+    },
+    credLit(_digits) {
+      return Number(this.sourceString)
+    },
+    ket(_whole, _point, _fraction) {
+      return Number(this.sourceString)
+    },
+    
+    Exp(left, op, right) {
+      return new ast.BinaryExpression(op.sourceString, left.ast(), right.ast())
+    },
+    Exp2(left, op, right) {
+      return new ast.BinaryExpression(op.sourceString, left.ast(), right.ast())
+    },
+    Exp3(left, op, right) {
+      return new ast.BinaryExpression(op.sourceString, left.ast(), right.ast())
+    },
+    Exp4(left, op, right) {
+      return new ast.BinaryExpression(op.sourceString, left.ast(), right.ast())
+    },
+    Exp5(left, op, right) {
+      return new ast.BinaryExpression(op.sourceString, left.ast(), right.ast())
+    },
+    Exp6(left, op, right) {
+      return new ast.BinaryExpression(op.sourceString, left.ast(), right.ast())
+    },
+    Exp7(left, op, right) {
+      return new ast.BinaryExpression(op.sourceString, left.ast(), right.ast())
+    },
+
 })
 
-const astBuilder = midiChlorianGrammar.createSemantics().addOperation('ast', {
-    // Program(body) {
-    //     return new ast.Program(body.ast())
-    // },
-    // Directive(body) {
-    //     return new ast.Directive(body.ast())
-    // },
-    // Command(left, op, right) {
-    //     return new ast.Command(op.sourceString, left.ast(), right.ast())
-    // }
-    // Designation(left, op, right) {
-    //     return new ast.Designation(op.sourceString, left.ast(), right.ast())
-    // },
-    // Command(type, id, body) {
-    //     return new ast.Command(type.ast(), id.sourceString, body.ast())
-    // },
-    //  Exp1_binary(left, op, right) {
-    //          return new ast.BinaryExpression(op.sourceString, left.ast(), right.ast())
-    //      },
-    //      Exp2_binary(left, op, right) {
-    //          return new ast.BinaryExpression(op.sourceString, left.ast(), right.ast())
-    //      },
-    //      Exp3_binary(left, op, right) {
-    //          return new ast.BinaryExpression(op.sourceString, left.ast(), right.ast())
-    //      },
-    //      Exp4_binary(left, op, right) {
-    //          return new ast.BinaryExpression(op.sourceString, left.ast(), right.ast())
-    //      },
-    //      Exp4_unary(op, operand) {
-    //          return new ast.UnaryExpression(op.sourceString, operand.ast())
-    //      },
-    //********************  Up to here should be good **************************
-    // Statement_assign(variable, _eq, expression) {
-    //     return new ast.Assignment(variable.ast(), expression.ast())
-    // },
-    // FunDecl(_fun, id, parameters, _colons, returnType, body) {
-    //         const returnTypeTree = returnType.ast()
-    //     return new ast.FunctionDeclaration(
-    //         id.sourceString,
-    //             parameters.ast(),
-    //         returnTypeTree.length === 0 ? null : returnTypeTree[0],
-    //         body.ast()
-    //         )
-    //     },
-    //     Params(_left, bindings, _right) {
-    //         return bindings.asIteration().ast()
-    //     },
-    //     Param(id, _colon, type) {
-    //         return new ast.Parameter(id.sourceString, type.ast())
-    //     },
-    //     TypeExp_array(_left, baseType, _right) {
-    //         return new ast.ArrayType(baseType.ast())
-    //     },
-    //     TypeExp_function(inputType, _arrow, outputType) {
-    //         return new ast.FunctionType(inputType.ast(), outputType.ast())
-    //     },
-    //     TypeExp_named(id) {
-    //         return new ast.TypeName(id.sourceString)
-    //     },
-    //     TypeExps(_left, memberTypeList, _right) {
-    //         return memberTypeList.asIteration().ast()
-    //     },
-    //     Statement_print(_print, expression) {
-    //         return new ast.PrintStatement(expression.ast())
-    //     },
-    //     WhileStmt(_while, test, body) {
-    //         return new ast.WhileStatement(test.ast(), body.ast())
-    //     },
-    //     IfStmt_long(_if, test, consequent, _else, alternative) {
-    //         return new ast.IfStatement(
-    //             test.ast(),
-    //             consequent.ast(),
-    //             alternative.ast()
-    //         )
-    //     },
-    //     IfStmt_short(_if, test, consequent) {
-    //         return new ast.ShortIfStatement(test.ast(), consequent.ast())
-    //     },
-    //     break(_) {
-    //         return new ast.BreakStatement()
-    //     },
-    //     continue(_) {
-    //         return new ast.ContinueStatement()
-    //     },
-    //     Statement_return(_return, expression) {
-    //         const returnValueTree = expression.ast()
-    //         if (returnValueTree.length === 0) {
-    //             return new ast.ShortReturnStatement()
-    //         }
-    //         return new ast.ReturnStatement(returnValueTree[0])
-    //     },
-    //     Block(_open, body, _close) {
-    //         // This one is fun, don't wrap the statements, just return the list
-    //         return body.ast()
-    //     },
-    //     Exp_or(first, _ors, rest) {
-    //         return new ast.OrExpression([first.ast(), ...rest.ast()])
-    //     },
-    //     Exp_and(first, _ors, rest) {
-    //         return new ast.AndExpression([first.ast(), ...rest.ast()])
-    //     },
-    //     Exp1_binary(left, op, right) {
-    //         return new ast.BinaryExpression(
-    //             op.sourceString,
-    //             left.ast(),
-    //             right.ast()
-    //         )
-    //     },
-    //     Exp2_binary(left, op, right) {
-    //         return new ast.BinaryExpression(
-    //             op.sourceString,
-    //             left.ast(),
-    //             right.ast()
-    //         )
-    //     },
-    //     Exp3_binary(left, op, right) {
-    //         return new ast.BinaryExpression(
-    //             op.sourceString,
-    //             left.ast(),
-    //             right.ast()
-    //         )
-    //     },
-    //     Exp4_binary(left, op, right) {
-    //         return new ast.BinaryExpression(
-    //             op.sourceString,
-    //             left.ast(),
-    //             right.ast()
-    //         )
-    //     },
-    //     Exp4_unary(op, operand) {
-    //         return new ast.UnaryExpression(op.sourceString, operand.ast())
-    //     },
-    //     Exp6_call(callee, _left, args, _right) {
-    //         return new ast.Call(callee.ast(), args.ast())
-    //     },
-    //     Exp6_subscript(array, _left, subscript, _right) {
-    //         return new ast.SubscriptExpression(array.ast(), subscript.ast())
-    //     },
-    //     Exp6_id(id) {
-    //         return new ast.IdentifierExpression(id.sourceString)
-    //     },
-    //     Exp7_arraylit(arrayType, _left, args, _right) {
-    //         return new ast.ArrayLiteral(arrayType.ast(), args.ast())
-    //     },
-    //     Exp7_parens(_open, expression, _close) {
-    //         return expression.ast()
-    //     },
-    //     Args(expressions) {
-    //         return expressions.asIteration().ast()
-    //     },
-    //     true(_) {
-    //         return true
-    //     },
-    //     false(_) {
-    //         return false
-    //     },
-    //     num(_whole, _point, _fraction, _e, _sign, _exponent) {
-    //         return Number(this.sourceString)
-    //     },
-    //     stringlit(_open, chars, _close) {
-    //         return chars.sourceString
-    //     },
-    // })
-    //     Directive(body) {
-    //         return new ast.Directive(body.ast())
-    //     },
-    //     Order(body) {
-    //         return new ast.Order(body.ast())
-    //     },
-    //     Transmission(body) {
-    //         return new ast.Transmission(body.ast())
-    //     },
-    //     Midichlorian(body) {
-    //         return new ast.Midichlorian(body.ast())
-    //     },
-    //     Return(execute, expression, _bar) {
-    //         return new ast.Return(expression.ast())
-    //     },
-    //     VarDecl(kind, id, _eq, initializer) {
-    //         const [name, readOnly] = [id.sourceString, kind.sourceString == 'const']
-    //         return new ast.VariableDeclaration(name, readOnly, initializer.ast())
-    //     },
-    //     FunDecl(_fun, id, parameters, _colons, returnType, body) {
-    //         const returnTypeTree = returnType.ast()
-    //         return new ast.FunctionDeclaration(
-    //             id.sourceString,
-    //             parameters.ast(),
-    //             returnTypeTree.length === 0 ? null : returnTypeTree[0],
-    //             body.ast()
-    //         )
-    //     },
-    //     Params(_left, bindings, _right) {
-    //         return bindings.asIteration().ast()
-    //     },
-    //     Param(id, _colon, type) {
-    //         return new ast.Parameter(id.sourceString, type.ast())
-    //     },
-    //     TypeExp_array(_left, baseType, _right) {
-    //         return new ast.ArrayType(baseType.ast())
-    //     },
-    //     TypeExp_function(inputType, _arrow, outputType) {
-    //         return new ast.FunctionType(inputType.ast(), outputType.ast())
-    //     },
-    //     TypeExp_named(id) {
-    //         return new ast.TypeName(id.sourceString)
-    //     },
-    //     TypeExps(_left, memberTypeList, _right) {
-    //         return memberTypeList.asIteration().ast()
-    //     },
-    //     Statement_assign(variable, _eq, expression) {
-    //         return new ast.Assignment(variable.ast(), expression.ast())
-    //     },
-    //     Statement_print(_emit, expression) {
-    //         return new ast.PrintStatement(expression.ast())
-    //     },
-    //     WhileStmt(_while, test, body) {
-    //         return new ast.WhileStatement(test.ast(), body.ast())
-    //     },
-    //     IfStmt_long(_if, test, consequent, _else, alternative) {
-    //         return new ast.IfStatement(
-    //             test.ast(),
-    //             consequent.ast(),
-    //             alternative.ast()
-    //         )
-    //     },
-    //     IfStmt_short(_if, test, consequent) {
-    //         return new ast.ShortIfStatement(test.ast(), consequent.ast())
-    //     },
-    //     unleash(_) {
-    //         //break
-    //         return new ast.BreakStatement()
-    //     },
-    //     continue(_) {
-    //         return new ast.ContinueStatement()
-    //     },
-    //     Statement_return(_return, expression) {
-    //         const returnValueTree = expression.ast()
-    //         if (returnValueTree.length === 0) {
-    //             return new ast.ShortReturnStatement()
-    //         }
-    //         return new ast.ReturnStatement(returnValueTree[0])
-    //     },
-    //     Block(_open, body, _close) {
-    //         // This one is fun, don't wrap the statements, just return the list
-    //         return body.ast()
-    //     },
-    //     Exp_or(first, _ors, rest) {
-    //         return new ast.OrExpression([first.ast(), ...rest.ast()])
-    //     },
-    //     Exp_and(first, _ors, rest) {
-    //         return new ast.AndExpression([first.ast(), ...rest.ast()])
-    //     },
-    //     Exp1_binary(left, op, right) {
-    //         return new ast.BinaryExpression(
-    //             op.sourceString,
-    //             left.ast(),
-    //             right.ast()
-    //         )
-    //     },
-    //     Exp2_binary(left, op, right) {
-    //         return new ast.BinaryExpression(
-    //             op.sourceString,
-    //             left.ast(),
-    //             right.ast()
-    //         )
-    //     },
-    //     Exp3_binary(left, op, right) {
-    //         return new ast.BinaryExpression(
-    //             op.sourceString,
-    //             left.ast(),
-    //             right.ast()
-    //         )
-    //     },
-    //     Exp4_binary(left, op, right) {
-    //         return new ast.BinaryExpression(
-    //             op.sourceString,
-    //             left.ast(),
-    //             right.ast()
-    //         )
-    //     },
-    //     Exp4_unary(op, operand) {
-    //         return new ast.UnaryExpression(op.sourceString, operand.ast())
-    //     },
-    //     Exp6_call(callee, _left, args, _right) {
-    //         return new ast.Call(callee.ast(), args.ast())
-    //     },
-    //     Exp6_subscript(array, _left, subscript, _right) {
-    //         return new ast.SubscriptExpression(array.ast(), subscript.ast())
-    //     },
-    //     Exp6_id(id) {
-    //         return new ast.IdentifierExpression(id.sourceString)
-    //     },
-    //     Exp7_arraylit(arrayType, _left, args, _right) {
-    //         return new ast.ArrayLiteral(arrayType.ast(), args.ast())
-    //     },
-    //     Exp7_parens(_open, expression, _close) {
-    //         return expression.ast()
-    //     },
-    //     Args(expressions) {
-    //         return expressions.asIteration().ast()
-    //     },
-    //     true(_) {
-    //         return true
-    //     },
-    //     false(_) {
-    //         return false
-    //     },
-    //     num(_whole, _point, _fraction, _e, _sign, _exponent) {
-    //         return Number(this.sourceString)
-    //     },
-    //     stringlit(_open, chars, _close) {
-    //         return chars.sourceString
-    //     },
-    //})
-    // export default function parse(source) {
-    //     const match = midiChlorianGrammar.match(source)
-    //     if (!match.succeeded()) {
-    //         throw new Error(match.message)
-    //     }
-    //     return astBuilder(match).ast()
-    //     return match.succeeded()
-    // }
-})
+
 export default function parse(sourceCode) {
     const match = midiChlorianGrammar.match(sourceCode)
-    // if (!match.succeeded()) {
-    //     throw new Error(match.message)
-    // }
-    // return astBuilder(match).ast()
-    return match.succeeded()
+    if (!match.succeeded()) {
+        throw new Error(match.message)
+    }
+    return astBuilder(match).ast()
+    //return match.succeeded()
 }

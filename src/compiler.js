@@ -1,13 +1,11 @@
-// from // from https://github.com/rtoal/ael-ohm/blob/master/src/compiler.js
+// from https://github.com/rtoal/ael-ohm/blob/master/src/compiler.js
 
 //Compiler
 //
 // This module exports a single function
-//
 //   compile(sourceCodeString, outputType)
 //
 // The second argument tells the compiler what to return. It must be one of:
-//
 //   ast        the abstract syntax tree
 //   analyzed   the semantically analyzed representation
 //   optimized  the optimized semantically analyzed representation
@@ -31,6 +29,6 @@ export default function compile(source, outputType) {
         // } else if (["js", "c", "llvm"].includes(outputType)) {
         //   return generate(outputType)(optimize(analyze(parse(source))))
     } else {
-        return 'Unknown output type'
+        return 'Unknown Output Type'
     }
 }

@@ -26,17 +26,26 @@ Midi-Chlorian is created by [Carter Pon](https://github.com/cpon00), [Adrian Leu
 
 # Types
 
-| Type in Javascript | Midi-chlorian |            Declaration            |
-| :----------------: | :-----------: | :-------------------------------: |
-|        int         |     cred      |            Cred a = 9             |
-|        long        |    parsec     |         Parsec b = 900000         |
-|       double       |      ket      |            ket c = 0.5            |
-|      boolean       |   absolute    |         absolute d = true         |
-|        char        | midichlorian  |       midichlorian e = "s"        |
-|       string       | transmission  |  transmission f = "Hello There"   |
-|       array        |     tome      | tome g = ["Execute","Order","66"] |
+| Type in Javascript | Midi-chlorian |            Declaration                                |
+| :----------------: | :-----------: | :----------------------------------------------------:|
+|        int         |     cred      |            Cred a = 9                                 |
+|        long        |    parsec     |         Parsec b = 900000                             |
+|       double       |      ket      |            ket c = 0.5                                |
+|      boolean       |   absolute    |         absolute d = true                             |
+|        char        | midichlorian  |       midichlorian e = "s"                            |
+|       string       | transmission  |  transmission f = "Hello There"                       |
+|       array        |     tome      | tome\<transmission> g = ["Execute","Order","66"]      |
+|     dictionary     |   holocron    |  holocron\<transmission,cred> g = [exe:34, evc: 32]   |
 
 </br>
+
+
+# Boolean Values
+
+| Javascript | Midi-chlorian |
+| :--------: | :-----------: |
+|   true     |     light     |
+|   false    |     dark      |
 
 # Operational Logic
 
@@ -125,8 +134,8 @@ while (i < 3) {
 ## Fibonacci
 
 ```Javascript
-function fibonacci(n) {
-    if (n <= 1){
+function fibonacci (n) {
+    if (n <= 1) {
         return 1
     }
     return fibonacci(n-1) + fibonacci(n-2)
@@ -134,8 +143,8 @@ function fibonacci(n) {
 ```
 
 ```
-Order fibonacci(cred count) {
-    should(count <= 1) {
+Order fibonacci (cred count) {
+    should (count <= 1) {
         execute 1
     }
     execute fibonacci(n-1) + fibonacci(n-2)
