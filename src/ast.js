@@ -16,13 +16,13 @@ import util from 'util'
 
 export class Program {
     constructor(statements) {
-      this.statements = statements
+        this.statements = statements
     }
-    [util.inspect.custom]() {
-      return prettied(this)
-    }
-  }
-  
+    // [util.inspect.custom]() {
+    //   return prettied(this)
+    // }
+}
+
 export class Command {
     constructor(variables, initializers) {
         Object.assign(this, { variables, initializers })
@@ -64,6 +64,17 @@ export class Print {
         this.argument = argument
     }
 }
+export class HolocronContent {
+    constructor(literal, expression) {
+        Object.assign(this, { literal, expression })
+    }
+}
+
+export class HolocronObj {
+    constructor(content) {
+        this.content = content
+    }
+}
 
 export class ReturnStatement {
     constructor(returnValue) {
@@ -95,85 +106,91 @@ export class UnaryExpression {
 
 export class Exp {
     constructor(expression1, expression2) {
-      Object.assign(this, { expression1, expression2 })
+        Object.assign(this, { expression1, expression2 })
     }
-  }
+}
 
 export class Exp1 {
     constructor(expression1, expression2) {
-      Object.assign(this, { expression1, expression2 })
+        Object.assign(this, { expression1, expression2 })
     }
-  }
-  
-  export class Exp2 {
-    constructor(expression1, expression2) {
-      Object.assign(this, { expression1, expression2 })
-    }
-  }
-  
-  export class Exp3 {
-    constructor(expression1, expression2) {
-      Object.assign(this, { expression1, expression2 })
-    }
-  }
-  
-  export class Exp4 {
-    constructor(expression1, expression2) {
-      Object.assign(this, { expression1, expression2 })
-    }
-  }
-  
-  export class Exp5 {
-    constructor(expression1, expression2) {
-      Object.assign(this, { expression1, expression2 })
-    }
-  }
-  
-  export class Exp6 {
-    constructor(expression1, expression2) {
-      Object.assign(this, { expression1, expression2 })
-    }
-  }
-  
-  export class Exp7 {
-    constructor(expression) {
-      this.expression = expression
-    }
-  }
+}
 
-  export class Increment{
-      constructor(id, operation){
-          Object.assign(this,{id,operation})
-      }
-  }
-  export class id{
-      constructor(expression){
-          this.expression = expression
-      }
-  }
-
-  export class Arg {
-    constructor(expression) {
-      this.expression = expression
+export class Exp2 {
+    constructor(expression1, expression2) {
+        Object.assign(this, { expression1, expression2 })
     }
-  }
-  export class Args {
+}
+
+export class Exp3 {
+    constructor(expression1, expression2) {
+        Object.assign(this, { expression1, expression2 })
+    }
+}
+
+export class Exp4 {
+    constructor(expression1, expression2) {
+        Object.assign(this, { expression1, expression2 })
+    }
+}
+
+export class Exp5 {
+    constructor(expression1, expression2) {
+        Object.assign(this, { expression1, expression2 })
+    }
+}
+
+export class Exp6 {
+    constructor(expression1, expression2) {
+        Object.assign(this, { expression1, expression2 })
+    }
+}
+
+export class Exp7 {
+    constructor(expression) {
+        this.expression = expression
+    }
+}
+
+export class ArrayExp {
+    constructor(elements) {
+        this.elements = elements
+    }
+}
+
+export class Increment {
+    constructor(id, operation) {
+        Object.assign(this, { id, operation })
+    }
+}
+export class id {
+    constructor(expression) {
+        this.expression = expression
+    }
+}
+
+export class Arg {
+    constructor(expression) {
+        this.expression = expression
+    }
+}
+export class Args {
     constructor(argumentList) {
-      this.argumentList = argumentList
+        this.argumentList = argumentList
     }
-  }
-  export class Call {
+}
+export class Call {
     constructor(callee, args) {
-      Object.assign(this, {callee, args})
+        Object.assign(this, { callee, args })
     }
-  }
+}
 
-  export class Literal {
-    constructor(type){
-      this.type = type
+export class Literal {
+    constructor(type) {
+        this.type = type
     }
-  }
-  
+}
+
 function prettied(node) {
     // Return a compact and pretty string representation of the node graph,
     // taking care of cycles. Written here from scratch because the built-in
