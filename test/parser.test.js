@@ -1,4 +1,5 @@
 import assert from 'assert'
+import util from 'util'
 import parse from '../src/parser.js'
 
 describe('The parser', () => {
@@ -17,9 +18,11 @@ const goodPrograms = [
         }
         execute b
     }
-    
+
     fibonacci (c:20)`,
-    `tome<cred> b = [3, 6 ,9]`,
+
+    `tome<cred> b = [3,6,9]`,
+
     `cred x = 500`,
     `ket y = 100`,
     `order cred f(cred q, ket p) { emit("nice") }
@@ -27,7 +30,7 @@ const goodPrograms = [
     `absolute orderSixtySix = light`,
     `cred x = 10`,
     `transmission x = "the force"`,
-    `transmission message = "Help me Obi-Wan, you are my only hope"`, //ask about apostrophe as midichlorian
+    `transmission message = "Help me Obi-Wan, you\\'re my only hope"`, //ask about apostrophe as midichlorian
     `ket y = 2.0`,
     `cred x = 3 * 4`,
     `cred y = 2**2`,
@@ -39,18 +42,36 @@ const goodPrograms = [
     `dark`,
     `absolute x = darth x`,
     `holocron<cred, transmission> x = <1:hello>`,
+
     `[3,4,5,6,7]`,
+
     `force (cred x = 3; x < 3; x++) {
         should(x){
             unleash
         }
         x++
     }`,
-    `[3, 2.0, "fuck",light]`,
-    
+    `a=4
+     b=4
+     a onewith b`,
+    `[3, 2.0, "heck",light]`,
+    `function()`,
+    `cred i = 4
+    execute i`,
+    `force (cred i = 0; i < 5; i++) {
+        should (i onewith 3) {
+            unleash >< break from loop
+        }
+    }`,
 
+    `order max (cred i, cred j) {
+        should (i > j) {
+            execute i
+        }  elseshould {
+            execute j
+        }
+    }`,
 ]
-
 
 describe('The Parser ', () => {
     for (let program of goodPrograms) {
@@ -58,6 +79,7 @@ describe('The Parser ', () => {
             0,
             10
         )}`, () => {
+            //        console.log(util.inspect(parse(program), { depth: 5 }))
             assert.ok(parse(program))
         })
     }
