@@ -135,11 +135,7 @@ const astBuilder = midiChlorianGrammar.createSemantics().addOperation('ast', {
         return new ast.Call(id.ast(), args.ast())
     },
     Return(_execute, expression) {
-        const returnValueTree = expression.ast()
-        if (returnValueTree.length === 0) {
-            return new ast.ShortReturnStatement()
-        }
-        return new ast.ReturnStatement(returnValueTree[0])
+        return new ast.Return(expression.ast())
     },
     Break(_unleash) {
         return new ast.Unleash()
@@ -210,12 +206,6 @@ const astBuilder = midiChlorianGrammar.createSemantics().addOperation('ast', {
     id(_first, _rest) {
         return new ast.id(this.sourceString)
     },
-    // ArrayType(_tome, _semicolon1, lifeform, _semicolon2) {
-    //     return new ast.ArrayType(lifeform.ast())
-    // },
-    // DictType(_holocron, _leftarrow, keytype, _comma, valuetype, _rightarrow) {
-    //     return new ast.Dictionary(keytype.ast(), valuetype.ast())
-    // },
     LitList(_leftarrow, content, _rightarrow) {
         return new ast.LitList(content.asIteration().ast())
     },

@@ -64,13 +64,17 @@ const goodPrograms = [
         }
     }`,
 
-    `order max (cred i, cred j) {
+    `order cred max (cred i, cred j) {
         should (i > j) {
             execute i
         }  elseshould {
             execute j
         }
     }`,
+    `<"hello","hi">`,
+    `order cred c(cred i) {
+    }
+    c(i:3)`,
 ]
 
 describe('The Parser ', () => {
@@ -79,7 +83,8 @@ describe('The Parser ', () => {
             0,
             10
         )}`, () => {
-            //        console.log(util.inspect(parse(program), { depth: 5 }))
+            //prints ast
+            console.log(util.inspect(parse(program), { depth: null }))
             assert.ok(parse(program))
         })
     }

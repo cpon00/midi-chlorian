@@ -196,7 +196,7 @@ function twoSum(nums, target) {
 > ### Midi-Chlorian
 
 ```
-order twoSum (tome nums, cred target) {
+order cred twoSum (tome nums, cred target) {
     const comp = {};
     cred i = 0;
     force (i until nums.length) {

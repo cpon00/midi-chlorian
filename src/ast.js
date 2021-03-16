@@ -76,7 +76,7 @@ export class HolocronObj {
     }
 }
 
-export class ReturnStatement {
+export class Return {
     constructor(returnValue) {
         this.returnValue = returnValue
     }
@@ -186,6 +186,11 @@ export class Call {
 }
 
 export class Literal {
+    constructor(type) {
+        this.type = type
+    }
+}
+export class LitList {
     constructor(type) {
         this.type = type
     }
