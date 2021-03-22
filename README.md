@@ -114,7 +114,7 @@ should (i > j) {
 
 ```
 force (cred i = 0; i < 5; i++) {
-    should (i oneWith 3) {
+    should (i onewith 3) {
         unleash >< break from loop
     }
 }
@@ -171,7 +171,7 @@ function max (i, j) {
 order max (cred i, cred j) {
     should (i > j) {
         execute i
-    } orElse {
+    } elseshould {
         execute j
     }
 }
@@ -196,7 +196,7 @@ function twoSum(nums, target) {
 > ### Midi-Chlorian
 
 ```
-order twoSum (tome nums, cred target) {
+order cred twoSum (tome nums, cred target) {
     const comp = {};
     cred i = 0;
     force (i until nums.length) {
