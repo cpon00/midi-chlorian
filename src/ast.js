@@ -18,9 +18,6 @@ export class Program {
     constructor(statements) {
         this.statements = statements
     }
-    // [util.inspect.custom]() {
-    //   return prettied(this)
-    // }
 }
 
 export class Command {
@@ -103,54 +100,6 @@ export class UnaryExpression {
         Object.assign(this, { op, operand })
     }
 }
-
-// export class Exp {
-//     constructor(expression1, expression2) {
-//         Object.assign(this, { expression1, expression2 })
-//     }
-// }
-
-// export class Exp1 {
-//     constructor(expression1, expression2) {
-//         Object.assign(this, { expression1, expression2 })
-//     }
-// }
-
-// export class Exp2 {
-//     constructor(expression1, expression2) {
-//         Object.assign(this, { expression1, expression2 })
-//     }
-// }
-
-// export class Exp3 {
-//     constructor(expression1, expression2) {
-//         Object.assign(this, { expression1, expression2 })
-//     }
-// }
-
-// export class Exp4 {
-//     constructor(expression1, expression2) {
-//         Object.assign(this, { expression1, expression2 })
-//     }
-// }
-
-// export class Exp5 {
-//     constructor(expression1, expression2) {
-//         Object.assign(this, { expression1, expression2 })
-//     }
-// }
-
-// export class Exp6 {
-//     constructor(expression1, expression2) {
-//         Object.assign(this, { expression1, expression2 })
-//     }
-// }
-
-// export class Exp7 {
-//     constructor(expression) {
-//         this.expression = expression
-//     }
-// }
 
 export class ArrayExp {
     constructor(elements) {
