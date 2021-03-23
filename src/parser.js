@@ -239,25 +239,25 @@ const astBuilder = midiChlorianGrammar.createSemantics().addOperation('ast', {
         return value.sourceString
     },
     Exp_binary(left, _op, right) {
-        return new ast.Exp(left.ast(), right.ast())
+        return new ast.BinaryExpression(left.ast(), right.ast())
     },
     Exp1_binary(left, _op, right) {
-        return new ast.Exp1(left.ast(), right.ast())
+        return new ast.BinaryExpression(left.ast(), right.ast())
     },
     Exp2_binary(left, _op, right) {
-        return new ast.Exp2(left.ast(), right.ast())
+        return new ast.BinaryExpression(left.ast(), right.ast())
     },
     Exp3_binary(left, _op, right) {
-        return new ast.Exp3(left.ast(), right.ast())
+        return new ast.BinaryExpression(left.ast(), right.ast())
     },
     Exp4_binary(left, _op, right) {
-        return new ast.Exp4(left.ast(), right.ast())
+        return new ast.BinaryExpression(left.ast(), right.ast())
     },
     Exp5_binary(left, _op, right) {
-        return new ast.Exp5(left.ast(), right.ast())
+        return new ast.BinaryExpression(left.ast(), right.ast())
     },
     Exp6_unary(_prefix, expression) {
-        return new ast.Exp6(expression.ast())
+        return new ast.UnaryExpression(expression.ast())
     },
     Exp7_parens(_open, expression, _close) {
         return expression.ast()
