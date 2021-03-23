@@ -181,6 +181,7 @@ export class Args {
 }
 export class Call {
     constructor(callee, args) {
+        console.log('test')
         Object.assign(this, { callee, args })
     }
 }

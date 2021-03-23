@@ -2,11 +2,20 @@ import assert from 'assert'
 import util from 'util'
 import parse from '../src/parser.js'
 
-describe('The parser', () => {
-    it('accepts good programs', () => {})
-    it('rejects bad programs', () => {})
-})
-
+const badPrograms = [
+    `.awessfgsdf`,
+    `absolute x  5`,
+    `"hello`,
+    `frce (cred x = 3; x < 3; x ++) {
+    should (x) {
+        break
+    }
+    x++
+}`,
+    `[1,2,3}`,
+    `[1,2,3)`,
+    `<3, 4)`,
+]
 const goodPrograms = [
     `emit("May the force be with you.")`,
     `order cred fibonacci(cred c) {
@@ -88,12 +97,12 @@ describe('The Parser ', () => {
             assert.ok(parse(program))
         })
     }
-    // for (let program of badPrograms) {
-    //     it(`rejects the bad program starting with  ${program.slice(
-    //         0,
-    //         10
-    //     )}`, () => {
-    //         assert.ok(!parse(program))
-    //     })
-    // }
+    for (let program of badPrograms) {
+        it(`rejects the bad program starting with  ${program.slice(
+            0,
+            10
+        )}`, () => {
+            assert.throws(() => parse(program))
+        })
+    }
 })

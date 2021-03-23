@@ -131,9 +131,11 @@ const astBuilder = midiChlorianGrammar.createSemantics().addOperation('ast', {
     Designation(id, _eq, expression) {
         return new ast.Designation(id.ast(), expression.ast())
     },
+
     Call(id, _left, args, _right) {
         return new ast.Call(id.ast(), args.ast())
     },
+
     Return(_execute, expression) {
         return new ast.Return(expression.ast())
     },
@@ -214,9 +216,6 @@ const astBuilder = midiChlorianGrammar.createSemantics().addOperation('ast', {
     },
     HolocronContent(literal, _colon, expression) {
         return new ast.HolocronContent(literal.sourceString, expression.ast())
-    },
-    Call(id, _left, args, _right) {
-        return new ast.Call(id.ast(), args.ast())
     },
     Increment(id, sign) {
         return new ast.Increment(id.ast(), sign.ast())
