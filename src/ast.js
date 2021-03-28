@@ -1,4 +1,5 @@
 // from https://github.com/rtoal/ael-ohm/blob/master/src/ast.js
+// also from https://github.com/rtoal/carlos-compiler/blob/11-strings/src/ast.js
 
 //Abstract Syntax Tree Nodes
 //
@@ -20,9 +21,53 @@ export class Program {
     }
 }
 
+export class Type {
+    constructor(name) {
+        this.name = name
+    }
+    static ABSOLUTE = new Type('absolute')
+    static CRED = new Type('cred')
+    static TRANSMISSION = new Type('transmission')
+    static KET = new Type('ket')
+    static MIDICHLORIAN = new Type('midichlorian')
+    static TYPE = new Type('type')
+}
+
+export class TypeName {
+    constructor(name) {
+        this.name = name
+    }
+}
+
 export class Command {
     constructor(variables, initializers) {
         Object.assign(this, { variables, initializers })
+    }
+}
+
+export class OrderType {
+    constructor(parameterTypes, returnType) {
+        Object.assign(this, { parameterTypes, returnType })
+    }
+    get name() {
+        return `(${this.parameterTypes.map((t) => t.name).join(',')})->${
+            this.returnType.name
+        }`
+    }
+}
+
+export class TomeType {
+    constructor(baseType) {
+        this.baseType = baseType
+    }
+    get name() {
+        return `[${this.baseType.name}]`
+    }
+}
+
+export class Variable {
+    constructor(name, readOnly) {
+        Object.assign(this, { name, readOnly })
     }
 }
 

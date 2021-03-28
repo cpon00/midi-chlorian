@@ -6,7 +6,7 @@ const badPrograms = [
     `.awessfgsdf`,
     `absolute x  5`,
     `"hello`,
-    `frce (cred x = 3; x < 3; x ++) {
+    `foce (cred x = 3; x < 3; x ++) {
     should (x) {
         break
     }
