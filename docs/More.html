@@ -1,67 +1,553 @@
-<head>
-    <link rel="stylesheet" href="more.css">
-    <script src="index.js"></script>
-</head>
-<body>
-    <div id = logo>
-        <img src="https://raw.githubusercontent.com/cpon00/midi-chlorian/main/docs/midichlorianlogo.png" />
-    </div>
 
-    
-    <div id="content">
-        <div class="subSection">
-            <h3 class="subTitle">Types</h3>
-            <table class="text" style="width:100%">
-            <tr>
-                <th>Type in Javascript</th>
-                <th>Midi-Chlorian</th> 
-                <th>Declaration</th>
-            </tr>
-            <tr>
-                <td>int</td>
-                <td>long</td>
-                <td>double</td>
-                <td>boolean</td>
-                <td>char</td>
-                <td>string</td>
-                <td>array</td>
-                <td>dictionary</td>
-            </tr>
-            <tr>
-                <td>cred</td>
-                <td>parsec</td>
-                <td>ket</td>
-                <td>absolute</td>
-                <td>midichlorian</td>
-                <td>transmission</td>
-                <td>tome</td>
-                <td>holocron</td>
-            </tr>
-            <tr>
-                <td>Cred a = 9</td>
-                <td>Parsec b = 900000</td>
-                <td>ket c = 0.5</td>
-                <td>absolute d = true</td>
-                <td>transmission f = "Hello There"</td>
-                <td>tome<transmission> g = ["Execute","Order","66"]</td>
-                <td>holocron<transmission,cred> g = [exe:34, evc: 32]</td>
-            </td>
-            </tr>
-            </table>
+
+<html lang="en-US">
+    <head>
+        <link rel="stylesheet" href="More.css">
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>
+            midi-chlorian | Created by Isaiah Anyimi, Jason Kalili, Adrian
+            Leung, and Carter Pon
+        </title>
+        <meta name="generator" content="Jekyll v3.9.0" />
+        <meta property="og:title" content="midi-chlorian" />
+        <meta property="og:locale" content="en_US" />
+        <meta
+            name="description"
+            content="Created by Isaiah Anyimi, Jason Kalili, Adrian Leung, and Carter Pon"
+        />
+        <meta
+            property="og:description"
+            content="Created by Isaiah Anyimi, Jason Kalili, Adrian Leung, and Carter Pon"
+        />
+        <link rel="canonical" href="https://jkalili.github.io/midi-chlorian/" />
+        <meta
+            property="og:url"
+            content="https://jkalili.github.io/midi-chlorian/"
+        />
+        <meta property="og:site_name" content="midi-chlorian" />
+        <meta name="twitter:card" content="summary" />
+        <meta property="twitter:title" content="midi-chlorian" />
+        <script type="application/ld+json">
+            {
+                "@type": "WebSite",
+                "url": "https://jkalili.github.io/midi-chlorian/",
+                "headline": "midi-chlorian",
+                "description": "Created by Isaiah Anyimi, Jason Kalili, Adrian Leung, and Carter Pon",
+                "name": "midi-chlorian",
+                "@context": "https://schema.org"
+            }
+        </script>
+
+        <link
+            rel="stylesheet"
+            href="/midi-chlorian/assets/css/style.css?v=502c8fd0af2a6155f31cb1c67fe11e6e84a4b33d"
+        />
+        <script data-dapp-detection="">
+            !(function () {
+                let e = !1
+                function n() {
+                    if (!e) {
+                        const n = document.createElement('meta')
+                        ;(n.name = 'dapp-detected'),
+                            document.head.appendChild(n),
+                            (e = !0)
+                    }
+                }
+                if (window.hasOwnProperty('ethereum')) {
+                    if (
+                        ((window.__disableDappDetectionInsertion = !0),
+                        void 0 === window.ethereum)
+                    )
+                        return
+                    n()
+                } else {
+                    var t = window.ethereum
+                    Object.defineProperty(window, 'ethereum', {
+                        configurable: !0,
+                        enumerable: !1,
+                        set: function (e) {
+                            window.__disableDappDetectionInsertion || n(),
+                                (t = e)
+                        },
+                        get: function () {
+                            if (!window.__disableDappDetectionInsertion) {
+                                const e = arguments.callee
+                                ;(e &&
+                                    e.caller &&
+                                    e.caller.toString &&
+                                    -1 !==
+                                        e.caller
+                                            .toString()
+                                            .indexOf('getOwnPropertyNames')) ||
+                                    n()
+                            }
+                            return t
+                        },
+                    })
+                }
+            })()
+        </script>
+    </head>
+    <body>
+        <div class="wrapper">
+            <section>
+                <div align="center">
+                    <img
+                        src="https://raw.githubusercontent.com/cpon00/midi-chlorian/main/docs/midichlorianlogo.png"
+                    />
+                </div>
+
+                <p style = "text-align: center; margin-top: 10px"> 
+                    Midi-Chlorian is created by
+                    <a href="https://github.com/cpon00">Carter Pon</a>,
+                    <a href="https://github.com/AdrianLearn">Adrian Leung</a>,
+                    <a href="https://github.com/ianyimi">Isaiah Anyimi</a>, and
+                    <a href="https://github.com/jkalili">Jason Kalili</a>.
+                </p>
+
+                <h1 id="shortcuts">Shortcuts</h1>
+
+                <ul>
+                    <li><a href="#types"> Types </a></li>
+                    <li>
+                        <a href="#operational-logic"> Operational Logic </a>
+                        <ul>
+                            <li>
+                                <a href="#unary-operators"> Unary Operators</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li><a href="#comments"> Comments </a></li>
+                    <li>
+                        <a href="#examples"> Midi-Chlorian Examples </a>
+                        <ul>
+                            <li><a href="#print">Print</a></li>
+                            <li>
+                                <a href="#variable-declaration"
+                                    >Variabale Declaration</a
+                                >
+                            </li>
+                            <li><a href="#if-statements">If Statements</a></li>
+                            <li><a href="#for-loop">For Loop</a></li>
+                            <li><a href="#while-loop">While Loop</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#example-programs">Example Programs</a></li>
+                </ul>
+
+                <h1 id="types">Types</h1>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="text-align: center">
+                                Type in Javascript
+                            </th>
+                            <th style="text-align: center">Midi-chlorian</th>
+                            <th style="text-align: center">Declaration</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="text-align: center">int</td>
+                            <td style="text-align: center">cred</td>
+                            <td style="text-align: center">Cred a = 9</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center">long</td>
+                            <td style="text-align: center">parsec</td>
+                            <td style="text-align: center">
+                                Parsec b = 900000
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center">double</td>
+                            <td style="text-align: center">ket</td>
+                            <td style="text-align: center">ket c = 0.5</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center">boolean</td>
+                            <td style="text-align: center">absolute</td>
+                            <td style="text-align: center">
+                                absolute d = true
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center">char</td>
+                            <td style="text-align: center">midichlorian</td>
+                            <td style="text-align: center">
+                                midichlorian e = “s”
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center">string</td>
+                            <td style="text-align: center">transmission</td>
+                            <td style="text-align: center">
+                                transmission f = “Hello There”
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center">array</td>
+                            <td style="text-align: center">tome</td>
+                            <td style="text-align: center">
+                                tome&lt;transmission&gt; g =
+                                [“Execute”,”Order”,”66”]
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center">dictionary</td>
+                            <td style="text-align: center">holocron</td>
+                            <td style="text-align: center">
+                                holocron&lt;transmission,cred&gt; g = [exe:34,
+                                evc: 32]
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h1 id="boolean-values">Boolean Values</h1>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="text-align: center">Javascript</th>
+                            <th style="text-align: center">Midi-chlorian</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="text-align: center">true</td>
+                            <td style="text-align: center">light</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center">false</td>
+                            <td style="text-align: center">dark</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h1 id="operational-logic">Operational Logic</h1>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="text-align: center">Javascript</th>
+                            <th style="text-align: center">Midi-chlorian</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="text-align: center">a + b</td>
+                            <td style="text-align: center">a + b</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center">a - b</td>
+                            <td style="text-align: center">a - b</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center">a _ b</td>
+                            <td style="text-align: center">a _ b</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center">a / b</td>
+                            <td style="text-align: center">a / b</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center">a * b</td>
+                            <td style="text-align: center">a * b</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center">a % b</td>
+                            <td style="text-align: center">a % b</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center">a == b</td>
+                            <td style="text-align: center">a oneWith b</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center">a != b</td>
+                            <td style="text-align: center">a !oneWith b</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center">a &gt; b</td>
+                            <td style="text-align: center">a &gt; b</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center">a &lt; b</td>
+                            <td style="text-align: center">a &lt; b</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center">a &lt;= b</td>
+                            <td style="text-align: center">a &lt;= b</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center">a &amp;&amp; b</td>
+                            <td style="text-align: center">a and b</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center">a or b</td>
+                            <td style="text-align: center">a or b</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3 id="unary-operators">Unary Operators</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Operation</th>
+                            <th>Compatability</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                increment:
+                                <code
+                                    class="language-plaintext highlighter-rouge"
+                                    >++</code
+                                >
+                            </td>
+                            <td>
+                                <code
+                                    class="language-plaintext highlighter-rouge"
+                                    >Numbers</code
+                                >
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                decrement:
+                                <code
+                                    class="language-plaintext highlighter-rouge"
+                                    >--</code
+                                >
+                            </td>
+                            <td>
+                                <code
+                                    class="language-plaintext highlighter-rouge"
+                                    >Numbers</code
+                                >
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                negative:
+                                <code
+                                    class="language-plaintext highlighter-rouge"
+                                    >-</code
+                                >
+                            </td>
+                            <td>
+                                <code
+                                    class="language-plaintext highlighter-rouge"
+                                    >Numbers</code
+                                >
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                negation:
+                                <code
+                                    class="language-plaintext highlighter-rouge"
+                                    >darth</code
+                                >
+                            </td>
+                            <td>
+                                <code
+                                    class="language-plaintext highlighter-rouge"
+                                    >Booleans</code
+                                >
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h1 id="comments">Comments</h1>
+
+                <ul>
+                    <li>
+                        Single Line:
+                        <code class="language-plaintext highlighter-rouge"
+                            >&gt;&lt; comment goes here</code
+                        >
+                    </li>
+                    <li>
+                        Block:
+                        <code class="language-plaintext highlighter-rouge"
+                            >&gt;&gt; comment goes here &lt;&lt;
+                        </code>
+                    </li>
+                </ul>
+
+                <h1 id="examples">Examples</h1>
+
+                <h2 id="print">Print</h2>
+
+                <div class="language-plaintext highlighter-rouge">
+                    <div class="highlight">
+                        <pre
+                            class="highlight"
+                        ><code>emit ("May the force be with you.")
+</code></pre>
+                    </div>
+                </div>
+
+                <h2 id="variable-declaration">Variable Declaration</h2>
+
+                <div class="language-plaintext highlighter-rouge">
+                    <div class="highlight">
+                        <pre class="highlight"><code>cred numberOfSith = 9
+
+</code></pre>
+                    </div>
+                </div>
+
+                <h2 id="if-statements">If Statements</h2>
+
+                <div class="language-plaintext highlighter-rouge">
+                    <div class="highlight">
+                        <pre class="highlight"><code>should (i &gt; j) {
+    execute i
+} orElse {
+    execute j
+}
+</code></pre>
+                    </div>
+                </div>
+
+                <h2 id="for-loop">For Loop</h2>
+
+                <div class="language-plaintext highlighter-rouge">
+                    <div class="highlight">
+                        <pre
+                            class="highlight"
+                        ><code>force (cred i = 0; i &lt; 5; i++) {
+    should (i onewith 3) {
+        unleash &gt;&lt; break from loop
+    }
+}
+</code></pre>
+                    </div>
+                </div>
+
+                <h2 id="while-loop">While Loop</h2>
+
+                <div class="language-plaintext highlighter-rouge">
+                    <div class="highlight">
+                        <pre class="highlight"><code>while (i &lt; 3) {
+    unleash &gt;&lt; break from loop
+}
+
+</code></pre>
+                    </div>
+                </div>
+
+                <h1 id="example-programs">Example Programs</h1>
+
+                <h2 id="fibonacci">Fibonacci</h2>
+
+                <pre><code class="language-Javascript">function fibonacci (n) {
+    if (n &lt;= 1) {
+        return 1
+    }
+    return fibonacci(n-1) + fibonacci(n-2)
+}
+</code></pre>
+
+                <div class="language-plaintext highlighter-rouge">
+                    <div class="highlight">
+                        <pre
+                            class="highlight"
+                        ><code>Order fibonacci (cred count) {
+    should (count &lt;= 1) {
+        execute 1
+    }
+    execute fibonacci(n-1) + fibonacci(n-2)
+}
+</code></pre>
+                    </div>
+                </div>
+
+                <h2 id="returns-the-larger-of-two-integers">
+                    Returns the Larger of Two Integers
+                </h2>
+
+                <blockquote>
+                    <h3 id="javascript">Javascript</h3>
+                </blockquote>
+
+                <pre><code class="language-JavaScript">function max (i, j) {
+    if (i &gt; j) {
+        return i
+    } else {
+        return j
+    }
+}
+</code></pre>
+
+                <blockquote>
+                    <h3 id="midi-chlorian">Midi-Chlorian</h3>
+                </blockquote>
+
+                <div class="language-plaintext highlighter-rouge">
+                    <div class="highlight">
+                        <pre
+                            class="highlight"
+                        ><code>order max (cred i, cred j) {
+    should (i &gt; j) {
+        execute i
+    } elseshould {
+        execute j
+    }
+}
+</code></pre>
+                    </div>
+                </div>
+
+                <h2 id="two-sum-leetcode-problem">Two Sum Leetcode Problem</h2>
+
+                <blockquote>
+                    <h3 id="javscript">Javscript</h3>
+                </blockquote>
+
+                <pre><code class="language-JavaScript">function twoSum(nums, target) {
+    const comp = {};
+    for (let i = 0; i &lt; nums.length; i++) {
+        if (comp[nums[i]] &gt;= 0) {
+            return [comp[nums[i]], i]
+        }
+        comp[target-nums[i]] = i
+    }
+}
+</code></pre>
+
+                <blockquote>
+                    <h3 id="midi-chlorian-1">Midi-Chlorian</h3>
+                </blockquote>
+
+                <div class="language-plaintext highlighter-rouge">
+                    <div class="highlight">
+                        <pre
+                            class="highlight"
+                        ><code>order cred twoSum (tome nums, cred target) {
+    const comp = {};
+    cred i = 0;
+    force (i until nums.length) {
+        should (comp[nums[i]] &gt;= 0) {
+            execute [comp[nums[i]], i]
+        }
+        comp[target-nums[i]] = i
+    }
+}
+</code></pre>
+                    </div>
+                </div>
+            </section>
         </div>
-        <div class="subSection">
-            <h3 class="subTitle">Operational Logic</h3>
-        </div>
-        <div class="subSection">
-            <h3 class="subTitle">Unary Operators</h3>
-        </div>
-        <div class="subSection">
-            <h3 class="subTitle">Sub Title</h3>
-        </div>
-        
-        <div id="examples">
-          
-        </div> 
-    </div>
-    
-</body>
+        <script src="/midi-chlorian/assets/js/scale.fix.js"></script>
+    </body>
+</html>
