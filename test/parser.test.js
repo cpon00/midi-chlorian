@@ -45,11 +45,6 @@ describe('The Parser ', () => {
             0,
             10
         )}`, () => {
-<<<<<<< Updated upstream
-=======
-            //prints ast
-            //console.log(util.inspect(parse(program), { depth: null }))
->>>>>>> Stashed changes
             assert.ok(parse(program))
         })
     }
