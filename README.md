@@ -12,39 +12,38 @@ Midi-Chlorian is created by [Carter Pon](https://github.com/cpon00), [Adrian Leu
 
 # Shortcuts
 
--   [ Types ](#types)
--   [ Operational Logic ](#operational-logic)
-    -   [ Unary Operators](#unary-operators)
--   [ Comments ](#comments)
--   [ Midi-Chlorian Examples ](#examples)
-    -   [Print](#print)
-    -   [Variabale Declaration](#variable-declaration)
-    -   [If Statements](#if-statements)
-    -   [For Loop](#for-loop)
-    -   [While Loop](#while-loop)
--   [Example Programs](#example-programs)
+- [ Types ](#types)
+- [ Operational Logic ](#operational-logic)
+  - [ Unary Operators](#unary-operators)
+- [ Comments ](#comments)
+- [ Midi-Chlorian Examples ](#examples)
+  - [Print](#print)
+  - [Variabale Declaration](#variable-declaration)
+  - [If Statements](#if-statements)
+  - [For Loop](#for-loop)
+  - [While Loop](#while-loop)
+- [Example Programs](#example-programs)
 
 # Types
 
-| Type in Javascript | Midi-chlorian |            Declaration                                |
-| :----------------: | :-----------: | :----------------------------------------------------:|
-|        int         |     cred      |            Cred a = 9                                 |
-|        long        |    parsec     |         Parsec b = 900000                             |
-|       double       |      ket      |            ket c = 0.5                                |
-|      boolean       |   absolute    |         absolute d = true                             |
-|        char        | midichlorian  |       midichlorian e = "s"                            |
-|       string       | transmission  |  transmission f = "Hello There"                       |
-|       array        |     tome      | tome\<transmission> g = ["Execute","Order","66"]      |
-|     dictionary     |   holocron    |  holocron\<transmission,cred> g = [exe:34, evc: 32]   |
+| Type in Javascript | Midi-chlorian |                    Declaration                     |
+| :----------------: | :-----------: | :------------------------------------------------: |
+|        int         |     cred      |                     Cred a = 9                     |
+|        long        |    parsec     |                 Parsec b = 900000                  |
+|       double       |      ket      |                    ket c = 0.5                     |
+|      boolean       |   absolute    |                 absolute d = true                  |
+|        char        | midichlorian  |                midichlorian e = "s"                |
+|       string       | transmission  |           transmission f = "Hello There"           |
+|       array        |     tome      |  tome\<transmission> g = ["Execute","Order","66"]  |
+|     dictionary     |   holocron    | holocron\<transmission,cred> g = [exe:34, evc: 32] |
 
 </br>
-
 
 # Boolean Values
 
 | Javascript | Midi-chlorian |
 | :--------: | :-----------: |
-|   true     |     light     |
+|    true    |     light     |
 |   false    |     dark      |
 
 # Operational Logic
@@ -80,8 +79,8 @@ Midi-Chlorian is created by [Carter Pon](https://github.com/cpon00), [Adrian Leu
 
 # Comments
 
--   Single Line: `>< comment goes here`
--   Block: `>> comment goes here << `
+- Single Line: `>< comment goes here`
+- Block: `>> comment goes here << `
 
 <br/>
 
@@ -143,7 +142,7 @@ function fibonacci (n) {
 ```
 
 ```
-Order fibonacci (cred count) {
+order fibonacci (cred count) {
     should (count <= 1) {
         execute 1
     }
