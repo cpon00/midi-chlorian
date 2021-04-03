@@ -1,7 +1,7 @@
 //Imported from https://github.com/rtoal/carlos-compiler/blob/11-strings/src/analyzer.js
 //TO DO: change import values below to specific types as stated in Midi-chlorian grammar.
 //Will also need to change object names within each function.
-import { Variable, Type, FunctionType, Function, ArrayType } from './ast.js'
+import { Variable, Type, OrderType, Order, TomeType } from './ast.js'
 import * as stdlib from './stdlib.js'
 
 function must(condition, errorMessage) {
@@ -15,17 +15,17 @@ Type.prototype.isAssignableTo = function (target) {
     return this === target
 }
 
-ArrayType.prototype.isAssignableTo = function (target) {
+TomeType.prototype.isAssignableTo = function (target) {
     return (
-        target.constructor === ArrayType &&
+        target.constructor === TomeType &&
         this.baseType.isAssignableTo(target.baseType)
     )
 }
 
 // Contravariance for parameters and covariance for return types
-FunctionType.prototype.isAssignableTo = function (target) {
+OrderType.prototype.isAssignableTo = function (target) {
     return (
-        target.constructor === FunctionType &&
+        target.constructor === OrderType &&
         this.returnType.isAssignableTo(target.returnType) &&
         this.parameterTypes.length === target.parameterTypes.length &&
         this.parameterTypes.every((t, i) =>
@@ -36,19 +36,16 @@ FunctionType.prototype.isAssignableTo = function (target) {
 
 const check = {
     isNumber(e) {
-        must(
-            e.type === Type.NUMBER,
-            `Expected a number but got a ${e.type.name}`
-        )
+        must(e.type === Type.CRED, `Expected a cred but got a ${e.type.name}`)
     },
     isBoolean(e) {
         must(
-            e.type === Type.BOOLEAN,
-            `Expected a boolean but got a ${e.type.name}`
+            e.type === Type.ABSOLUTE,
+            `Expected an absolute but got a ${e.type.name}`
         )
     },
     isType(t) {
-        must([Type, FunctionType].includes(t.constructor), 'Type expected')
+        must([Type, OrderType].includes(t.constructor), 'Type expected')
     },
     haveSameTypes(e1, e2) {
         must(e1.type === e2.type, 'Operands do not have the same type')
@@ -72,7 +69,7 @@ const check = {
         must(context.function, 'Return can only appear in a function')
     },
     isCallable(e) {
-        must(e.type.constructor === FunctionType, 'Call of non-function')
+        must(e.type.constructor === OrderType, 'Call of non-function')
     },
     returnsNothing(f) {
         must(
@@ -156,12 +153,12 @@ class Context {
     FunctionDeclaration(d) {
         d.returnType = d.returnType ? this.analyze(d.returnType) : Type.VOID
         // Declarations generate brand new function objects
-        const f = (d.function = new Function(d.name))
+        const f = (d.function = new Order(d.name))
         // When entering a function body, we must reset the inLoop setting,
         // because it is possible to declare a function inside a loop!
         const childContext = this.newChild({ inLoop: false, forFunction: f })
         d.parameters = childContext.analyze(d.parameters)
-        f.type = new FunctionType(
+        f.type = new OrderType(
             d.parameters.map((p) => p.type),
             d.returnType
         )
@@ -175,11 +172,11 @@ class Context {
         check.isType(t)
         return t
     }
-    ArrayType(t) {
+    TomeType(t) {
         t.baseType = this.analyze(t.baseType)
         return t
     }
-    FunctionType(t) {
+    OrderType(t) {
         t.parameterTypes = t.parameterTypes.map((p) => this.analyze(p))
         t.returnType = this.analyze(t.returnType)
         return t
@@ -260,13 +257,13 @@ class Context {
     OrExpression(e) {
         e.disjuncts = this.analyze(e.disjuncts)
         e.disjuncts.forEach((disjunct) => check.isBoolean(disjunct))
-        e.type = Type.BOOLEAN
+        e.type = Type.ABSOLUTE
         return e
     }
     AndExpression(e) {
         e.conjuncts = this.analyze(e.conjuncts)
         e.conjuncts.forEach((conjunct) => check.isBoolean(conjunct))
-        e.type = Type.BOOLEAN
+        e.type = Type.ABSOLUTE
         return e
     }
     BinaryExpression(e) {
@@ -275,14 +272,14 @@ class Context {
         if (['+', '-', '*', '/', '**'].includes(e.op)) {
             check.isNumber(e.left)
             check.isNumber(e.right)
-            e.type = Type.NUMBER
+            e.type = Type.CRED
         } else if (['<', '<=', '>', '>='].includes(e.op)) {
             check.isNumber(e.left)
             check.isNumber(e.right)
-            e.type = Type.BOOLEAN
+            e.type = Type.ABSOLUTE
         } else if (['==', '!='].includes(e.op)) {
             check.haveSameTypes(e.left, e.right)
-            e.type = Type.BOOLEAN
+            e.type = Type.ABSOLUTE
         }
         return e
     }
@@ -299,9 +296,9 @@ class Context {
         return e
     }
     ArrayLiteral(a) {
-        a.arrayType = this.analyze(a.arrayType)
+        a.tomeType = this.analyze(a.TomeType)
         a.args = this.analyze(a.args)
-        a.type = a.arrayType
+        a.type = a.tomeType
         return a
     }
     IdentifierExpression(e) {
@@ -323,9 +320,9 @@ class Context {
 }
 
 export default function analyze(node) {
-    Number.prototype.type = Type.NUMBER
-    Boolean.prototype.type = Type.BOOLEAN
-    String.prototype.type = Type.STRING
+    Number.prototype.type = Type.CRED
+    Boolean.prototype.type = Type.ABSOLUTE
+    String.prototype.type = Type.TRANSMISSION
     Type.prototype.type = Type.TYPE
     const initialContext = new Context()
 

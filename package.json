@@ -9,6 +9,7 @@
     "test": "test"
   },
   "dependencies": {
+    "@stdlib/stdlib": "0.0.93",
     "c8": "^7.5.0",
     "eslint-config-prettier": "^7.2.0",
     "ohm-js": "^15.4.1",
