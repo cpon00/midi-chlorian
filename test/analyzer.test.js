@@ -5,184 +5,206 @@ import util from "util";
 import parse from "../src/parser.js";
 import analyze from "../src/analyzer.js";
 
-const source = `
-  let x = 1024
-  function next(n: number): [number] {
-    let a = [number](1, 2, 3)
-    a[1] = 100
-    return a
-  }
-  while x > 3 {
-    let y = false && (true || 2 >= x)
-    x = (0 + x) / 2 ** next(0)[0] // call in expression
-    if false {
-      const hello = 5
-      function g() { print hello return }
-      break
-    } else if true {
-      next(99)   // call statement
-      let hello = y // a different hello
-    } else {
-      continue
-    }
-    print x   // TADA 🥑
-  }
-`;
+// const source = `
+//   cred x = 1024
+//   order next(n: cred): tome {
+//     tome a = [1, 2, 3]
+//     a[1] = 100
+//     execute a
+//   }
+//   as x > 3 {
+//     absolute y = dark && (light || 2 >= x)
+//     cred x = (0 + x) / 2 ** next(0)[0] // call in expression
+//     should dark {
+//       cred hello = 5
+//       order g() { emit hello execute }
+//       unleash
+//     } altshould light {
+//       next(99)   // call statement
+//       cred hello = y // a different hello
+//     } elseshould {
+//       continue
+//     }
+//     emit x   // TADA 🥑
+//   }
+// `;
 
-const expectedAst = `
-   1 | Program statements=[#2,#5,#17]
-   2 | VariableDeclaration name='x' readOnly=false initializer=1024 variable=#3
-   3 | Variable name='x' readOnly=false type=#4
-   4 | Type name='number'
-   5 | FunctionDeclaration name='next' parameters=[#6] returnType=#7 body=[#8,#12,#14] function=#15
-   6 | Parameter name='n' type=#4
-   7 | ArrayType baseType=#4
-   8 | VariableDeclaration name='a' readOnly=false initializer=#9 variable=#11
-   9 | ArrayLiteral arrayType=#10 args=[1,2,3] type=#10
-  10 | ArrayType baseType=#4
-  11 | Variable name='a' readOnly=false type=#10
-  12 | Assignment target=#13 source=100
-  13 | SubscriptExpression array=#11 element=1 type=#4
-  14 | ReturnStatement expression=#11
-  15 | Function name='next' type=#16
-  16 | FunctionType parameterTypes=[#4] returnType=#7
-  17 | WhileStatement test=#18 body=[#20,#25,#31,#46]
-  18 | BinaryExpression op='>' left=#3 right=3 type=#19
-  19 | Type name='boolean'
-  20 | VariableDeclaration name='y' readOnly=false initializer=#21 variable=#24
-  21 | AndExpression conjuncts=[false,#22] type=#19
-  22 | OrExpression disjuncts=[true,#23] type=#19
-  23 | BinaryExpression op='>=' left=2 right=#3 type=#19
-  24 | Variable name='y' readOnly=false type=#19
-  25 | Assignment target=#3 source=#26
-  26 | BinaryExpression op='/' left=#27 right=#28 type=#4
-  27 | BinaryExpression op='+' left=0 right=#3 type=#4
-  28 | BinaryExpression op='**' left=2 right=#29 type=#4
-  29 | SubscriptExpression array=#30 element=0 type=#4
-  30 | Call callee=#15 args=[0] type=#7
-  31 | IfStatement test=false consequent=[#32,#34,#40] alternative=#41
-  32 | VariableDeclaration name='hello' readOnly=true initializer=5 variable=#33
-  33 | Variable name='hello' readOnly=true type=#4
-  34 | FunctionDeclaration name='g' parameters=[] returnType=#35 body=[#36,#37] function=#38
-  35 | Type name='void'
-  36 | PrintStatement argument=#33
-  37 | ShortReturnStatement
-  38 | Function name='g' type=#39
-  39 | FunctionType parameterTypes=[] returnType=#35
-  40 | BreakStatement
-  41 | IfStatement test=true consequent=[#42,#43] alternative=[#45]
-  42 | Call callee=#15 args=[99] type=#7
-  43 | VariableDeclaration name='hello' readOnly=false initializer=#24 variable=#44
-  44 | Variable name='hello' readOnly=false type=#19
-  45 | ContinueStatement
-  46 | PrintStatement argument=#3
-`.slice(1, -1);
+// const expectedAst = `
+//    1 | Program statements=[#2,#5,#17]
+//    2 | VariableDeclaration name='x' readOnly=dark initializer=1024 variable=#3
+//    3 | Variable name='x' readOnly=dark type=#4
+//    4 | Type name='cred'
+//    5 | orderDeclaration name='next' parameters=[#6] executeType=#7 body=[#8,#12,#14] order=#15
+//    6 | Parameter name='n' type=#4
+//    7 | ArrayType baseType=#4
+//    8 | VariableDeclaration name='a' readOnly=dark initializer=#9 variable=#11
+//    9 | ArrayLiteral arrayType=#10 args=[1,2,3] type=#10
+//   10 | ArrayType baseType=#4
+//   11 | Variable name='a' readOnly=dark type=#10
+//   12 | Assignment target=#13 source=100
+//   13 | SubscriptExpression array=#11 element=1 type=#4
+//   14 | executeStatement expression=#11
+//   15 | order name='next' type=#16
+//   16 | orderType parameterTypes=[#4] executeType=#7
+//   17 | WhileStatement test=#18 body=[#20,#25,#31,#46]
+//   18 | BinaryExpression op='>' left=#3 right=3 type=#19
+//   19 | Type name='absolute'
+//   20 | VariableDeclaration name='y' readOnly=dark initializer=#21 variable=#24
+//   21 | AndExpression conjuncts=[dark,#22] type=#19
+//   22 | OrExpression disjuncts=[light,#23] type=#19
+//   23 | BinaryExpression op='>=' left=2 right=#3 type=#19
+//   24 | Variable name='y' readOnly=dark type=#19
+//   25 | Assignment target=#3 source=#26
+//   26 | BinaryExpression op='/' left=#27 right=#28 type=#4
+//   27 | BinaryExpression op='+' left=0 right=#3 type=#4
+//   28 | BinaryExpression op='**' left=2 right=#29 type=#4
+//   29 | SubscriptExpression array=#30 element=0 type=#4
+//   30 | Call callee=#15 args=[0] type=#7
+//   31 | IfStatement test=dark consequent=[#32,#34,#40] alternative=#41
+//   32 | VariableDeclaration name='hello' readOnly=light initializer=5 variable=#33
+//   33 | Variable name='hello' readOnly=light type=#4
+//   34 | orderDeclaration name='g' parameters=[] executeType=#35 body=[#36,#37] order=#38
+//   35 | Type name='void'
+//   36 | emitStatement argument=#33
+//   37 | ShortexecuteStatement
+//   38 | order name='g' type=#39
+//   39 | orderType parameterTypes=[] executeType=#35
+//   40 | unleashStatement
+//   41 | IfStatement test=light consequent=[#42,#43] alternative=[#45]
+//   42 | Call callee=#15 args=[99] type=#7
+//   43 | VariableDeclaration name='hello' readOnly=dark initializer=#24 variable=#44
+//   44 | Variable name='hello' readOnly=dark type=#19
+//   45 | ContinueStatement
+//   46 | emitStatement argument=#3
+// `.slice(1, -1);
 
 const semanticChecks = [
-  ["return in nested if", "function f() {if true {return}}"],
-  ["break in nested if", "while false {if true {break}}"],
-  ["continue in nested if", "while false {if true {continue}}"],
-  ["assigned functions", "function f() {}\nlet g = f\ng = f"],
-  ["call of assigned functions", "function f(x: number) {}\nlet g=f\ng(1)"],
+  ["return in nested if", "order absolute f() {should light {execute}}"],
+  ["break in nested if", "as dark {should light {unleash}}"],
+  //["continue in nested if", "as dark {should light {endure}}"],
+  ["assigned functions", "order absolute f() {}\norder g = f\ng = f"],
+  [
+    "call of assigned functions",
+    "order absolute f(x: cred) {}\norder g=f\ng(1)",
+  ],
   [
     "call of assigned function in expression",
-    `function f(x: number, y: boolean): number {}
-    let g = f
-    print g(1, true)
+    `order absolute f(x: cred, y: absolute): cred {}
+    order g = f
+    emit( g(1, light))
     f = g // Type check here`,
   ],
   [
     "pass a function to a function",
-    `function f(x: number, y: (boolean)->void): number { return 1 }
-     function g(z: boolean) {}
+    `order f(x: cred, y: (absolute)->void): cred { execute 1 }
+     order g(z: absolute) {}
      f(2, g)`,
   ],
   [
     "function return types",
-    `function square(x: number): number { return x * x }
-     function compose(): (number)->number { return square }`,
+    `order square(x: cred): cred { execute x * x }
+     order compose(): (cred)->cred { execute square }`,
   ],
-  ["built-in constants", "print 25 * π"],
-  ["built-in sin", "print sin(π)"],
-  ["built-in cos", "print cos(93.999)"],
-  ["built-in hypot", "print hypot(-4, 3.00001)"],
+
+  ["negative", "cred x = -7"],
+  ["negation", "cred a = darth 7"],
+  ["increment", "cred x = 7  x++ "],
+  ["decrement", "cred x = 7  x-- "],
+  ["multiply", "cred x = 7 * 5 "],
+  ["divide", "cred x = 7 / 5 "],
+  ["mod", "cred x = 7 % 5 "],
+  ["plus", "cred x = 7 + 5 "],
+  ["minus", "cred x = 7 - 5 "],
+  ["power", "cred x = 7 ** 5 "],
 ];
 
 const semanticErrors = [
-  ["redeclarations", "print x", /Identifier x not declared/],
-  ["non declared ids", "let x = 1\nlet x = 1", /Identifier x already declared/],
-  ["assign to const", "const x = 1\nx = 2", /Cannot assign to constant x/],
-  ["assign bad type", "let x=1\nx=true", /Cannot assign a boolean to a number/],
-  ["bad types for ||", "print false||1", /a boolean but got a number/],
-  ["bad types for &&", "print false&&1", /a boolean but got a number/],
-  ["bad types for ==", "print false==1", /Operands do not have the same type/],
-  ["bad types for !=", "print false==1", /Operands do not have the same type/],
-  ["bad types for +", "print false+1", /a number but got a boolean/],
-  ["bad types for -", "print false-1", /a number but got a boolean/],
-  ["bad types for *", "print false*1", /a number but got a boolean/],
-  ["bad types for /", "print false/1", /a number but got a boolean/],
-  ["bad types for **", "print false**1", /a number but got a boolean/],
-  ["bad types for <", "print false<1", /a number but got a boolean/],
-  ["bad types for <=", "print false<=1", /a number but got a boolean/],
-  ["bad types for >", "print false>1", /a number but got a boolean/],
-  ["bad types for >=", "print false>=1", /a number but got a boolean/],
-  ["bad types for negation", "print -true", /a number but got a boolean/],
-  ["non-boolean if test", "if 1 {}", /a boolean but got a number/],
-  ["non-boolean while test", "while 1 {}", /a boolean but got a number/],
+  ["redeclarations", "emit x", /Identifier x not declared/],
   [
-    "shadowing",
-    "let x = 1\nwhile true {let x = 1}",
+    "non declared ids",
+    "cred x = 1\ncred x = 1",
     /Identifier x already declared/,
   ],
-  ["break outside loop", "break", /'break' can only appear in a loop/],
+  ["assign to const", "const x = 1\nx = 2", /Cannot assign to constant x/],
+  [
+    "assign bad type",
+    "cred x=1\nx=light",
+    /Cannot assign a absolute to a cred/,
+  ],
+  ["bad types for ||", "emit dark||1", /expected a absolute but got a cred/],
+  ["bad types for &&", "emit dark&&1", /expected a absolute but got a cred/],
+  ["bad types for ==", "emit dark==1", /Operands do not have the same type/],
+  ["bad types for !=", "emit dark==1", /Operands do not have the same type/],
+  ["bad types for +", "emit dark+1", /expected a cred but got a absolute/],
+  ["bad types for -", "emit dark-1", /expected a cred but got a absolute/],
+  ["bad types for *", "emit dark*1", /expected a cred but got a absolute/],
+  ["bad types for /", "emit dark/1", /expected a cred but got a absolute/],
+  ["bad types for **", "emit dark**1", /expected a cred but got a absolute/],
+  ["bad types for <", "emit dark<1", /expected a cred but got a absolute/],
+  ["bad types for <=", "emit dark<=1", /expected a cred but got a absolute/],
+  ["bad types for >", "emit dark>1", /expected a cred but got a absolute/],
+  ["bad types for >=", "emit dark>=1", /expected a cred but got a absolute/],
+  [
+    "bad types for negation",
+    "emit -light",
+    /expected a cred but got a absolute/,
+  ],
+  ["non-boolean if test", "should 1 {}", /expected a absolute but got a cred/],
+  ["non-boolean while test", "as 1 {}", /expected a absolute but got a cred/],
+  [
+    "shadowing",
+    "cred x = 1\nshould light {cred x = 1}",
+    /Identifier x already declared/,
+  ],
+  ["break outside loop", "unleash", /'unleash' can only appear in a loop/],
   ["continue outside loop", "continue", /'continue' can only appear in a loop/],
   [
-    "break inside function",
-    "while true {function f() {break}}",
-    /'break' can only appear in a loop/,
+    "break inside order",
+    "should light {order f() {unleash}}",
+    /'unleash' can only appear in a loop/,
   ],
   [
-    "continue inside function",
-    "while true {function f() {continue}}",
+    "continue inside order",
+    "should light {order f() {continue}}",
     /'continue' can only appear in a loop/,
   ],
   [
-    "return expression from void function",
-    "function f() {return 1}",
-    /Cannot return a value here/,
+    "return expression from void order",
+    "order f() {execute 1}",
+    /Cannot execute a value here/,
   ],
   [
     "return nothing when should have",
-    "function f(): number {return}",
-    /Something should be returned here/,
+    "order f(): cred {execute}",
+    /Something should be executeed here/,
   ],
   [
     "Too many args",
-    "function f(x: number) {}\nf(1,2)",
+    "order f(x: cred) {}\nf(1,2)",
     /1 parameter\(s\) required but 2 argument\(s\) passed/,
   ],
   [
     "Too few args",
-    "function f(x: number) {}\nf()",
+    "order f(x: cred) {}\nf()",
     /1 parameter\(s\) required but 0 argument\(s\) passed/,
   ],
   [
     "Parameter type mismatch",
-    "function f(x: number) {}\nf(false)",
-    /Cannot assign a boolean to a number/,
+    "order f(x: cred) {}\nf(dark)",
+    /Cannot assign a absolute to a cred/,
   ],
-  ["call of non-function", "let x = 1\nprint x()", /Call of non-function/],
+  ["call of non-function", "cred x = 1\nemit x()", /Call of non-order/],
   [
     "function type mismatch",
-    `function f(x: number, y: (boolean)->void): number { return 1 }
-     function g(z: boolean): number { return 5 }
+    `order f(x: cred, y: (absolute)->void): cred { execute 1 }
+     order g(z: absolute): cred { execute 5 }
      f(2, g)`,
-    /Cannot assign a \(boolean\)->number to a \(boolean\)->void/,
+    /Cannot assign a \(absolute\)->cred to a \(absolute\)->void/,
   ],
   [
     "bad call to a standard library function",
-    "print(sin(true))",
-    /Cannot assign a boolean to a number/,
+    "emit(sin(light))",
+    /Cannot assign a absolute to a cred/,
   ],
 ];
 

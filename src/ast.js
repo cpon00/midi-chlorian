@@ -56,15 +56,6 @@ export class FunctionType {
   }
 }
 
-export class ArrayType {
-  constructor(baseType) {
-    this.baseType = baseType;
-  }
-  get name() {
-    return `[${this.baseType.name}]`;
-  }
-}
-
 export class TomeType {
   constructor(baseType) {
     this.baseType = baseType;
@@ -80,7 +71,7 @@ export class Variable {
   }
 }
 
-export class Function {
+export class Order {
   constructor(id, parameters, body) {
     Object.assign(this, { id, parameters, body });
   }
@@ -152,6 +143,12 @@ export class BinaryExpression {
 export class UnaryExpression {
   constructor(op, operand) {
     Object.assign(this, { op, operand });
+  }
+}
+
+export class SubscriptExpression {
+  constructor(array, index) {
+    Object.assign(this, { array, index });
   }
 }
 
