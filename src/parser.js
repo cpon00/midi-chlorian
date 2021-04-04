@@ -139,7 +139,7 @@ const astBuilder = midiChlorianGrammar.createSemantics().addOperation("ast", {
   },
 
   Return(_execute, expression) {
-    return new ast.Return(expression.ast());
+    return new ast.Execute(expression.ast());
   },
   Break(_unleash) {
     return new ast.Unleash();
@@ -190,7 +190,7 @@ const astBuilder = midiChlorianGrammar.createSemantics().addOperation("ast", {
     );
   },
   Print(_emit, expression) {
-    return new ast.Print(expression.ast());
+    return new ast.Emit(expression.ast());
   },
   Body(_left, body, _right) {
     return body.ast();

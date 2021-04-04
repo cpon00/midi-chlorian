@@ -45,7 +45,7 @@ export class Command {
   }
 }
 
-export class FunctionType {
+export class OrderType {
   constructor(parameterTypes, returnType) {
     Object.assign(this, { parameterTypes, returnType });
   }
@@ -101,7 +101,7 @@ export class ForLoop {
   }
 }
 
-export class Print {
+export class Emit {
   constructor(argument) {
     this.argument = argument;
   }
@@ -118,7 +118,7 @@ export class HolocronObj {
   }
 }
 
-export class Return {
+export class Execute {
   constructor(returnValue) {
     this.returnValue = returnValue;
   }

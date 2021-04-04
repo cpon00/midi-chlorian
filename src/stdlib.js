@@ -1,4 +1,4 @@
-import { Type, FunctionType, Variable, Order, TomeType } from "./ast.js";
+import { Type, OrderType, Variable, Order, TomeType } from "./ast.js";
 
 function makeFunction(name, type) {
   return Object.assign(new Order(name), { type });
@@ -18,5 +18,5 @@ export const types = {
 };
 
 export const functions = {
-  print: makeFunction("execute", new FunctionType([Type.ANY], Type.VOID)),
+  print: makeFunction("execute", new OrderType([Type.ANY], Type.VOID)),
 };

@@ -2,9 +2,9 @@
 
 // Semantic Analyzer
 //
-// Analyzes the AST by looking for semantic errors and resolving references.
+// Analyzes the AST by look r semantic errors and resolving references.
 
-import { Variable, Type, FunctionType, Order, TomeType } from "./ast.js";
+import { Variable, Type, OrderType, Order, TomeType } from "./ast.js";
 import * as stdlib from "./stdlib.js";
 
 function must(condition, errorMessage) {
@@ -45,10 +45,10 @@ Object.assign(TomeType.prototype, {
 });
 
 //FUNCTION TYPE EQUIVALENCE
-Object.assign(FunctionType.prototype, {
+Object.assign(OrderType.prototype, {
   isEquivalentTo(target) {
     return (
-      target.constructor === FunctionType &&
+      target.constructor === OrderType &&
       this.returnType.isEquivalentTo(target.returnType) &&
       this.paramTypes.length === target.paramTypes.length &&
       this.paramTypes.every((t, i) => target.paramTypes[i].isEquivalentTo(t))
@@ -57,7 +57,7 @@ Object.assign(FunctionType.prototype, {
   isAssignableTo(target) {
     // Functions are covariant on return types, contravariant on parameters.
     return (
-      target.constructor === FunctionType &&
+      target.constructor === OrderType &&
       this.returnType.isAssignableTo(target.returnType) &&
       this.paramTypes.length === target.paramTypes.length &&
       this.paramTypes.every((t, i) => target.paramTypes[i].isAssignableTo(t))
@@ -174,7 +174,7 @@ const check = (self) => ({
   },
   isCallable() {
     must(
-      self.type.constructor == FunctionType,
+      self.type.constructor == OrderType,
       "Call of non-function or non-constructor"
     );
   },
@@ -267,16 +267,16 @@ class Context {
     this.add(d.variable.name, d.variable);
     return d;
   }
-  FuncDecl(d) {
+  Order(d) {
     d.returnType = d.returnType ? this.analyze(d.returnType) : Type.VOID;
     check(d.returnType).isAType();
     // Declarations generate brand new function objects
-    const f = (d.function = new Function(d.name));
+    const f = (d.function = new Order(d.name));
     // When entering a function body, we must reset the inLoop setting,
     // because it is possible to declare a function inside a loop!
     const childContext = this.newChild({ inLoop: false, forFunction: f });
     d.parameters = childContext.analyze(d.parameters);
-    f.type = new FunctionType(
+    f.type = new OrderType(
       d.parameters.map((p) => p.type),
       d.returnType
     );
@@ -294,22 +294,22 @@ class Context {
     this.add(p.id2, p);
     return p;
   }
-  ArrayType(t) {
+  TomeType(t) {
     t.baseType = this.analyze(t.baseType);
     return t;
   }
-  DictType(t) {
+  HolocronObj(t) {
     t.keyType = this.analyze(t.keyType);
     t.valueType = this.analyze(t.valueType);
     return t;
   }
-  DictContent(t) {
+  HolocronContent(t) {
     t.literal1 = this.analyze(t.literal1);
     t.literal2 = this.analyze(t.literal2);
     check;
     return t;
   }
-  FunctionType(t) {
+  OrderType(t) {
     t.parameterTypes = this.analyze(t.parameterTypes);
     t.returnType = this.analyze(t.returnType);
     return t;
@@ -320,7 +320,7 @@ class Context {
     check(s.identifier).isInteger();
     return s;
   }
-  Reassignment(s) {
+  Designation(s) {
     s.source = this.analyze(s.source);
     s.targets = this.analyze(s.targets);
     check(s.source).isAssignableTo(s.targets.type);
@@ -331,18 +331,18 @@ class Context {
     b.statements = this.analyze(b.statements);
     return b;
   }
-  Break(s) {
+  Unleash(s) {
     check(this).isInsideALoop();
     return s;
   }
-  Return(s) {
+  Execute(s) {
     check(this).isInsideAFunction();
     check(this.function).returnsSomething();
     s.returnValue = this.analyze(s.returnValue);
     check(s.returnValue).isReturnableFrom(this.function);
     return s;
   }
-  Print(s) {
+  Emit(s) {
     s.argument = this.analyze(s.argument);
     return s;
   }
@@ -359,7 +359,7 @@ class Context {
     s.body = this.newChild({ inLoop: true }).analyze(s.body);
     return s;
   }
-  ForL(s) {
+  ForLoop(s) {
     s.initializer = new Variable(s.initializer, true);
     s.test = this.analyze(s.test);
 
@@ -402,6 +402,13 @@ class Context {
       check(e.expression).isBoolean();
       e.type = "absolute";
     }
+    return e;
+  }
+  SubscriptExpression(e) {
+    e.array = this.analyze(e.array);
+    e.type = e.array.type.baseType;
+    e.index = this.analyze(e.index);
+    check(e.index).isInteger();
     return e;
   }
   Call(c) {
