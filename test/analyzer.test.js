@@ -172,11 +172,11 @@ const semanticErrors = [
     "return expression from void order",
     "order f() {execute 1}",
     /Cannot execute a value here/,
-  ],
+  ], //void?
   [
     "return nothing when should have",
-    "order f(): cred {execute}",
-    /Something should be executeed here/,
+    "order cred f() {execute}",
+    /Something should be executed here/,
   ],
   [
     "Too many args",
