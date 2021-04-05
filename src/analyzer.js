@@ -426,6 +426,9 @@ class Context {
   Literal(e) {
     return e.value;
   }
+  LitList(e) {
+    return e.value;
+  }
   Number(e) {
     return e;
   }
@@ -436,6 +439,9 @@ class Context {
     return e;
   }
   String(e) {
+    return e;
+  }
+  id(e) {
     return e;
   }
   Array(a) {
