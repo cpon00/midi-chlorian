@@ -29,6 +29,10 @@ const source = `
   }
 `;
 
+//don't need readonly
+//initializer is initial value
+//
+
 const expectedAst = `
    1 | Program statements=[#2,#5,#17]
    2 | VariableDeclaration name='x' readOnly=dark initializer=1024 variable=#3
@@ -211,15 +215,18 @@ const semanticErrors = [
 describe("The analyzer", () => {
   for (const [scenario, source] of semanticChecks) {
     it(`recognizes ${scenario}`, () => {
+      console.log(parse(source));
       assert.ok(analyze(parse(source)));
     });
   }
   for (const [scenario, source, errorMessagePattern] of semanticErrors) {
     it(`throws on ${scenario}`, () => {
+      console.log(parse(source));
       assert.throws(() => analyze(parse(source)), errorMessagePattern);
     });
   }
   it("can analyze all the nodes", () => {
+    console.log(parse(source));
     assert.deepStrictEqual(util.format(analyze(parse(source))), expectedAst);
   });
 });

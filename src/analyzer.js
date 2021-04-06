@@ -246,6 +246,7 @@ class Context {
     return new Context(this, configuration);
   }
   analyze(node) {
+    //console.log(node);
     return this[node.constructor.name](node);
   }
   Program(p) {

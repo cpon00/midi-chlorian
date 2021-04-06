@@ -17,7 +17,7 @@ const badPrograms = [
   `<3, 4)`,
 ];
 const goodPrograms = [
-  `a++`,
+  `emit a++`,
   `emit("May the force be with you.")`,
   `order cred fibonacci(cred c) {
         cred a = 0
@@ -46,10 +46,10 @@ const goodPrograms = [
   `cred y = 2**2`,
   `absolute y = a or b`,
   `absolute y = a and b`,
-  `5`,
+  `emit 5`,
   `"Only Siths deal in absolutes"`,
-  `2.0`,
-  `dark`,
+  `emit 2.0`,
+  `emit dark`,
   `absolute x = darth x`,
   `holocron<cred, transmission> x = <1:hello>`,
 
@@ -81,11 +81,12 @@ const goodPrograms = [
             execute j
         }
     }`,
-  `<"hello","hi">`,
+  `emit <"hello">`,
   `order cred c(cred i) {
     }
     c(i:3)`,
-  `a[12]`,
+  `emit a[12]`,
+  ``,
 ];
 
 describe("The Parser ", () => {
