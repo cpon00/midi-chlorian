@@ -4,7 +4,7 @@
 //
 // Analyzes the AST by look r semantic errors and resolving references.
 
-import { Variable, Type, OrderType, Order, TomeType } from "./ast.js";
+import { Type, OrderDeclaration, Order, TomeType } from "./ast.js";
 import * as stdlib from "./stdlib.js";
 
 function must(condition, errorMessage) {
@@ -13,7 +13,7 @@ function must(condition, errorMessage) {
   }
 }
 
-//TYPE EQUIVALENCE
+// //TYPE EQUIVALENCE
 Object.assign(Type.prototype, {
   // Equivalence: when are two types the same
   isEquivalentTo(target) {
@@ -88,7 +88,7 @@ const check = (self) => ({
   },
   isNumericOrString() {
     must(
-      [Type.CRED, Type.KET, Type.TRANSMISSION.name].includes(self.type),
+      [Type.CRED, Type.KET, Type.TRANSMISSION].includes(self.type),
       `Expected a number or string, found ${self.type.description}`
     );
   },
@@ -105,11 +105,7 @@ const check = (self) => ({
     );
   },
   isAType() {
-    must(
-      ["transmission", "cred", "ket", "absolute"].includes(self) ||
-        self.constructor === TomeType ||
-        self.constructor === HolocronObj
-    );
+    must(self instanceof Type, "Type expected");
   },
   // isAnOptional() {
   //   must(self.type.constructor === OptionalType, "Optional expected");
@@ -121,14 +117,10 @@ const check = (self) => ({
     must(self.type.constructor === DictType, "Dict expected");
   },
   hasSameTypeAs(other) {
-    if (["cred", "ket", "transmission", "absolute"].includes(self.type)) {
-      must(self.type === other.type, "Operands do not have the same type");
-    } else {
-      must(
-        self.type.isEquivalentTo(other.type),
-        "Operands do not have the same type"
-      );
-    }
+    must(
+      self.type.isEquivalentTo(other.type),
+      "Operands do not have the same type"
+    );
   },
   allHaveSameType() {
     must(
@@ -145,13 +137,8 @@ const check = (self) => ({
   isAssignableTo(type) {
     // self is a type, can objects of self be assigned to vars of type
     must(
-      type === Type.ANY ||
-        (self === "cred" && type === "cred") ||
-        (self === "ket" && type === "ket") ||
-        (self === "transmission" && type === "transmission") ||
-        (self === "absolute" && type === "absolute") ||
-        self.type.isAssignableTo(type),
-      `Cannot assign a ${self.type.name} to a ${type.name}`
+      self.type.isAssignableTo(type),
+      `Cannot assign a ${self.type.description} to a ${type.description}`
     );
   },
   isNotReadOnly() {
@@ -246,162 +233,177 @@ class Context {
     return new Context(this, configuration);
   }
   analyze(node) {
-    //console.log(node);
     return this[node.constructor.name](node);
   }
   Program(p) {
     p.statements = this.analyze(p.statements);
     return p;
   }
-
   Command(d) {
-    // Declarations generate brand new variable objects
-    // d.source = this.analyze(d.source)
-    // d.variable = new Variable(d.name)
-    // d.variable.type = d.source.type
-    // this.add(d.variable.name, d.variable)
-    // return d
-
-    d.type = this.analyze(d.type);
-    d.variable = new Variable(d.name);
-    d.variable.type = d.type;
+    // Only analyze the declaration, not the variable
+    d.initializer = this.analyze(d.initializer);
+    d.variable.type = d.initializer.type;
     this.add(d.variable.name, d.variable);
     return d;
   }
-  Order(d) {
-    d.returnType = d.returnType ? this.analyze(d.returnType) : Type.VOID;
-    check(d.returnType).isAType();
-    // Declarations generate brand new function objects
-    const f = (d.function = new Order(d.name));
-    // When entering a function body, we must reset the inLoop setting,
-    // because it is possible to declare a function inside a loop!
-    const childContext = this.newChild({ inLoop: false, forFunction: f });
-    d.parameters = childContext.analyze(d.parameters);
-    f.type = new OrderType(
-      d.parameters.map((p) => p.type),
-      d.returnType
-    );
-    // Add before analyzing the body to allow recursion
-    this.add(f.name, f);
-    d.block = childContext.analyze(d.block);
+  Type(d) {
+    // Add early to allow recursion
+    this.add(d.type.description, d.type);
+    d.type.fields = this.analyze(d.type.fields);
+    check(d.type.fields).areAllDistinct();
+    check(d.type).isNotRecursive();
     return d;
   }
-  Param(p) {
-    p.type1 = this.analyze(p.type1);
-    check(p.type1).isAType();
-    this.add(p.id1, p);
-    p.type2 = this.analyze(p.type2);
-    check(p.type2).isAType();
-    this.add(p.id2, p);
+  Body(f) {
+    f.type = this.analyze(f.type);
+    check(f.type).isAType();
+    return f;
+  }
+  OrderDeclaration(d) {
+    d.fun.returnType = d.fun.returnType
+      ? this.analyze(d.fun.returnType)
+      : Type.VOID;
+    check(d.fun.returnType).isAType();
+    // When entering a function body, we must reset the inLoop setting,
+    // because it is possible to declare a function inside a loop!
+    const childContext = this.newChild({ inLoop: false, forFunction: d.fun });
+    d.fun.parameters = childContext.analyze(d.fun.parameters);
+    d.fun.type = new OrderType(
+      d.fun.parameters.map((p) => p.type),
+      d.fun.returnType
+    );
+    // Add before analyzing the body to allow recursion
+    this.add(d.fun.name, d.fun);
+    d.body = childContext.analyze(d.body);
+    return d;
+  }
+  Parameter(p) {
+    p.type = this.analyze(p.type);
+    check(p.type).isAType();
+    this.add(p.name, p);
     return p;
   }
   TomeType(t) {
     t.baseType = this.analyze(t.baseType);
     return t;
   }
-  HolocronObj(t) {
-    t.keyType = this.analyze(t.keyType);
-    t.valueType = this.analyze(t.valueType);
-    return t;
-  }
-  HolocronContent(t) {
-    t.literal1 = this.analyze(t.literal1);
-    t.literal2 = this.analyze(t.literal2);
-    check;
-    return t;
-  }
   OrderType(t) {
-    t.parameterTypes = this.analyze(t.parameterTypes);
+    t.paramTypes = this.analyze(t.paramTypes);
     t.returnType = this.analyze(t.returnType);
     return t;
   }
   Increment(s) {
-    s.identifier = this.analyze(s.identifier);
-    console.log(util.inspect(s.identifier));
-    check(s.identifier).isInteger();
+    s.variable = this.analyze(s.variable);
+    check(s.variable).isInteger();
     return s;
   }
   Designation(s) {
     s.source = this.analyze(s.source);
-    s.targets = this.analyze(s.targets);
-    check(s.source).isAssignableTo(s.targets.type);
-    check(s.targets).isNotReadOnly();
-    return s;
-  }
-  Body(b) {
-    b.statements = this.analyze(b.statements);
-    return b;
-  }
-  Unleash(s) {
-    check(this).isInsideALoop();
+    s.target = this.analyze(s.target);
+    check(s.source).isAssignableTo(s.target.type);
+    check(s.target).isNotReadOnly();
     return s;
   }
   Execute(s) {
     check(this).isInsideAFunction();
     check(this.function).returnsSomething();
-    s.returnValue = this.analyze(s.returnValue);
-    check(s.returnValue).isReturnableFrom(this.function);
+    s.expression = this.analyze(s.expression);
+    check(s.expression).isReturnableFrom(this.function);
     return s;
   }
-  Emit(s) {
-    s.argument = this.analyze(s.argument);
+  Unleash(s) {
+    check(this).isInsideALoop();
     return s;
   }
+  // ShortReturnStatement(s) {
+  //   check(this).isInsideAFunction()
+  //   check(this.function).returnsNothing()
+  //   return s
+  // }
   IfStatement(s) {
-    s.tests = this.analyze(s.tests);
-    s.tests.forEach((s) => check(s).isBoolean());
-    s.consequents = s.consequents.map((b) => this.newChild().analyze(b));
-    s.alternates = s.alternates.map((b) => this.newChild().analyze(b));
+    s.test = this.analyze(s.test);
+    check(s.test).isBoolean();
+    s.consequent = this.newChild().analyze(s.consequent);
+    if (s.alternate.constructor === Array) {
+      // It's a block of statements, make a new context
+      s.alternate = this.newChild().analyze(s.alternate);
+    } else if (s.alternate) {
+      // It's a trailing if-statement, so same context
+      s.alternate = this.analyze(s.alternate);
+    }
     return s;
   }
-  WhileLoop(s) {
+  WhileStatement(s) {
     s.test = this.analyze(s.test);
     check(s.test).isBoolean();
     s.body = this.newChild({ inLoop: true }).analyze(s.body);
     return s;
   }
-  ForLoop(s) {
-    s.initializer = new Variable(s.initializer, true);
-    s.test = this.analyze(s.test);
 
-    s.initializer.type = s.initializer.type.baseType;
-    s.increment = this.analyze(s.increment);
-
-    s.initializer.type = s.initializer.type.baseType;
-
-    s.body = this.newChild({ inLoop: true }).analyze(s.body);
+  //For Loop Statement, need help with this
+  ForRangeStatement(s) {
+    s.low = this.analyze(s.low);
+    check(s.low).isInteger();
+    s.high = this.analyze(s.high);
+    check(s.high).isInteger();
+    s.iterator = new Variable(s.iterator, true);
+    s.iterator.type = Type.INT;
+    const bodyContext = this.newChild({ inLoop: true });
+    bodyContext.add(s.iterator.name, s.iterator);
+    s.body = bodyContext.analyze(s.body);
     return s;
   }
+  ForStatement(s) {
+    s.collection = this.analyze(s.collection);
+    check(s.collection).isAnArray();
+    s.iterator = new Variable(s.iterator, true);
+    s.iterator.type = s.collection.type.baseType;
+    const bodyContext = this.newChild({ inLoop: true });
+    bodyContext.add(s.iterator.name, s.iterator);
+    s.body = bodyContext.analyze(s.body);
+    return s;
+  }
+  //TODO
   BinaryExpression(e) {
-    e.expression1 = this.analyze(e.expression1);
-    e.expression2 = this.analyze(e.expression2);
-    if (["apple", "orange"].includes(e.op)) {
-      check(e.expression1).isBoolean();
-      check(e.expression2).isBoolean();
-      e.type = "absolute";
-    } else if (
-      ["plus", "minus", "times", "divby", "mod", "to the power of"].includes(
-        e.op
-      )
-    ) {
-      check(e.expression1).isNumeric();
-      check(e.expression1).hasSameTypeAs(e.expression2);
-      e.type = e.expression1.type;
-    } else if (["less", "less equals", "more", "more equals"].includes(e.op)) {
-      check(e.expression1).isNumeric();
-      check(e.expression1).hasSameTypeAs(e.expression2);
-      e.type = "absolute";
-    } else if (["equals", "not equals"].includes(e.op)) {
-      check(e.expression1).hasSameTypeAs(e.expression2);
-      e.type = "absolute";
+    e.left = this.analyze(e.left);
+    e.right = this.analyze(e.right);
+    if (["+"].includes(e.op)) {
+      check(e.left).isNumericOrString();
+      check(e.left).hasSameTypeAs(e.right);
+      e.type = e.left.type;
+    } else if (["-", "*", "/", "%", "**"].includes(e.op)) {
+      check(e.left).isNumeric();
+      check(e.left).hasSameTypeAs(e.right);
+      e.type = e.left.type;
+    } else if (["<", "<=", ">", ">="].includes(e.op)) {
+      check(e.left).isNumericOrString();
+      check(e.left).hasSameTypeAs(e.right);
+      e.type = Type.BOOLEAN;
+    } else if (["oneWith", "!oneWith"].includes(e.op)) {
+      check(e.left).hasSameTypeAs(e.right);
+      e.type = Type.BOOLEAN;
+    } else if (["and", "or"].includes(e.op)) {
+      check(e.left).isBoolean();
+      check(e.right).isBoolean();
+      e.type = Type.BOOLEAN;
     }
     return e;
   }
+  //TODO
   UnaryExpression(e) {
-    e.expression = this.analyze(e.expression);
-    if (e.op === "not") {
-      check(e.expression).isBoolean();
-      e.type = "absolute";
+    e.operand = this.analyze(e.operand);
+    if (e.op === "#") {
+      check(e.operand).isAnArray();
+      e.type = Type.INT;
+    } else if (e.op === "-") {
+      check(e.operand).isNumeric();
+      e.type = e.operand.type;
+    } else if (e.op === "!") {
+      check(e.operand).isBoolean();
+      e.type = Type.BOOLEAN;
+    } else {
+      // Operator is "some"
+      e.type = new OptionalType(e.operand.type);
     }
     return e;
   }
@@ -412,23 +414,28 @@ class Context {
     check(e.index).isInteger();
     return e;
   }
+  ArrayExpression(a) {
+    a.elements = this.analyze(a.elements);
+    check(a.elements).allHaveSameType();
+    a.type = new ArrayType(a.elements[0].type);
+    return a;
+  }
   Call(c) {
     c.callee = this.analyze(c.callee);
     check(c.callee).isCallable();
     c.args = this.analyze(c.args);
-    check(c.args).matchParametersOf(c.callee.type);
-    c.type = c.callee.type.returnType;
+    if (c.callee.constructor === StructType) {
+      check(c.args).matchFieldsOf(c.callee);
+      c.type = c.callee;
+    } else {
+      check(c.args).matchParametersOf(c.callee.type);
+      c.type = c.callee.type.returnType;
+    }
     return c;
   }
-  IdentifierExpression(e) {
-    // Id expressions get "replaced" with the entities they refer to.
-    return this.lookup(e.name);
-  }
-  Literal(e) {
-    return e.value;
-  }
-  LitList(e) {
-    return e.value;
+  Symbol(e) {
+    // Symbols represent identifiers so get resolved to the entities referred to
+    return this.lookup(e.description);
   }
   Number(e) {
     return e;
@@ -440,9 +447,6 @@ class Context {
     return e;
   }
   String(e) {
-    return e;
-  }
-  id(e) {
     return e;
   }
   Array(a) {

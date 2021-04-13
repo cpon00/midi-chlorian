@@ -6,26 +6,25 @@ import parse from "../src/parser.js";
 import analyze from "../src/analyzer.js";
 
 const source = `
-  cred x = 1024
-  order tome next(cred n) {
-    tome a = [1, 2, 3]
+cred x = 1024
+order tome<cred> next(cred n) {
+    tome<cred> a = [1, 2, 3]
     a[1] = 100
     execute a
   }
   as x > 3 {
-    absolute y = dark && (light || 2 >= x)
-    cred x = (0 + x) / 2 ** next(0)[0] // call in expression
+    absolute y = dark and (light or 2 >= x)
+    cred x = (0 + x) / 2 ** next[0]
     should dark {
       cred hello = 5
       order cred g() { emit hello execute }
       unleash
     } altshould light {
-      next(99)   // call statement
-      cred hello = y // a different hello
+      next(a : 99)   >< call statement
+      cred hello = y >< a different hello
     } elseshould {
-      continue
     }
-    emit x   // TADA 🥑
+    emit x   >< TADA 🥑
   }
 `;
 
@@ -35,7 +34,7 @@ const source = `
 
 const expectedAst = `
    1 | Program statements=[#2,#5,#17]
-   2 | VariableDeclaration name='x' readOnly=dark initializer=1024 variable=#3
+   2 | VariableDeclaration name='x' initializer=1024 variable=#3
    3 | Variable name='x' readOnly=dark type=#4
    4 | Type name='cred'
    5 | orderDeclaration name='next' parameters=[#6] executeType=#7 body=[#8,#12,#14] order=#15

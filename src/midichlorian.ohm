@@ -12,7 +12,7 @@ Midichlorian {
                   | Increment                    
                   | Break                    
   Command         = lifeform id "=" Exp
-  Designation     = id "=" Exp
+  Designation     = id ("["credLit"]")? "=" Exp
   IfStatement     = should Exp Body (altshould Exp Body)*
                      (elseshould Body)?
   WhileLoop       = as Exp Body
@@ -27,7 +27,6 @@ Midichlorian {
   Arg             = id ":" Exp
   Params          = "(" ListOf<Param, ","> ")"
   Param           = lifeform id
-  LitList         = "<" ListOf<Literal, ","> ">"
   HolocronObj     = "<" ListOf<HolocronContent, ","> ">"
   HolocronContent = Literal ":" Exp
   Exp             = Exp or Exp1                   --binary
@@ -48,7 +47,6 @@ Midichlorian {
                   | Call
                   | Literal
                   | HolocronObj
-                  | LitList
                   | id
                   | "(" Exp ")"                    --parens
                   | "[" NonemptyListOf<Exp, ","> "]" --arraylit

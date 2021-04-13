@@ -1,10 +1,10 @@
-import { Type, OrderType, Variable, Order, TomeType } from "./ast.js";
+import { Type, Order, TomeType } from "./ast.js";
 
 function makeFunction(name, type) {
   return Object.assign(new Order(name), { type });
 }
 
-// const floatsType = new TomeType(Type.FLOAT)
+// const floatsType = new ArrayType(Type.FLOAT)
 // const floatFloatType = new FunctionType([Type.FLOAT], Type.FLOAT)
 // const floatFloatFloatType = new FunctionType([Type.FLOAT, Type.FLOAT], Type.FLOAT)
 // const stringToIntsType = new FunctionType([Type.STRING], floatsType)
@@ -18,5 +18,5 @@ export const types = {
 };
 
 export const functions = {
-  print: makeFunction("execute", new OrderType([Type.ANY], Type.VOID)),
+  print: makeFunction("execute", new Order([Type.ANY], Type.VOID)),
 };

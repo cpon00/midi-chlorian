@@ -14,7 +14,7 @@ const astBuilder = midiChlorianGrammar.createSemantics().addOperation("ast", {
   Command(_lifeform, id, _eq, expression) {
     return new ast.Command(id.sourceString, expression.ast());
   },
-  Designation(id, _eq, expression) {
+  Designation(id, _open, _credLit, _close, _eq, expression) {
     return new ast.Designation(id.ast(), expression.ast());
   },
 
@@ -34,7 +34,7 @@ const astBuilder = midiChlorianGrammar.createSemantics().addOperation("ast", {
   },
 
   WhileLoop(_as, expression, body) {
-    return new ast.WhileLoop(expression.ast(), body.ast());
+    return new ast.WhileStatement(expression.ast(), body.ast());
   },
   ForLoop(
     _force,
@@ -47,7 +47,7 @@ const astBuilder = midiChlorianGrammar.createSemantics().addOperation("ast", {
     _close,
     body
   ) {
-    return new ast.ForLoop(
+    return new ast.ForStatement(
       assignment.ast(),
       expression.ast(),
       increment.ast(),
@@ -74,7 +74,7 @@ const astBuilder = midiChlorianGrammar.createSemantics().addOperation("ast", {
     );
   },
   Print(_emit, expression) {
-    return new ast.Emit(expression.ast());
+    return new ast.Program(expression.ast());
   },
   Body(_left, body, _right) {
     return body.ast();
@@ -83,7 +83,7 @@ const astBuilder = midiChlorianGrammar.createSemantics().addOperation("ast", {
     return param.asIteration().ast();
   },
   Param(lifeform, id) {
-    return new ast.Param(id.sourceString, lifeform.ast());
+    return new ast.Parameter(id.sourceString, lifeform.ast());
   },
   Args(expressions) {
     return new ast.Args(expressions.asIteration().ast());
@@ -94,14 +94,11 @@ const astBuilder = midiChlorianGrammar.createSemantics().addOperation("ast", {
   id(_first, _rest) {
     return new ast.id(this.sourceString);
   },
-  LitList(_leftarrow, content, _rightarrow) {
-    return new ast.LitList(content.asIteration().ast());
-  },
   HolocronObj(_leftarrow, content, _rightarrow) {
-    return new ast.HolocronObj(content.asIteration().ast());
+    return new ast.DictExpression(content.asIteration().ast());
   },
   HolocronContent(literal, _colon, expression) {
-    return new ast.HolocronContent(literal.sourceString, expression.ast());
+    return new ast.DictContent(literal.sourceString, expression.ast());
   },
   Increment(id, sign) {
     return new ast.Increment(id.ast(), sign.ast());
@@ -152,7 +149,7 @@ const astBuilder = midiChlorianGrammar.createSemantics().addOperation("ast", {
     return new ast.SubscriptExpression(array.ast(), subscript.ast());
   },
   Exp7_arraylit(_left, array, _right) {
-    return new ast.ArrayExp(array.asIteration().ast());
+    return new ast.ArrayExpression(array.asIteration().ast());
   },
   _terminal() {
     this.sourceString;
