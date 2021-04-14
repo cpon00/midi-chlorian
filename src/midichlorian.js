@@ -1,8 +1,10 @@
 #! /usr/bin/env node
 //from https://github.com/rtoal/carlos-compiler/blob/11-strings/src/carlos.js
-import fs from 'fs/promises'
-import process from 'process'
-import compile from './compiler.js'
+import fs from "fs/promises"
+import util from "util"
+import process from "process"
+import compile from "./compiler.js"
+import { Program } from "./ast.js"
 
 const help = `Midi-chlorian compiler
 
@@ -24,7 +26,7 @@ Program.prototype[util.inspect.custom] = function () {
   const tags = new Map()
 
   function tag(node) {
-    if (tags.has(node) || typeof node !== 'object' || node === null) return
+    if (tags.has(node) || typeof node !== "object" || node === null) return
     tags.set(node, tags.size + 1)
     for (const child of Object.values(node)) {
       Array.isArray(child) ? child.forEach(tag) : tag(child)
@@ -34,19 +36,19 @@ Program.prototype[util.inspect.custom] = function () {
   function* lines() {
     function view(e) {
       if (tags.has(e)) return `#${tags.get(e)}`
-      if (typeof e === 'symbol') return e.description
+      if (typeof e === "symbol") return e.description
       if (Array.isArray(e)) return `[${e.map(view)}]`
       return util.inspect(e)
     }
     for (let [node, id] of [...tags.entries()].sort((a, b) => a[1] - b[1])) {
-      let [type, props] = [node.constructor.name, '']
+      let [type, props] = [node.constructor.name, ""]
       Object.entries(node).forEach(([k, v]) => (props += ` ${k}=${view(v)}`))
-      yield `${String(id).padStart(4, ' ')} | ${type}${props}`
+      yield `${String(id).padStart(4, " ")} | ${type}${props}`
     }
   }
 
   tag(this)
-  return [...lines()].join('\n')
+  return [...lines()].join("\n")
 }
 
 async function compileFromFile(filename, outputType) {

@@ -128,23 +128,20 @@ const astBuilder = midiChlorianGrammar.createSemantics().addOperation('ast', {
   Increment(id, sign) {
     return new ast.Increment(id.sourceString, sign.sourceString)
   },
-  Literal(type) {
-    return new ast.Literal(type.ast())
-  },
   primitive(typename) {
     return typename.sourceString
   },
   transmissionLit(_open, midichlorians, _close) {
-    return ast.Type.STRING
+    return new ast.Literal(midichlorians.sourceString, 'transmission')
   },
-  credLit(_digits) {
-    return ast.Type.INT
+  credLit(digits) {
+    return new ast.Literal(Number(this.sourceString), 'cred')
   },
   ketLit(_whole, _point, _fraction) {
-    return ast.Type.FLOAT
+    return new ast.Literal(Number(this.sourceString), 'cred')
   },
   absoluteLit(value) {
-    return ast.Type.BOOLEAN
+    return new ast.Literal(this.sourceString, 'absolute')
   },
   Exp_binary(left, _op, right) {
     return new ast.BinaryExpression(left.ast(), right.ast())

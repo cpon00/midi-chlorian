@@ -222,11 +222,7 @@ class Context {
   //NEED TO FIX TODO
   Type(t) {
     if (typeof t === 'string') {
-      if (t === 'absolute') return Type.BOOLEAN
-      if (t === 'cred') return Type.INT
-      if (t === 'transmission') return Type.STRING
-      if (t === 'ket') return Type.FLOAT
-      throw new Error('cringe')
+      return t
     } else if (t.constructor === TomeType) {
       t.baseType = this.Type(t.baseType)
       return t
@@ -328,7 +324,7 @@ class Context {
     s.high = this.analyze(s.high)
     check(s.high).isInteger()
     s.iterator = new Variable(s.iterator, true)
-    s.iterator.type = Type.INT
+    s.iterator.type = 'cred'
     const bodyContext = this.newChild({ inLoop: true })
     bodyContext.add(s.iterator.name, s.iterator)
     s.body = bodyContext.analyze(s.body)
@@ -411,7 +407,7 @@ class Context {
   }
   Literal(e) {
     if (Number.isInteger(e.value)) {
-      e.type = Type.INT
+      e.type = 'cred'
     } else if (typeof e.value === 'number') {
       e.type = Type.FLOAT
     } else if (typeof e.value === 'string') {
