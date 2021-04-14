@@ -135,16 +135,16 @@ const astBuilder = midiChlorianGrammar.createSemantics().addOperation('ast', {
     return typename.sourceString
   },
   transmissionLit(_open, midichlorians, _close) {
-    return midichlorians.sourceString
+    return ast.Type.STRING
   },
   credLit(_digits) {
-    return Number(this.sourceString)
+    return ast.Type.INT
   },
   ketLit(_whole, _point, _fraction) {
-    return Number(this.sourceString)
+    return ast.Type.FLOAT
   },
   absoluteLit(value) {
-    return value.sourceString
+    return ast.Type.BOOLEAN
   },
   Exp_binary(left, _op, right) {
     return new ast.BinaryExpression(left.ast(), right.ast())

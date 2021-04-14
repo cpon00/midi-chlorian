@@ -146,9 +146,12 @@ const check = (self) => ({
     )
   },
   returnsSomething() {
+    //TODO
+    console.log('RETURNS SOMETHING: ' + self.type)
     must(self.type.returnType !== Type.VOID, 'Cannot return a value here')
   },
   isReturnableFrom(f) {
+    //PROBLEM HERE
     check(self).isAssignableTo(f.type.returnType)
   },
   match(targetTypes) {
@@ -207,7 +210,7 @@ class Context {
     return new Context(this, configuration)
   }
   analyze(node) {
-    //console.log('ANALYZE: ' + node.constructor.name)
+    console.log('ANALYZE: ' + node.constructor.name)
     return this[node.constructor.name](node)
   }
   Program(p) {
@@ -238,6 +241,7 @@ class Context {
       return t
     }
   }
+
   Body(f) {
     f.type = this.analyze(f.type)
     check(f.type).isAType()
@@ -286,10 +290,10 @@ class Context {
     return s
   }
   Execute(s) {
-    check(this).isInsideAFunction()
-    check(this.function).returnsSomething()
-    s.expression = this.analyze(s.expression)
-    check(s.expression).isReturnableFrom(this.function)
+    //check(this).isInsideAFunction()
+    //check(this.function).returnsSomething()
+    s.returnValue = this.analyze(s.returnValue)
+    check(s.returnValue).isReturnableFrom(this.function)
     return s
   }
   Unleash(s) {
