@@ -1,22 +1,22 @@
 Midichlorian {
   Program         = Directive*
-  Directive       =  Command                      
+  Directive       =  Command
                   | Order
-                  | Designation                                  
+                  | Designation
                   | WhileLoop
                   | ForLoop
-                  | Call                         
+                  | Call
                   | IfStatement
                   | Print
-                  | Return                       
-                  | Increment                    
-                  | Break                    
+                  | Return
+                  | Increment
+                  | Break
   Command         = lifeform id "=" Exp
   Designation     = id ("["credLit"]")? "=" Exp
   IfStatement     = should Exp Body (altshould Exp Body)*
                      (elseshould Body)?
   WhileLoop       = as Exp Body
-  ForLoop         = force "(" Command "; " Exp "; " Increment ")" Body 
+  ForLoop         = force "(" Command "; " Exp "; " Increment ")" Body
   Body            = "{"Directive*"}"
   Order           = order lifeform id Params Body
   Print           = emit Exp
@@ -72,7 +72,7 @@ Midichlorian {
   escape          = "\\" ("n" | "\\" | "'" | "\"")
   credLit         = digit+
   ketLit          = digit+ "." digit+
-  absoluteLit     = "light" | "dark"
+  absoluteLit     = light | dark
   order           = "order" ~alnum
   emit            = "emit" ~alnum
   execute         = "execute" ~alnum
@@ -83,6 +83,8 @@ Midichlorian {
   altshould       = "altshould" ~alnum
   elseshould      = "elseshould" ~alnum
   as              = "as" ~alnum
+  light           = "light" ~alnum
+  dark            = "dark" ~alnum
   force           = "force" ~alnum
   transmission    = "transmission" ~alnum
   ket             = "ket" ~alnum
@@ -100,6 +102,8 @@ Midichlorian {
                   | altshould
                   | elseshould
                   | as
+                  | light
+                  | dark
                   | force
                   | transmission
                   | ket

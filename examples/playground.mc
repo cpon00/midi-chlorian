@@ -1,1 +1,1 @@
-cred x = -7
+transmission x = "hello"  x++

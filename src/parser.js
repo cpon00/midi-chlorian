@@ -141,7 +141,7 @@ const astBuilder = midiChlorianGrammar.createSemantics().addOperation('ast', {
     return new ast.Literal(Number(this.sourceString), 'cred')
   },
   absoluteLit(value) {
-    return new ast.Literal(this.sourceString, 'absolute')
+    return new ast.Literal(this.sourceString === 'light', 'absolute')
   },
   Exp_binary(left, _op, right) {
     return new ast.BinaryExpression(left.ast(), right.ast())

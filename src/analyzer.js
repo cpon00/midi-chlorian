@@ -61,6 +61,7 @@ const check = (self) => ({
     )
   },
   isBoolean() {
+    console.log(`self is ${JSON.stringify(self)}`)
     must(self.type === 'absolute', `Expected an absolute, found ${self}`)
   },
   isInteger() {
@@ -269,7 +270,9 @@ class Context {
   }
 
   Increment(s) {
+    console.log(s.variable, '<<<<<<<<<<')
     s.variable = this.analyze(s.variable)
+    console.log(s.variable, '<<<<<<<<<<')
     check(s.variable).isInteger()
     return s
   }
@@ -355,14 +358,14 @@ class Context {
     } else if (['<', '<=', '>', '>='].includes(e.op)) {
       check(e.left).isNumericOrString()
       check(e.left).hasSameTypeAs(e.right)
-      e.type = Type.BOOLEAN
+      e.type = 'absolute'
     } else if (['oneWith', '!oneWith'].includes(e.op)) {
       check(e.left).hasSameTypeAs(e.right)
-      e.type = Type.BOOLEAN
+      e.type = 'absolute'
     } else if (['and', 'or'].includes(e.op)) {
       check(e.left).isBoolean()
       check(e.right).isBoolean()
-      e.type = Type.BOOLEAN
+      e.type = 'absolute'
     }
     return e
   }
@@ -409,11 +412,11 @@ class Context {
     if (Number.isInteger(e.value)) {
       e.type = 'cred'
     } else if (typeof e.value === 'number') {
-      e.type = Type.FLOAT
+      e.type = 'ket'
     } else if (typeof e.value === 'string') {
-      e.type = Type.STRING
+      e.type = 'transmission'
     } else if (typeof e.value === 'boolean') {
-      e.type = Type.BOOLEAN
+      e.type = 'absolute'
     }
     return e
   }
