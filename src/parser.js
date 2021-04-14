@@ -164,8 +164,8 @@ const astBuilder = midiChlorianGrammar.createSemantics().addOperation('ast', {
   Exp5_binary(left, _op, right) {
     return new ast.BinaryExpression(left.ast(), right.ast())
   },
-  Exp6_unary(_prefix, expression) {
-    return new ast.UnaryExpression(expression.ast())
+  Exp6_unary(prefix, expression) {
+    return new ast.UnaryExpression(prefix.sourceString, expression.ast())
   },
   Exp7_parens(_open, expression, _close) {
     return expression.ast()

@@ -52,28 +52,19 @@ Object.assign(TomeType.prototype, {
 
 const check = (self) => ({
   isNumeric() {
-    must(
-      [Type.INT, Type.FLOAT].includes(self.type),
-      `Expected a number, found ${self.type.description}`
-    )
+    must(['ket', 'cred'].includes(self), `Expected a number, found ${self}`)
   },
   isNumericOrString() {
     must(
-      [Type.INT, Type.FLOAT, Type.STRING].includes(self.type),
+      ['ket', 'cred', 'transmission'].includes(self),
       `Expected a number or transmission, found ${self.type.description}`
     )
   },
   isBoolean() {
-    must(
-      self.type === Type.BOOLEAN,
-      `Expected an absolute, found ${self.type.description}`
-    )
+    must(self.type === 'absolute', `Expected an absolute, found ${self}`)
   },
   isInteger() {
-    must(
-      self.type === Type.INT,
-      `Expected a cred, found ${self.type.description}`
-    )
+    must(self.type === 'cred', `Expected a cred, found ${self}`)
   },
 
   isAType() {
@@ -85,10 +76,10 @@ const check = (self) => ({
   },
 
   isAnArray() {
-    must(self.type.constructor === TomeType, 'Array expected')
+    must(self.type.constructor === TomeType, 'Tome expected')
   },
   isADict() {
-    must(self.type.constructor === DictType, 'Dict expected')
+    must(self.type.constructor === HolocronType, 'Holocron expected')
   },
   hasSameTypeAs(other) {
     must(
@@ -110,19 +101,21 @@ const check = (self) => ({
   // },
   isAssignableTo(type) {
     // self is a type, can objects of self be assigned to vars of type
-    must(
-      self.type.isAssignableTo(type),
-      `Cannot assign a ${self.type.description} to a ${type.description}`
-    )
-  },
-  isNotReadOnly() {
-    must(!self.readOnly, `Cannot assign to constant ${self.name}`)
-  },
-  areAllDistinct() {
-    must(
-      new Set(self.map((f) => f.name)).size === self.length,
-      'Fields must be distinct'
-    )
+
+    console.log('type: ' + type)
+    if (typeof self === 'string') {
+      must(self === type), `Cannot assign a ${type} to a ${self}`
+    } else if (self.constructor === TomeType) {
+      must(type.constructor === TomeType && type.baseType === self.baseType),
+        `Cannot assign a ${type.baseType} to a ${self.baseType}`
+    } else {
+      must(
+        type.constructor === HolocronType &&
+          type.keyType === self.keyType &&
+          type.valueType === self.valueType
+      ),
+        `Cannot assign a ${type.baseType} to a ${self.baseType}`
+    }
   },
   isInTheObject(object) {
     must(object.type.fields.map((f) => f.name).includes(self), 'No such field')
@@ -152,7 +145,9 @@ const check = (self) => ({
   },
   isReturnableFrom(f) {
     //PROBLEM HERE
-    check(self).isAssignableTo(f.type.returnType)
+    console.log('F: ' + f)
+    console.log('F.returntype: ' + f.returnType)
+    check(self).isAssignableTo(f.returnType)
   },
   match(targetTypes) {
     // self is the array of arguments
@@ -293,6 +288,7 @@ class Context {
     //check(this).isInsideAFunction()
     //check(this.function).returnsSomething()
     s.returnValue = this.analyze(s.returnValue)
+    console.log('S RET VALUE: ' + s.returnValue)
     check(s.returnValue).isReturnableFrom(this.function)
     return s
   }
@@ -376,19 +372,14 @@ class Context {
   }
   //TODO
   UnaryExpression(e) {
+    console.log(e.operand)
     e.operand = this.analyze(e.operand)
-    if (e.op === '#') {
-      check(e.operand).isAnArray()
-      e.type = Type.INT
-    } else if (e.op === '-') {
-      check(e.operand).isNumeric()
+    if (e.op === '-') {
+      check(e.operand.type).isNumeric()
       e.type = e.operand.type
-    } else if (e.op === '!') {
+    } else if (e.op === 'darth') {
       check(e.operand).isBoolean()
-      e.type = Type.BOOLEAN
-    } else {
-      // Operator is "some"
-      e.type = new OptionalType(e.operand.type)
+      e.type = 'absolute'
     }
     return e
   }

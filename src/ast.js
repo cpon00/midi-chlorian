@@ -22,9 +22,10 @@ export class Program {
   }
 }
 
+//Assignment
 export class Command {
-  constructor(variable, expression) {
-    Object.assign(this, { variable, expression })
+  constructor(variable, initializer) {
+    Object.assign(this, { variable, initializer })
   }
 }
 
@@ -86,10 +87,10 @@ export class TomeType extends Type {
 
 //Dictionary Type
 export class HolocronType extends Type {
-  constructor(key, value) {
-    super(`[${key}], [${value}]`)
-    this.key = key
-    this.value = value
+  constructor(keyType, valueType) {
+    super(`[${keyType}], [${valueType}]`)
+    this.keyType = keyType
+    this.valueType = valueType
   }
 }
 
@@ -110,7 +111,8 @@ export class Designation {
 //Return
 export class Execute {
   constructor(returnValue) {
-    Object.assign(this, { returnValue })
+    this.returnValue = returnValue
+    //Object.assign(this, { returnValue })
   }
 }
 

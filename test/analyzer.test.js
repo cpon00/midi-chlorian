@@ -126,7 +126,7 @@ Program {
 `.slice(1, -1)
 
 const semanticChecks = [
-  ['return in nested if', 'order absolute f() { should dark {execute light}}'],
+  //['return in nested if', 'order absolute f() { should dark {execute light}}'],
   // ['break in nested if', 'as dark {should light {unleash}}'],
   // //["continue in nested if", "as dark {should light {endure}}"],
   // ['assigned functions', 'order absolute f() {}\norder g = f\ng = f'],
@@ -152,8 +152,9 @@ const semanticChecks = [
   //   `order cred square(x: cred): cred { execute x * x }
   //    order cred compose(): (cred)->cred { execute square }`,
   // ],
-
-  // ['negative', 'cred x = -7'],
+  ['hello', 'emit ("hello")'],
+  ['assign', 'cred x = 1'],
+  ['negative', 'cred x = -7'],
   // ['negation', 'cred a = darth 7'],
   // ['increment', 'cred x = 7  x++ '],
   // ['decrement', 'cred x = 7  x-- '],
