@@ -1,40 +1,47 @@
 //import fs from 'fs'
-import ohm from "ohm-js";
-import * as ast from "./ast.js";
-import fs from "fs";
+import ohm from 'ohm-js'
+import * as ast from './ast.js'
+import fs from 'fs'
 
-const midiChlorianGrammar = ohm.grammar(
-  fs.readFileSync("src/midichlorian.ohm")
-);
+const midiChlorianGrammar = ohm.grammar(fs.readFileSync('src/midichlorian.ohm'))
 
-const astBuilder = midiChlorianGrammar.createSemantics().addOperation("ast", {
+const astBuilder = midiChlorianGrammar.createSemantics().addOperation('ast', {
   Program(body) {
-    return new ast.Program(body.ast());
+    return new ast.Program(body.ast())
   },
-  Command(_lifeform, id, _eq, expression) {
-    return new ast.Command(id.sourceString, expression.ast());
+  //VarDecl
+  Command(lifeform, id, _eq, expression) {
+    //initializer in Declaration, type and name in actual Variable
+    //In SA, check that type in initializer is same type in variable
+    const variable = new ast.Variable(lifeform.ast(), id.sourceString)
+    return new ast.Command(variable, expression.ast())
   },
   Designation(id, _open, _credLit, _close, _eq, expression) {
-    return new ast.Designation(id.ast(), expression.ast());
+    return new ast.Designation(id.sourceString, expression.ast())
   },
 
   Call(id, _left, args, _right) {
-    return new ast.Call(id.ast(), args.ast());
+    return new ast.Call(id.sourceString, args.ast())
   },
 
   Return(_execute, expression) {
-    return new ast.Execute(expression.ast());
+    return new ast.Execute(expression.ast())
   },
   Break(_unleash) {
-    return new ast.Unleash();
+    return new ast.Unleash()
   },
 
-  Order(_order, _lifeform, id, parameters, body) {
-    return new ast.Order(id.sourceString, parameters.ast(), body.ast());
+  Order(_order, lifeform, id, parameters, body) {
+    const order = new ast.Order(
+      id.sourceString,
+      parameters.ast(),
+      lifeform.ast()
+    )
+    return new ast.OrderDeclaration(order, body.ast())
   },
 
   WhileLoop(_as, expression, body) {
-    return new ast.WhileStatement(expression.ast(), body.ast());
+    return new ast.WhileStatement(expression.ast(), body.ast())
   },
   ForLoop(
     _force,
@@ -52,7 +59,7 @@ const astBuilder = midiChlorianGrammar.createSemantics().addOperation("ast", {
       expression.ast(),
       increment.ast(),
       body.ast()
-    );
+    )
   },
 
   IfStatement(
@@ -71,95 +78,110 @@ const astBuilder = midiChlorianGrammar.createSemantics().addOperation("ast", {
       expression2.ast(),
       body2.ast(),
       body3.ast()
-    );
+    )
   },
   Print(_emit, expression) {
-    return new ast.Program(expression.ast());
+    return new ast.Program(expression.ast())
   },
+
+  lifeform_tometype(_tome, _left, baseType, _right) {
+    return new ast.TomeType(baseType.ast())
+  },
+
+  lifeform_dicttype(
+    _holocron,
+    _left,
+    lifeform_key,
+    _comma,
+    lifeform_value,
+    _right
+  ) {
+    return new ast.HolocronType(lifeform_key.ast(), lifeform_value.ast())
+  },
+
   Body(_left, body, _right) {
-    return body.ast();
+    return body.ast()
   },
   Params(_left, param, _right) {
-    return param.asIteration().ast();
+    return param.asIteration().ast()
   },
+
   Param(lifeform, id) {
-    return new ast.Parameter(id.sourceString, lifeform.ast());
+    return new ast.Parameter(id.sourceString, lifeform.ast())
   },
+
   Args(expressions) {
-    return new ast.Args(expressions.asIteration().ast());
+    return new ast.Args(expressions.asIteration().ast())
   },
   Arg(id, _colon, expression) {
-    return new ast.Arg(id.sourceString, expression.ast());
+    return new ast.Arg(id.sourceString, expression.ast())
   },
   id(_first, _rest) {
-    return new ast.id(this.sourceString);
+    return new ast.id(this.sourceString)
   },
   HolocronObj(_leftarrow, content, _rightarrow) {
-    return new ast.DictExpression(content.asIteration().ast());
+    return new ast.DictExpression(content.asIteration().ast())
   },
   HolocronContent(literal, _colon, expression) {
-    return new ast.DictContent(literal.sourceString, expression.ast());
+    return new ast.DictContent(literal.ast(), expression.ast())
   },
   Increment(id, sign) {
-    return new ast.Increment(id.ast(), sign.ast());
+    return new ast.Increment(id.sourceString, sign.sourceString)
   },
   Literal(type) {
-    return new ast.Literal(type.ast());
+    return new ast.Literal(type.ast())
   },
   primitive(typename) {
-    return typename.sourceString;
+    return typename.sourceString
   },
   transmissionLit(_open, midichlorians, _close) {
-    return midichlorians.sourceString;
+    return midichlorians.sourceString
   },
   credLit(_digits) {
-    return Number(this.sourceString);
+    return Number(this.sourceString)
   },
   ketLit(_whole, _point, _fraction) {
-    return Number(this.sourceString);
+    return Number(this.sourceString)
   },
   absoluteLit(value) {
-    return value.sourceString;
+    return value.sourceString
   },
   Exp_binary(left, _op, right) {
-    return new ast.BinaryExpression(left.ast(), right.ast());
+    return new ast.BinaryExpression(left.ast(), right.ast())
   },
   Exp1_binary(left, _op, right) {
-    return new ast.BinaryExpression(left.ast(), right.ast());
+    return new ast.BinaryExpression(left.ast(), right.ast())
   },
   Exp2_binary(left, _op, right) {
-    return new ast.BinaryExpression(left.ast(), right.ast());
+    return new ast.BinaryExpression(left.ast(), right.ast())
   },
   Exp3_binary(left, _op, right) {
-    return new ast.BinaryExpression(left.ast(), right.ast());
+    return new ast.BinaryExpression(left.ast(), right.ast())
   },
   Exp4_binary(left, _op, right) {
-    return new ast.BinaryExpression(left.ast(), right.ast());
+    return new ast.BinaryExpression(left.ast(), right.ast())
   },
   Exp5_binary(left, _op, right) {
-    return new ast.BinaryExpression(left.ast(), right.ast());
+    return new ast.BinaryExpression(left.ast(), right.ast())
   },
   Exp6_unary(_prefix, expression) {
-    return new ast.UnaryExpression(expression.ast());
+    return new ast.UnaryExpression(expression.ast())
   },
   Exp7_parens(_open, expression, _close) {
-    return expression.ast();
+    return expression.ast()
   },
   Exp7_subscript(array, _left, subscript, _right) {
-    return new ast.SubscriptExpression(array.ast(), subscript.ast());
+    return new ast.SubscriptExpression(array.ast(), subscript.ast())
   },
   Exp7_arraylit(_left, array, _right) {
-    return new ast.ArrayExpression(array.asIteration().ast());
+    return new ast.ArrayExpression(array.asIteration().ast())
   },
-  _terminal() {
-    this.sourceString;
-  },
-});
+})
 
 export default function parse(sourceCode) {
-  const match = midiChlorianGrammar.match(sourceCode);
+  const match = midiChlorianGrammar.match(sourceCode)
   if (!match.succeeded()) {
-    throw new Error(match.message);
+    throw new Error(match.message)
   }
-  return astBuilder(match).ast();
+  return astBuilder(match).ast()
 }

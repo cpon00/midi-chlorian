@@ -54,14 +54,14 @@ Midichlorian {
   relop           = "<=" | ">=" | "<" | ">" | "onewith"
   addop           = "+" | "-"
   mulop           = "*" | "/" | "%"
-  power   = "**"
+  power           = "**"
   prefix          = "-" | "darth"
   Literal         = transmissionLit
                   | ketLit
                   | credLit
                   | absoluteLit
   lifeform        = primitive
-                  | tome "<"lifeform">"             --arraytype
+                  | tome "<"lifeform">"             --tometype
                   | holocron "<"lifeform", " lifeform ">" --dicttype
   primitive       = transmission
                   | ket

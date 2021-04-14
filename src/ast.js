@@ -13,19 +13,24 @@
 // entire AST. It even works well if you analyze the AST and turn it into a
 // graph with cycles.
 
-import util from "util";
+import util from 'util'
 
 //Program
 export class Program {
   constructor(statements) {
-    this.statements = statements;
+    this.statements = statements
   }
 }
 
-//Variable Declaration
 export class Command {
-  constructor(variable, initializers) {
-    Object.assign(this, { variable, initializers });
+  constructor(variable, expression) {
+    Object.assign(this, { variable, expression })
+  }
+}
+
+export class Variable {
+  constructor(type, name) {
+    Object.assign(this, { type, name })
   }
 }
 
@@ -36,69 +41,71 @@ export class Command {
 //Type of primitive lifeform: transmission, ket, cred, absolute, superclass of other types
 
 export class Type {
-  constructor(description) {
-    Object.assign(this, { description });
+  constructor(name) {
+    this.name = name
   }
-}
-
-//Field
-export class Body {
-  constructor(name, type) {
-    Object.assign(this, { name, type });
-  }
+  static BOOLEAN = new Type('absolute')
+  static INT = new Type('cred')
+  static FLOAT = new Type('ket')
+  static STRING = new Type('transmission')
 }
 
 //Function Declaration
 export class OrderDeclaration {
   constructor(fun, body) {
-    Object.assign(this, { fun, body });
+    Object.assign(this, { fun, body })
   }
 }
 
 //Function
 export class Order {
   constructor(name, parameters, returnType) {
-    Object.assign(this, { name, parameters, returnType });
+    Object.assign(this, { name, parameters, returnType })
   }
 }
 
 //Parameter
 export class Parameter {
   constructor(name, type) {
-    Object.assign(this, { name, type });
+    Object.assign(this, { name, type })
   }
 }
 
 //Array Type
 export class TomeType extends Type {
   constructor(baseType) {
-    super(`[${baseType.description}]`);
-    this.baseType = baseType;
+    super(`[${baseType}]`)
+    this.baseType = baseType
   }
 }
 
-//TODO: Holocron Type
+//Dictionary Type
+export class HolocronType extends Type {
+  constructor(key, value) {
+    super(`[${key}], [${value}]`)
+    this.key = key
+    this.value = value
+  }
+}
 
 //Increment
-
 export class Increment {
   constructor(variable) {
-    this.variable = variable;
+    this.variable = variable
   }
 }
-//TODO: Maybe add Decrement
 
 //Assignment
 export class Designation {
   constructor(target, source) {
-    Object.assign(this, { target, source });
+    Object.assign(this, { target, source })
   }
 }
 
 //Return
 export class Execute {
   constructor(returnValue) {
-    this.returnValue = returnValue;
+    this.returnValue = returnValue
   }
 }
 
@@ -111,7 +118,7 @@ export class Unleash {
 export class IfStatement {
   // Example: if x < 3 { print(100); } else { break; }
   constructor(test, consequent, alternate) {
-    Object.assign(this, { test, consequent, alternate });
+    Object.assign(this, { test, consequent, alternate })
   }
 }
 
@@ -119,21 +126,21 @@ export class IfStatement {
 export class WhileStatement {
   // Example: while level != 90 { level += random(-3, 8); }
   constructor(test, body) {
-    Object.assign(this, { test, body });
+    Object.assign(this, { test, body })
   }
 }
 
 //For Statement
 export class ForStatement {
   constructor(iterator, range, body) {
-    Object.assign(this, { iterator, range, body });
+    Object.assign(this, { iterator, range, body })
   }
 }
 
 //Binary Expression
 export class BinaryExpression {
   constructor(op, left, right) {
-    Object.assign(this, { op, left, right });
+    Object.assign(this, { op, left, right })
   }
 }
 
@@ -141,7 +148,7 @@ export class BinaryExpression {
 export class UnaryExpression {
   // Example: -55
   constructor(op, operand) {
-    Object.assign(this, { op, operand });
+    Object.assign(this, { op, operand })
   }
 }
 
@@ -149,7 +156,7 @@ export class UnaryExpression {
 export class SubscriptExpression {
   // Example: a[20]
   constructor(array, index) {
-    Object.assign(this, { array, index });
+    Object.assign(this, { array, index })
   }
 }
 
@@ -157,21 +164,21 @@ export class SubscriptExpression {
 export class ArrayExpression {
   // Example: ["Emma", "Norman", "Ray"]
   constructor(elements) {
-    this.elements = elements;
+    this.elements = elements
   }
 }
 
 //Dictionary Expression
 export class DictExpression {
   constructor(elements) {
-    this.elements = elements;
+    this.elements = elements
   }
 }
 
 //Dictionary Content
 export class DictContent {
   constructor(literal, expression) {
-    Object.assign(this, { literal, expression });
+    Object.assign(this, { literal, expression })
   }
 }
 
@@ -179,14 +186,14 @@ export class DictContent {
 export class Call {
   // Example: move(player, 90, "west")
   constructor(callee, args) {
-    Object.assign(this, { callee, args });
+    Object.assign(this, { callee, args })
   }
 }
 
 //id
 export class id {
   constructor(expression) {
-    this.expression = expression;
+    this.expression = expression
   }
 }
 
@@ -352,12 +359,12 @@ export class id {
 
 export class Arg {
   constructor(expression) {
-    this.expression = expression;
+    this.expression = expression
   }
 }
 export class Args {
   constructor(argumentList) {
-    this.argumentList = argumentList;
+    this.argumentList = argumentList
   }
 }
 // export class Call {
@@ -369,7 +376,7 @@ export class Args {
 
 export class Literal {
   constructor(type) {
-    this.type = type;
+    this.type = type
   }
 }
 // export class LitList {
