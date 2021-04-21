@@ -119,6 +119,13 @@ export class Execute {
   }
 }
 
+//Print
+export class Print {
+  constructor(argument) {
+    this.argument = argument
+  }
+}
+
 //Break
 export class Unleash {
   //intentionally empty
@@ -149,8 +156,8 @@ export class ForStatement {
 
 //Binary Expression
 export class BinaryExpression {
-  constructor(left, right) {
-    Object.assign(this, { left, right })
+  constructor(op, left, right) {
+    Object.assign(this, { op, left, right })
   }
 }
 
@@ -201,8 +208,8 @@ export class Call {
 
 //id
 export class id {
-  constructor(expression) {
-    this.expression = expression
+  constructor(name) {
+    this.name = name
   }
 }
 

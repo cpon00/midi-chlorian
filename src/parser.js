@@ -25,7 +25,9 @@ const astBuilder = midiChlorianGrammar.createSemantics().addOperation('ast', {
   },
 
   Return(_execute, expression) {
-    return new ast.Execute(expression.ast())
+    const returnValue =
+      expression.ast().length === 0 ? null : expression.ast()[0]
+    return new ast.Execute(returnValue)
   },
   Break(_unleash) {
     return new ast.Unleash()
@@ -81,7 +83,7 @@ const astBuilder = midiChlorianGrammar.createSemantics().addOperation('ast', {
     )
   },
   Print(_emit, expression) {
-    return new ast.Program(expression.ast())
+    return new ast.Print(expression.ast())
   },
 
   lifeform_tometype(_tome, _left, baseType, _right) {
@@ -143,23 +145,23 @@ const astBuilder = midiChlorianGrammar.createSemantics().addOperation('ast', {
   absoluteLit(value) {
     return new ast.Literal(this.sourceString === 'light', 'absolute')
   },
-  Exp_binary(left, _op, right) {
-    return new ast.BinaryExpression(left.ast(), right.ast())
+  Exp_binary(left, op, right) {
+    return new ast.BinaryExpression(op.sourceString, left.ast(), right.ast())
   },
-  Exp1_binary(left, _op, right) {
-    return new ast.BinaryExpression(left.ast(), right.ast())
+  Exp1_binary(left, op, right) {
+    return new ast.BinaryExpression(op.sourceString, left.ast(), right.ast())
   },
-  Exp2_binary(left, _op, right) {
-    return new ast.BinaryExpression(left.ast(), right.ast())
+  Exp2_binary(left, op, right) {
+    return new ast.BinaryExpression(op.sourceString, left.ast(), right.ast())
   },
-  Exp3_binary(left, _op, right) {
-    return new ast.BinaryExpression(left.ast(), right.ast())
+  Exp3_binary(left, op, right) {
+    return new ast.BinaryExpression(op.sourceString, left.ast(), right.ast())
   },
-  Exp4_binary(left, _op, right) {
-    return new ast.BinaryExpression(left.ast(), right.ast())
+  Exp4_binary(left, op, right) {
+    return new ast.BinaryExpression(op.sourceString, left.ast(), right.ast())
   },
-  Exp5_binary(left, _op, right) {
-    return new ast.BinaryExpression(left.ast(), right.ast())
+  Exp5_binary(left, op, right) {
+    return new ast.BinaryExpression(op.sourceString, left.ast(), right.ast())
   },
   Exp6_unary(prefix, expression) {
     return new ast.UnaryExpression(prefix.sourceString, expression.ast())

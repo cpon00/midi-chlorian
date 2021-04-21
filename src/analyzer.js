@@ -69,7 +69,7 @@ const check = (self) => ({
   },
   isNumericOrString() {
     must(
-      ['ket', 'cred', 'transmission'].includes(self),
+      ['ket', 'cred', 'transmission'].includes(self.type),
       `Expected a number or transmission, found ${self.type.description}`
     )
   },
@@ -96,7 +96,7 @@ const check = (self) => ({
     must(self.type.constructor === HolocronType, 'Holocron expected')
   },
   hasSameTypeAs(other) {
-    must(self.isEquivalentTo(other), 'Operands do not have the same type')
+    must(self.type === other.type, 'Operands do not have the same type')
   },
   allHaveSameType() {
     must(
@@ -158,9 +158,8 @@ const check = (self) => ({
     //PROBLEM HERE
     console.log('RETURNABLE FROM VALUE')
     console.log(util.inspect(f))
-    console.log('F.returntype: ' + f.returnType)
-    console.log(util.inspect(self))
-    check(self).isAssignableTo(f.returnType)
+    console.log('F.returntype: ' + util.inspect(f.returnType))
+    check(self.type).isAssignableTo(f.returnType)
   },
   match(targetTypes) {
     // self is the array of arguments
@@ -315,6 +314,10 @@ class Context {
     check(s.returnValue).isReturnableFrom(this.function)
     return s
   }
+  Print(s) {
+    s.argument = this.analyze(s.argument)
+    return s
+  }
   Unleash(s) {
     check(this).isInsideALoop()
     return s
@@ -459,7 +462,7 @@ class Context {
     return e
   }
   id(e) {
-    return this.lookup(e.expression)
+    return this.lookup(e.name)
   }
   Array(a) {
     return a.map((item) => this.analyze(item))
