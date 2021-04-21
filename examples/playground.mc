@@ -1,1 +1,2 @@
-transmission x = "hello"  x++
+cred x = 89
+x++

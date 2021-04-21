@@ -138,10 +138,8 @@ const check = (self) => ({
     must(self.function, 'Return can only appear in a function')
   },
   isCallable() {
-    must(
-      self.type.constructor == OrderType,
-      'Call of non-function or non-constructor'
-    )
+    console.log(`CHECKING isCallable ${util.inspect(self)}`)
+    must(self.constructor == Order, 'Call of non-function or non-constructor')
   },
   returnsNothing() {
     must(
@@ -161,19 +159,22 @@ const check = (self) => ({
     console.log('F.returntype: ' + util.inspect(f.returnType))
     check(self.type).isAssignableTo(f.returnType)
   },
-  match(targetTypes) {
+  match(params) {
     // self is the array of arguments
-    must(
-      targetTypes.length === self.length,
-      `${targetTypes.length} argument(s) required but ${self.length} passed`
+    console.log(
+      `Matching params: self is ${util.inspect(self)}, params is ${util.inspect(
+        params
+      )}`
     )
-    targetTypes.forEach((type, i) => check(self[i]).isAssignableTo(type))
+    must(
+      params.length === self.length,
+      `${params.length} argument(s) required but ${self.length} passed`
+    )
+    params.forEach((p, i) => check(self[i].type).isAssignableTo(p.type))
   },
-  matchParametersOf(calleeType) {
-    check(self).match(calleeType.paramTypes)
-  },
-  matchFieldsOf(type) {
-    check(self).match(type.fields.map((f) => f.type))
+  matchParametersOf(callee) {
+    console.log(`In matchParametersOf, callee is ${util.inspect(callee)}`)
+    check(self).match(callee.parameters)
   },
 })
 
@@ -292,7 +293,7 @@ class Context {
     s.variable = this.analyze(s.variable)
     // console.log(s.variable, '<<<<<<<<<<')
     //console.log(s.variable.name)
-    check(s.variable.type).isInteger()
+    check(s.variable).isInteger()
     return s
   }
   Designation(s) {
@@ -424,13 +425,8 @@ class Context {
     c.callee = this.analyze(c.callee)
     check(c.callee).isCallable()
     c.args = this.analyze(c.args)
-    if (c.callee.constructor === StructType) {
-      check(c.args).matchFieldsOf(c.callee)
-      c.type = c.callee
-    } else {
-      check(c.args).matchParametersOf(c.callee.type)
-      c.type = c.callee.type.returnType
-    }
+    check(c.args).matchParametersOf(c.callee)
+    c.type = c.callee.returnType
     return c
   }
   Literal(e) {
