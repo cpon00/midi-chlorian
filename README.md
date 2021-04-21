@@ -168,7 +168,7 @@ function max (i, j) {
 > ### Midi-Chlorian
 
 ```
-order max (cred i, cred j) {
+order cred max (cred i, cred j) {
     should (i > j) {
         execute i
     } elseshould {
