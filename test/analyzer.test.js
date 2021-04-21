@@ -1,9 +1,9 @@
 //Imported from https://github.com/rtoal/carlos-compiler/blob/11-strings/test/analyzer.test.js
 
-import assert from 'assert';
-import util from 'util';
-import parse from '../src/parser.js';
-import analyze from '../src/analyzer.js';
+import assert from 'assert'
+import util from 'util'
+import parse from '../src/parser.js'
+import analyze from '../src/analyzer.js'
 
 const source = `
 cred x = 1024
@@ -26,7 +26,7 @@ order tome<cred> next(cred n) {
     }
     emit x   >< TADA 🥑
   }
-`;
+`
 
 //don't need readonly
 //initializer is initial value
@@ -123,7 +123,7 @@ Program {
       }
     ]
   }
-`.slice(1, -1);
+`.slice(1, -1)
 
 const semanticChecks = [
   //['return in nested if', 'order absolute f() { should dark {execute light}}'],
@@ -147,24 +147,29 @@ const semanticChecks = [
   //    order g(z: absolute) {}
   //    f(2, g)`,
   // ],
-  // [
-  //   'function return types',
-  //   `order cred square(x: cred): cred { execute x * x }
-  //    order cred compose(): (cred)->cred { execute square }`,
-  // ],
+  [
+    'function return types',
+    `order cred square(cred x) { execute x }
+     order cred fncall() {emit(square(2))}
+     `,
+  ],
+
+  //['increment', 'cred x = 7 x++'],
+  // ['decrement', 'cred x = 7  x-- '],
+]
+
+const successfulTests = [
   ['hello', 'emit ("hello")'],
   ['assign', 'cred x = 1'],
   ['negation', 'cred x = -7'],
   ['boolean not', 'absolute a = darth dark'],
-  ['increment', 'cred x = 7  x++ '],
-  // ['decrement', 'cred x = 7  x-- '],
-  // ['multiply', 'cred x = 7 * 5 '],
-  // ['divide', 'cred x = 7 / 5 '],
-  // ['mod', 'cred x = 7 % 5 '],
-  // ['plus', 'cred x = 7 + 5 '],
-  // ['minus', 'cred x = 7 - 5 '],
-  // ['power', 'cred x = 7 ** 5 '],
-];
+  ['multiply', 'cred x = 7 * 5 '],
+  ['divide', 'cred x = 7 / 5 '],
+  ['mod', 'cred x = 7 % 5 '],
+  ['plus', 'cred x = 7 + 5 '],
+  ['minus', 'cred x = 7 - 5 '],
+  ['power', 'cred x = 7 ** 5 '],
+]
 
 const semanticErrors = [
   // ['redeclarations', 'emit x', /Identifier x not declared/],
@@ -254,24 +259,24 @@ const semanticErrors = [
   //   'emit(sin(light))',
   //   /Cannot assign a absolute to a cred/,
   // ],
-];
+]
 
 describe('The analyzer', () => {
   for (const [scenario, source] of semanticChecks) {
     it(`recognizes ${scenario}`, () => {
-      console.log(util.inspect(parse(source), { depth: null }));
-      console.log(parse(source));
-      assert.ok(analyze(parse(source)));
-    });
+      console.log(util.inspect(parse(source), { depth: null }))
+      console.log(parse(source))
+      assert.ok(analyze(parse(source)))
+    })
   }
   for (const [scenario, source, errorMessagePattern] of semanticErrors) {
     it(`throws on ${scenario}`, () => {
-      console.log(parse(source));
-      assert.throws(() => analyze(parse(source)), errorMessagePattern);
-    });
+      console.log(parse(source))
+      assert.throws(() => analyze(parse(source)), errorMessagePattern)
+    })
   }
   // it('can analyze all the nodes', () => {
   //   console.log(parse(source))
   //   assert.deepStrictEqual(util.format(analyze(parse(source))), expectedAst)
   // })
-});
+})

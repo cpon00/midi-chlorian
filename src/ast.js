@@ -25,12 +25,15 @@ export class Program {
 //Assignment
 export class Command {
   constructor(variable, initializer) {
+    console.log('variable type: ' + variable.type)
+    console.log('variable name: ' + variable.name)
     Object.assign(this, { variable, initializer })
   }
 }
 
 export class Variable {
   constructor(type, name) {
+    console.log(type + '< type: name >' + name)
     Object.assign(this, { type, name })
   }
 }
@@ -146,8 +149,8 @@ export class ForStatement {
 
 //Binary Expression
 export class BinaryExpression {
-  constructor(op, left, right) {
-    Object.assign(this, { op, left, right })
+  constructor(left, right) {
+    Object.assign(this, { left, right })
   }
 }
 

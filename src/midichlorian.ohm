@@ -5,7 +5,7 @@ Midichlorian {
                   | Designation
                   | WhileLoop
                   | ForLoop
-                  | Call
+                  | Call                      
                   | IfStatement
                   | Print
                   | Return
@@ -22,9 +22,7 @@ Midichlorian {
   Print           = emit Exp
   Return          = execute Exp?
   Break           = unleash
-  Call            = id "(" Args ")"
-  Args            = ListOf<Arg, ",">
-  Arg             = id ":" Exp
+  Call            = id "(" ListOf<Exp, ","> ")"
   Params          = "(" ListOf<Param, ","> ")"
   Param           = lifeform id
   HolocronObj     = "<" ListOf<HolocronContent, ","> ">"

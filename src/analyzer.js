@@ -4,7 +4,15 @@
 //
 // Analyzes the AST by look r semantic errors and resolving references.
 
-import { Type, OrderDeclaration, Order, TomeType, HolocronType } from './ast.js'
+import util from 'util'
+import {
+  Type,
+  OrderDeclaration,
+  Order,
+  TomeType,
+  HolocronType,
+  Variable,
+} from './ast.js'
 import * as stdlib from './stdlib.js'
 
 function must(condition, errorMessage) {
@@ -52,7 +60,12 @@ Object.assign(TomeType.prototype, {
 
 const check = (self) => ({
   isNumeric() {
-    must(['ket', 'cred'].includes(self), `Expected a number, found ${self}`)
+    console.log('self type ', self)
+    console.log(['ket', 'cred'].includes(self.type))
+    must(
+      ['ket', 'cred'].includes(self.type),
+      `Expected a number, found ${self.type}`
+    )
   },
   isNumericOrString() {
     must(
@@ -65,7 +78,7 @@ const check = (self) => ({
     must(self.type === 'absolute', `Expected an absolute, found ${self}`)
   },
   isInteger() {
-    must(self.type === 'cred', `Expected a cred, found ${self}`)
+    must(self.type === 'cred', `Expected a cred, found ${self.type}`)
   },
 
   isAType() {
@@ -83,10 +96,7 @@ const check = (self) => ({
     must(self.type.constructor === HolocronType, 'Holocron expected')
   },
   hasSameTypeAs(other) {
-    must(
-      self.type.isEquivalentTo(other.type),
-      'Operands do not have the same type'
-    )
+    must(self.isEquivalentTo(other), 'Operands do not have the same type')
   },
   allHaveSameType() {
     must(
@@ -146,8 +156,10 @@ const check = (self) => ({
   },
   isReturnableFrom(f) {
     //PROBLEM HERE
-    console.log('F: ' + f)
+    console.log('RETURNABLE FROM VALUE')
+    console.log(util.inspect(f))
     console.log('F.returntype: ' + f.returnType)
+    console.log(util.inspect(self))
     check(self).isAssignableTo(f.returnType)
   },
   match(targetTypes) {
@@ -215,8 +227,12 @@ class Context {
   }
   Command(d) {
     // Only analyze the declaration, not the variable
+    console.log('<d in Command> ', d)
     d.initializer = this.analyze(d.initializer)
-    d.variable.type = d.initializer.type
+    //console.log('<d> ', d)
+    //d.variable.type = d.initializer.type
+    // console.log('variable name')
+    //console.log(d.variable.name)
     this.add(d.variable.name, d.variable)
     return d
   }
@@ -270,10 +286,14 @@ class Context {
   }
 
   Increment(s) {
-    console.log(s.variable, '<<<<<<<<<<')
+    console.log('<s in increment>: ', s)
+    //console.log(s.variable.type)
+    //console.log(s.variable.name)
+    // console.log(s)
     s.variable = this.analyze(s.variable)
-    console.log(s.variable, '<<<<<<<<<<')
-    check(s.variable).isInteger()
+    // console.log(s.variable, '<<<<<<<<<<')
+    //console.log(s.variable.name)
+    check(s.variable.type).isInteger()
     return s
   }
   Designation(s) {
@@ -286,8 +306,12 @@ class Context {
   Execute(s) {
     //check(this).isInsideAFunction()
     //check(this.function).returnsSomething()
+    console.log('RETURN VALUE')
+    console.log(util.inspect(s.returnValue))
     s.returnValue = this.analyze(s.returnValue)
-    console.log('S RET VALUE: ' + s.returnValue)
+    console.log('RETURN VALUE')
+    console.log(util.inspect(s.returnValue))
+
     check(s.returnValue).isReturnableFrom(this.function)
     return s
   }
@@ -295,11 +319,6 @@ class Context {
     check(this).isInsideALoop()
     return s
   }
-  // ShortReturnStatement(s) {
-  //   check(this).isInsideAFunction()
-  //   check(this.function).returnsNothing()
-  //   return s
-  // }
   IfStatement(s) {
     s.test = this.analyze(s.test)
     check(s.test).isBoolean()
@@ -345,6 +364,9 @@ class Context {
   }
   //TODO
   BinaryExpression(e) {
+    //console.log('e: ', e)
+    //console.log(e.left)
+    //console.log(e.right)
     e.left = this.analyze(e.left)
     e.right = this.analyze(e.right)
     if (['+'].includes(e.op)) {
@@ -374,7 +396,7 @@ class Context {
     console.log(e.operand)
     e.operand = this.analyze(e.operand)
     if (e.op === '-') {
-      check(e.operand.type).isNumeric()
+      check(e.operand).isNumeric()
       e.type = e.operand.type
     } else if (e.op === 'darth') {
       check(e.operand).isBoolean()
@@ -435,6 +457,9 @@ class Context {
   }
   String(e) {
     return e
+  }
+  id(e) {
+    return this.lookup(e.expression)
   }
   Array(a) {
     return a.map((item) => this.analyze(item))

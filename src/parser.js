@@ -20,8 +20,8 @@ const astBuilder = midiChlorianGrammar.createSemantics().addOperation('ast', {
     return new ast.Designation(id.sourceString, expression.ast())
   },
 
-  Call(id, _left, args, _right) {
-    return new ast.Call(id.sourceString, args.ast())
+  Call(callee, _left, args, _right) {
+    return new ast.Call(callee.ast(), args.asIteration().ast())
   },
 
   Return(_execute, expression) {
@@ -110,12 +110,12 @@ const astBuilder = midiChlorianGrammar.createSemantics().addOperation('ast', {
     return new ast.Parameter(id.sourceString, lifeform.ast())
   },
 
-  Args(expressions) {
-    return new ast.Args(expressions.asIteration().ast())
-  },
-  Arg(id, _colon, expression) {
-    return new ast.Arg(id.sourceString, expression.ast())
-  },
+  // Args(expressions) {
+  //   return new ast.Args(expressions.asIteration().ast())
+  // },
+  // Arg(id, _colon, expression) {
+  //   return new ast.Arg(id.sourceString, expression.ast())
+  // },
   id(_first, _rest) {
     return new ast.id(this.sourceString)
   },
@@ -125,8 +125,8 @@ const astBuilder = midiChlorianGrammar.createSemantics().addOperation('ast', {
   HolocronContent(literal, _colon, expression) {
     return new ast.DictContent(literal.ast(), expression.ast())
   },
-  Increment(id, sign) {
-    return new ast.Increment(id.sourceString, sign.sourceString)
+  Increment(variable, op) {
+    return new ast.Increment(variable.ast())
   },
   primitive(typename) {
     return typename.sourceString
