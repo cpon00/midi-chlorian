@@ -25,15 +25,19 @@ export class Program {
 //Assignment
 export class Command {
   constructor(variable, initializer) {
-    console.log('variable type: ' + variable.type)
-    console.log('variable name: ' + variable.name)
     Object.assign(this, { variable, initializer })
+  }
+}
+
+//Reassignment
+export class Designation {
+  constructor(target, source) {
+    Object.assign(this, { target, source })
   }
 }
 
 export class Variable {
   constructor(type, name) {
-    console.log(type + '< type: name >' + name)
     Object.assign(this, { type, name })
   }
 }
@@ -99,15 +103,9 @@ export class HolocronType extends Type {
 
 //Increment
 export class Increment {
-  constructor(variable) {
+  constructor(variable, op) {
     this.variable = variable
-  }
-}
-
-//Assignment
-export class Designation {
-  constructor(target, source) {
-    Object.assign(this, { target, source })
+    this.op = op
   }
 }
 
@@ -149,8 +147,8 @@ export class WhileStatement {
 
 //For Statement
 export class ForStatement {
-  constructor(iterator, range, body) {
-    Object.assign(this, { iterator, range, body })
+  constructor(assignment, expression, increment, body) {
+    Object.assign(this, { assignment, expression, increment, body })
   }
 }
 
@@ -210,17 +208,6 @@ export class Call {
 export class id {
   constructor(name) {
     this.name = name
-  }
-}
-
-export class Arg {
-  constructor(expression) {
-    this.expression = expression
-  }
-}
-export class Args {
-  constructor(argumentList) {
-    this.argumentList = argumentList
   }
 }
 

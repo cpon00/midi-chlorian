@@ -1,5 +1,7 @@
-cred x = 200
-ket p = -23.66980
-transmission s = "sdjkfhsdlkjfgsdkhfsa;s"
-absolute y = light and dark
-emit x
+absolute y = light
+ket x = 2.16
+cred a = 300
+cred b = -200
+transmission d = "jason smellz"
+
+

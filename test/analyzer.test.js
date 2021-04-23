@@ -125,41 +125,10 @@ Program {
   }
 `.slice(1, -1)
 
-const semanticChecks = [
-  //['return in nested if', 'order absolute f() { should dark {execute light}}'],
-  // ['break in nested if', 'as dark {should light {unleash}}'],
-  // //["continue in nested if", "as dark {should light {endure}}"],
-  // ['assigned functions', 'order absolute f() {}\norder g = f\ng = f'],
-  // [
-  //   'call of assigned functions',
-  //   'order absolute f(cred x) {}\norder g=f\ng(1)',
-  // ],
-  // [
-  //   'call of assigned function in expression',
-  //   `order absolute f(cred x, absolute y): cred {}
-  //   order g = f
-  //   emit( g(1, light))
-  //   f = g // Type check here`,
-  // ],
-  // [
-  //   'pass a function to a function',
-  //   `order cred f(cred y, (absolute)->void): cred { execute 1 }
-  //    order g(z: absolute) {}
-  //    f(2, g)`,
-  // ],
-  [
-    'function return types',
-    `order cred square(cred x) { execute x }
-     order cred fncall() {emit(square(2))}
-     `,
-  ],
-
-  //['increment', 'cred x = 7 x++'],
-  // ['decrement', 'cred x = 7  x-- '],
-]
+const semanticChecks = []
 
 const successfulTests = [
-  ['hello', 'emit ("hello")'],
+  ['hello', 'emit "hello"'],
   ['assign', 'cred x = 1'],
   ['negation', 'cred x = -7'],
   ['boolean not', 'absolute a = darth dark'],
@@ -169,6 +138,34 @@ const successfulTests = [
   ['plus', 'cred x = 7 + 5 '],
   ['minus', 'cred x = 7 - 5 '],
   ['power', 'cred x = 7 ** 5 '],
+
+  ['increment', 'cred x = 7 x++'],
+  ['decrement', 'cred x = 7  x-- '],
+  [
+    'Order fibonacci',
+    `order cred fibonacci (cred count) {
+      should (count <= 1) {
+        execute 1
+      }
+      execute fibonacci(count-1) + fibonacci(count-2)
+    }
+  `,
+  ],
+  [
+    'function return types',
+    `order cred square(cred x) { execute x }
+     order cred fncall() {emit(square(2))}
+     `,
+  ],
+  [
+    'all basic types',
+    `
+    cred x = 70
+    ket y = 99.99
+    absolute z = light
+    transmission abc = "You are my only hope"
+  `,
+  ],
 ]
 
 const semanticErrors = [
@@ -262,16 +259,16 @@ const semanticErrors = [
 ]
 
 describe('The analyzer', () => {
-  for (const [scenario, source] of semanticChecks) {
+  for (const [scenario, source] of successfulTests) {
     it(`recognizes ${scenario}`, () => {
-      console.log(util.inspect(parse(source), { depth: null }))
-      console.log(parse(source))
+      //console.log(util.inspect(parse(source), { depth: null }))
+      //console.log(parse(source))
       assert.ok(analyze(parse(source)))
     })
   }
   for (const [scenario, source, errorMessagePattern] of semanticErrors) {
     it(`throws on ${scenario}`, () => {
-      console.log(parse(source))
+      //console.log(parse(source))
       assert.throws(() => analyze(parse(source)), errorMessagePattern)
     })
   }

@@ -16,8 +16,8 @@ const astBuilder = midiChlorianGrammar.createSemantics().addOperation('ast', {
     const variable = new ast.Variable(lifeform.ast(), id.sourceString)
     return new ast.Command(variable, expression.ast())
   },
-  Designation(id, _open, _credLit, _close, _eq, expression) {
-    return new ast.Designation(id.sourceString, expression.ast())
+  Designation(variable, _open, _credLit, _close, _eq, expression) {
+    return new ast.Designation(variable.ast(), expression.ast())
   },
 
   Call(callee, _left, args, _right) {
@@ -111,13 +111,6 @@ const astBuilder = midiChlorianGrammar.createSemantics().addOperation('ast', {
   Param(lifeform, id) {
     return new ast.Parameter(id.sourceString, lifeform.ast())
   },
-
-  // Args(expressions) {
-  //   return new ast.Args(expressions.asIteration().ast())
-  // },
-  // Arg(id, _colon, expression) {
-  //   return new ast.Arg(id.sourceString, expression.ast())
-  // },
   id(_first, _rest) {
     return new ast.id(this.sourceString)
   },
@@ -128,22 +121,24 @@ const astBuilder = midiChlorianGrammar.createSemantics().addOperation('ast', {
     return new ast.DictContent(literal.ast(), expression.ast())
   },
   Increment(variable, op) {
-    return new ast.Increment(variable.ast())
+    return new ast.Increment(variable.ast(), op.sourceString)
   },
   primitive(typename) {
     return typename.sourceString
   },
   transmissionLit(_open, midichlorians, _close) {
+    console.log('tranmission')
     return new ast.Literal(midichlorians.sourceString, 'transmission')
   },
   credLit(digits) {
     return new ast.Literal(Number(this.sourceString), 'cred')
   },
   ketLit(_whole, _point, _fraction) {
-    return new ast.Literal(Number(this.sourceString), 'cred')
+    return new ast.Literal(Number(this.sourceString), 'ket')
   },
   absoluteLit(value) {
-    return new ast.Literal(this.sourceString === 'light', 'absolute')
+    console.log('absolute')
+    return new ast.Literal(value.sourceString, 'absolute')
   },
   Exp_binary(left, op, right) {
     return new ast.BinaryExpression(op.sourceString, left.ast(), right.ast())

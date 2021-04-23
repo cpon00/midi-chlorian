@@ -16,7 +16,7 @@
 import parse from './parser.js'
 import analyze from './analyzer.js'
 // import optimize from "./optimizer.js"
-// import generate from "./generator/index.js"
+import generate from './generator.js'
 
 function prettied(node) {
   // Return a compact and pretty string representation of the node graph,
@@ -57,8 +57,8 @@ export default function compile(source, outputType) {
     return analyze(parse(source))
     // } else if (outputType === "optimized") {
     //   return optimize(analyze(parse(source)))
-    // } else if (["js", "c", "llvm"].includes(outputType)) {
-    //   return generate(outputType)(optimize(analyze(parse(source))))
+  } else if (outputType === 'js') {
+    return generate(analyze(parse(source)))
   } else {
     return 'Unknown Output Type'
   }

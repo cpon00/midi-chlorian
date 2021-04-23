@@ -1,1 +1,1 @@
-emit "hello"
+emit 5

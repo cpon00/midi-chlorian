@@ -60,8 +60,6 @@ Object.assign(TomeType.prototype, {
 
 const check = (self) => ({
   isNumeric() {
-    console.log('self type ', self)
-    console.log(['ket', 'cred'].includes(self.type))
     must(
       ['ket', 'cred'].includes(self.type),
       `Expected a number, found ${self.type}`
@@ -74,8 +72,10 @@ const check = (self) => ({
     )
   },
   isBoolean() {
-    console.log(`self is ${JSON.stringify(self)}`)
-    must(self.type === 'absolute', `Expected an absolute, found ${self}`)
+    must(
+      self.type === 'absolute',
+      `Expected an absolute, found ${util.inspect(self)}`
+    )
   },
   isInteger() {
     must(self.type === 'cred', `Expected a cred, found ${self.type}`)
@@ -112,8 +112,6 @@ const check = (self) => ({
   // },
   isAssignableTo(type) {
     // self is a type, can objects of self be assigned to vars of type
-
-    console.log('type: ' + type)
     if (typeof self === 'string') {
       must(self === type), `Cannot assign a ${type} to a ${self}`
     } else if (self.constructor === TomeType) {
@@ -138,7 +136,6 @@ const check = (self) => ({
     must(self.function, 'Return can only appear in a function')
   },
   isCallable() {
-    console.log(`CHECKING isCallable ${util.inspect(self)}`)
     must(self.constructor == Order, 'Call of non-function or non-constructor')
   },
   returnsNothing() {
@@ -148,24 +145,13 @@ const check = (self) => ({
     )
   },
   returnsSomething() {
-    //TODO
-    console.log('RETURNS SOMETHING: ' + self.type)
     must(self.type.returnType !== Type.VOID, 'Cannot return a value here')
   },
   isReturnableFrom(f) {
-    //PROBLEM HERE
-    console.log('RETURNABLE FROM VALUE')
-    console.log(util.inspect(f))
-    console.log('F.returntype: ' + util.inspect(f.returnType))
     check(self.type).isAssignableTo(f.returnType)
   },
   match(params) {
     // self is the array of arguments
-    console.log(
-      `Matching params: self is ${util.inspect(self)}, params is ${util.inspect(
-        params
-      )}`
-    )
     must(
       params.length === self.length,
       `${params.length} argument(s) required but ${self.length} passed`
@@ -173,7 +159,6 @@ const check = (self) => ({
     params.forEach((p, i) => check(self[i].type).isAssignableTo(p.type))
   },
   matchParametersOf(callee) {
-    console.log(`In matchParametersOf, callee is ${util.inspect(callee)}`)
     check(self).match(callee.parameters)
   },
 })
@@ -218,7 +203,6 @@ class Context {
     return new Context(this, configuration)
   }
   analyze(node) {
-    console.log('ANALYZE: ' + node.constructor.name)
     return this[node.constructor.name](node)
   }
   Program(p) {
@@ -227,16 +211,11 @@ class Context {
   }
   Command(d) {
     // Only analyze the declaration, not the variable
-    console.log('<d in Command> ', d)
     d.initializer = this.analyze(d.initializer)
-    //console.log('<d> ', d)
     //d.variable.type = d.initializer.type
-    // console.log('variable name')
-    //console.log(d.variable.name)
     this.add(d.variable.name, d.variable)
     return d
   }
-  //NEED TO FIX TODO
   Type(t) {
     if (typeof t === 'string') {
       return t
@@ -286,32 +265,18 @@ class Context {
   }
 
   Increment(s) {
-    console.log('<s in increment>: ', s)
-    //console.log(s.variable.type)
-    //console.log(s.variable.name)
-    // console.log(s)
     s.variable = this.analyze(s.variable)
-    // console.log(s.variable, '<<<<<<<<<<')
-    //console.log(s.variable.name)
     check(s.variable).isInteger()
     return s
   }
   Designation(s) {
     s.source = this.analyze(s.source)
     s.target = this.analyze(s.target)
-    check(s.source).isAssignableTo(s.target.type)
-    check(s.target).isNotReadOnly()
+    check(s.source.type).isAssignableTo(s.target.type)
     return s
   }
   Execute(s) {
-    //check(this).isInsideAFunction()
-    //check(this.function).returnsSomething()
-    console.log('RETURN VALUE')
-    console.log(util.inspect(s.returnValue))
     s.returnValue = this.analyze(s.returnValue)
-    console.log('RETURN VALUE')
-    console.log(util.inspect(s.returnValue))
-
     check(s.returnValue).isReturnableFrom(this.function)
     return s
   }
@@ -343,34 +308,15 @@ class Context {
     return s
   }
 
-  //For Loop Statement, need help with this
-  ForRangeStatement(s) {
-    s.low = this.analyze(s.low)
-    check(s.low).isInteger()
-    s.high = this.analyze(s.high)
-    check(s.high).isInteger()
-    s.iterator = new Variable(s.iterator, true)
-    s.iterator.type = 'cred'
-    const bodyContext = this.newChild({ inLoop: true })
-    bodyContext.add(s.iterator.name, s.iterator)
-    s.body = bodyContext.analyze(s.body)
-    return s
-  }
   ForStatement(s) {
-    s.collection = this.analyze(s.collection)
-    check(s.collection).isAnArray()
-    s.iterator = new Variable(s.iterator, true)
-    s.iterator.type = s.collection.type.baseType
-    const bodyContext = this.newChild({ inLoop: true })
-    bodyContext.add(s.iterator.name, s.iterator)
-    s.body = bodyContext.analyze(s.body)
+    s.assignment = this.analyze(s.assignment)
+    s.expression = this.analyze(s.expression)
+    s.increment = this.analyze(s.increment)
+    s.body = this.newChild({ inLoop: true }).analyze(s.body)
     return s
   }
-  //TODO
+
   BinaryExpression(e) {
-    //console.log('e: ', e)
-    //console.log(e.left)
-    //console.log(e.right)
     e.left = this.analyze(e.left)
     e.right = this.analyze(e.right)
     if (['+'].includes(e.op)) {
@@ -397,7 +343,6 @@ class Context {
   }
   //TODO
   UnaryExpression(e) {
-    console.log(e.operand)
     e.operand = this.analyze(e.operand)
     if (e.op === '-') {
       check(e.operand).isNumeric()
@@ -432,12 +377,12 @@ class Context {
   Literal(e) {
     if (Number.isInteger(e.value)) {
       e.type = 'cred'
+    } else if (['light', 'dark'].includes(e.value)) {
+      e.type = 'absolute'
     } else if (typeof e.value === 'number') {
       e.type = 'ket'
     } else if (typeof e.value === 'string') {
       e.type = 'transmission'
-    } else if (typeof e.value === 'boolean') {
-      e.type = 'absolute'
     }
     return e
   }
