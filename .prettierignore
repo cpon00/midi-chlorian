@@ -1,2 +1,5 @@
-# Ignore artifacts
-README.md
+#Ignore artifacts:
+coverage
+docs
+examples
+node_modules

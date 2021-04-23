@@ -1,0 +1,113 @@
+Midichlorian {
+  Program         = Directive*
+  Directive       =  Command
+                  | Order
+                  | Designation
+                  | WhileLoop
+                  | ForLoop
+                  | Call                      
+                  | IfStatement
+                  | Print
+                  | Return
+                  | Increment
+                  | Break
+  Command         = lifeform id "=" Exp
+  Designation     = id ("["credLit"]")? "=" Exp
+  IfStatement     = should Exp Body (altshould Exp Body)*
+                     (elseshould Body)?
+  WhileLoop       = as Exp Body
+  ForLoop         = force "(" Command "; " Exp "; " Increment ")" Body
+  Body            = "{"Directive*"}"
+  Order           = order lifeform id Params Body
+  Print           = emit Exp
+  Return          = execute Exp?
+  Break           = unleash
+  Call            = id "(" ListOf<Exp, ","> ")"
+  Params          = "(" ListOf<Param, ","> ")"
+  Param           = lifeform id
+  HolocronObj     = "<" ListOf<HolocronContent, ","> ">"
+  HolocronContent = Literal ":" Exp
+  Exp             = Exp or Exp1                   --binary
+                  | Exp1
+  Exp1            = Exp1 and Exp2                 --binary
+                  | Exp2
+  Exp2            = Exp2 relop Exp3               --binary
+                  | Exp3
+  Exp3            = Exp3 addop Exp4               --binary
+                  | Exp4
+  Exp4            = Exp4 mulop Exp5               --binary
+                  | Exp5
+  Exp5            = Exp5 power Exp6  --binary
+                  | Exp6
+  Exp6            = prefix Exp7                   --unary
+                  | Exp7
+  Exp7            = Exp7("[" | "?[") Exp "]"      --subscript
+                  | Call
+                  | Literal
+                  | HolocronObj
+                  | id
+                  | "(" Exp ")"                    --parens
+                  | "[" NonemptyListOf<Exp, ","> "]" --arraylit
+  Increment       = id ("++" | "--")
+  relop           = "<=" | ">=" | "<" | ">" | "onewith"
+  addop           = "+" | "-"
+  mulop           = "*" | "/" | "%"
+  power           = "**"
+  prefix          = "-" | "darth"
+  Literal         = transmissionLit
+                  | ketLit
+                  | credLit
+                  | absoluteLit
+  lifeform        = primitive
+                  | tome "<"lifeform">"             --tometype
+                  | holocron "<"lifeform", " lifeform ">" --dicttype
+  primitive       = transmission
+                  | ket
+                  | cred
+                  | absolute
+  transmissionLit = "\'" midichlorian* "\'" | "\"" midichlorian* "\""
+  midichlorian    = ~"\n" ~"\r" ~"\\" ~"\'" ~"\""  any | escape
+  escape          = "\\" ("n" | "\\" | "'" | "\"")
+  credLit         = digit+
+  ketLit          = digit+ "." digit+
+  absoluteLit     = light | dark
+  order           = "order" ~alnum
+  emit            = "emit" ~alnum
+  execute         = "execute" ~alnum
+  unleash         = "unleash" ~alnum
+  tome            = "tome" ~alnum
+  holocron        = "holocron" ~alnum
+  should          = "should" ~alnum
+  altshould       = "altshould" ~alnum
+  elseshould      = "elseshould" ~alnum
+  as              = "as" ~alnum
+  light           = "light" ~alnum
+  dark            = "dark" ~alnum
+  force           = "force" ~alnum
+  transmission    = "transmission" ~alnum
+  ket             = "ket" ~alnum
+  cred            = "cred" ~alnum
+  absolute        = "absolute" ~alnum
+  or              = "or" ~alnum
+  and             = "and" ~alnum
+  keyword         = order
+                  | emit
+                  | execute
+                  | unleash
+                  | tome
+                  | holocron
+                  | should
+                  | altshould
+                  | elseshould
+                  | as
+                  | light
+                  | dark
+                  | force
+                  | transmission
+                  | ket
+                  | cred
+                  | absolute
+  id              = ~keyword letter alnum*
+  comment         = "><" (~"\n" any)* ("\n" | end)   --singleLine
+  space           += comment
+ }

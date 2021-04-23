@@ -1,4 +1,5 @@
 // from https://github.com/rtoal/ael-ohm/blob/master/src/ast.js
+// also from https://github.com/rtoal/carlos-compiler/blob/11-strings/src/ast.js
 
 //Abstract Syntax Tree Nodes
 //
@@ -14,124 +15,205 @@
 
 import util from 'util'
 
-export class Directive {
-    constructor(statements) {
-        this.statements = statements
-    }
-    [util.inspect.custom]() {
-        return prettied(this)
-    }
+//Program
+export class Program {
+  constructor(statements) {
+    this.statements = statements
+  }
 }
 
-// export class VariableDeclaration {
-//     constructor(name, initializer) {
-//         Object.assign(this, { name, initializer })
-//     }
-// }
+//Assignment
+export class Command {
+  constructor(variable, initializer) {
+    Object.assign(this, { variable, initializer })
+  }
+}
 
-// export class Variable {
-//     constructor(name) {
-//         this.name = name
-//     }
-// }
+//Reassignment
+export class Designation {
+  constructor(target, source) {
+    Object.assign(this, { target, source })
+  }
+}
 
-// export class Assignment {
-//     constructor(target, source) {
-//         Object.assign(this, { target, source })
-//     }
-// }
+export class Variable {
+  constructor(type, name) {
+    Object.assign(this, { type, name })
+  }
+}
 
+//TODO: Designation? Reassignment?
+
+//Type of primitive lifeform: transmission, ket, cred, absolute, superclass of other types
+export class Type {
+  constructor(name) {
+    this.name = name
+  }
+  static BOOLEAN = new Type('absolute')
+  static INT = new Type('cred')
+  static FLOAT = new Type('ket')
+  static STRING = new Type('transmission')
+
+  isEquivalentTo(target) {
+    return this == target
+  }
+
+  isAssignableTo(target) {
+    return this.isEquivalentTo(target)
+  }
+}
+
+//Function Declaration
+export class OrderDeclaration {
+  constructor(fun, body) {
+    Object.assign(this, { fun, body })
+  }
+}
+
+//Function
 export class Order {
-    constructor(type, parameters, block) {
-        Object.assign(this, { type, parameters, block })
-    }
+  constructor(name, parameters, returnType) {
+    Object.assign(this, { name, parameters, returnType })
+  }
 }
 
-export class Transmission {
-    constructor(type, parameters, block) {
-        Object.assign(this, { type, parameters, block })
-    }
-}
-
-export class Midichlorian {
-    constructor(argument) {
-        this.argument = argument
-    }
-}
-
-export class ForceLoop {
-    constructor(initializer, test, inc, body) {
-        Object.assign(this, { initializer, test, inc, body })
-    }
-}
-
-export class Emit {
-    constructor(arg) {
-        this.argument = arg
-    }
-}
-
-export class Arguments {
-    constructor(args) {
-        this.args = args
-    }
-}
-
+//Parameter
 export class Parameter {
-    constructor(names, types) {
-        Object.assign(this, { names, types })
-    }
+  constructor(name, type) {
+    Object.assign(this, { name, type })
+  }
 }
 
+//Array Type
+export class TomeType extends Type {
+  constructor(baseType) {
+    super(`[${baseType}]`)
+    this.baseType = baseType
+  }
+}
+
+//Dictionary Type
+export class HolocronType extends Type {
+  constructor(keyType, valueType) {
+    super(`[${keyType}], [${valueType}]`)
+    this.keyType = keyType
+    this.valueType = valueType
+  }
+}
+
+//Increment
+export class Increment {
+  constructor(variable, op) {
+    this.variable = variable
+    this.op = op
+  }
+}
+
+//Return
+export class Execute {
+  constructor(returnValue) {
+    this.returnValue = returnValue
+    //Object.assign(this, { returnValue })
+  }
+}
+
+//Print
+export class Print {
+  constructor(argument) {
+    this.argument = argument
+  }
+}
+
+//Break
+export class Unleash {
+  //intentionally empty
+}
+
+//If Statement
+export class IfStatement {
+  // Example: if x < 3 { print(100); } else { break; }
+  constructor(test, consequent, alternate) {
+    Object.assign(this, { test, consequent, alternate })
+  }
+}
+
+//While Statement
+export class WhileStatement {
+  // Example: while level != 90 { level += random(-3, 8); }
+  constructor(test, body) {
+    Object.assign(this, { test, body })
+  }
+}
+
+//For Statement
+export class ForStatement {
+  constructor(assignment, expression, increment, body) {
+    Object.assign(this, { assignment, expression, increment, body })
+  }
+}
+
+//Binary Expression
 export class BinaryExpression {
-    constructor(operation, left, right) {
-        Object.assign(this, { operation, left, right })
-    }
+  constructor(op, left, right) {
+    Object.assign(this, { op, left, right })
+  }
 }
 
-// export class UnaryExpression {
-//     constructor(op, operand) {
-//         Object.assign(this, { op, operand })
-//     }
-// }
+//Unary Expression
+export class UnaryExpression {
+  // Example: -55
+  constructor(op, operand) {
+    Object.assign(this, { op, operand })
+  }
+}
 
-// export class IdentifierExpression {
-//     constructor(name) {
-//         this.name = name
-//     }
-// }
+//Subscript Expression
+export class SubscriptExpression {
+  // Example: a[20]
+  constructor(array, index) {
+    Object.assign(this, { array, index })
+  }
+}
 
-function prettied(node) {
-    // Return a compact and pretty string representation of the node graph,
-    // taking care of cycles. Written here from scratch because the built-in
-    // inspect function, while nice, isn't nice enough.
-    const tags = new Map()
+//Array Expression
+export class ArrayExpression {
+  // Example: ["Emma", "Norman", "Ray"]
+  constructor(elements) {
+    this.elements = elements
+  }
+}
 
-    function tag(node) {
-        if (tags.has(node) || typeof node !== 'object' || node === null) return
-        tags.set(node, tags.size + 1)
-        for (const child of Object.values(node)) {
-            Array.isArray(child) ? child.forEach(tag) : tag(child)
-        }
-    }
+//Dictionary Expression
+export class DictExpression {
+  constructor(elements) {
+    this.elements = elements
+  }
+}
 
-    function* lines() {
-        function view(e) {
-            if (tags.has(e)) return `#${tags.get(e)}`
-            if (Array.isArray(e)) return `[${e.map(view)}]`
-            return util.inspect(e)
-        }
-        for (let [node, id] of [...tags.entries()].sort(
-            (a, b) => a[1] - b[1]
-        )) {
-            let [type, props] = [node.constructor.name, '']
-            Object.entries(node).forEach(
-                ([k, v]) => (props += ` ${k}=${view(v)}`)
-            )
-            yield `${String(id).padStart(4, ' ')} | ${type}${props}`
-        }
-    }
+//Dictionary Content
+export class DictContent {
+  constructor(literal, expression) {
+    Object.assign(this, { literal, expression })
+  }
+}
 
-    tag(node)
-    return [...lines()].join('\n')
+//Call
+export class Call {
+  constructor(callee, args) {
+    Object.assign(this, { callee, args })
+  }
+}
+
+//id
+export class id {
+  constructor(name) {
+    this.name = name
+  }
+}
+
+export class Literal {
+  constructor(value, type) {
+    this.value = value
+    this.type = type
+  }
 }

@@ -10,13 +10,11 @@
   },
   "dependencies": {
     "c8": "^7.5.0",
-    "eslint-config-prettier": "^7.2.0",
-    "ohm-js": "^15.4.1",
-    "prettier": "^2.2.1"
+    "ohm-js": "^15.4.1"
   },
   "devDependencies": {
     "c8": "^7.5.0",
-    "mocha": "^8.2.1"
+    "mocha": "^8.3.2"
   },
   "scripts": {
     "test": "c8 node_modules/.bin/mocha"
