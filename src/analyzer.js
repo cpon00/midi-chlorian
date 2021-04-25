@@ -100,7 +100,7 @@ const check = (self) => ({
   },
   allHaveSameType() {
     must(
-      self.slice(1).every((e) => e.type.isEquivalentTo(self[0].type)),
+      self.slice(1).every((e) => e.type === self[0].type),
       'Not all elements have the same type'
     )
   },
@@ -220,7 +220,7 @@ class Context {
     if (typeof t === 'string') {
       return t
     } else if (t.constructor === TomeType) {
-      t.baseType = this.Type(t.baseType)
+      t.baseType = this.TomeType(t.baseType)
       return t
     } else {
       t.keyType = this.Type(t.keyType)
@@ -369,9 +369,10 @@ class Context {
   ArrayExpression(a) {
     a.elements = this.analyze(a.elements)
     check(a.elements).allHaveSameType()
-    a.type = new ArrayType(a.elements[0].type)
+    //a.type = new ArrayType(a.elements[0].type)
     return a
   }
+
   Call(c) {
     c.callee = this.analyze(c.callee)
     check(c.callee).isCallable()

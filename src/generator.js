@@ -133,11 +133,24 @@ export default function generate(program) {
     },
     //TODO
     ArrayExpression(e) {
-      return `${e}`
+      const array = []
+      console.log(' Expression:   ', e)
+      for (let element of e.elements) {
+        console.log('Element:  ', element)
+        array.push(`${gen(element)}`)
+      }
+      return `[` + array + `]`
     },
+
     //TODO
     DictExpression(e) {
-      return `${e}`
+      const array = []
+      console.log('Dict Expression:   ', e)
+      for (let element of e.elements) {
+        
+        array.push(`${gen(element)}`)
+      }
+      return `[` + array + `]
     },
     //TODO
     DictContent(c) {
