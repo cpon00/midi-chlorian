@@ -109,7 +109,6 @@ const astBuilder = midiChlorianGrammar.createSemantics().addOperation('ast', {
     return typename.sourceString
   },
   transmissionLit(_open, midichlorians, _close) {
-    console.log('tranmission')
     return new ast.Literal(midichlorians.sourceString, 'transmission')
   },
   credLit(digits) {

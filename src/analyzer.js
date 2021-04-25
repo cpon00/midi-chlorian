@@ -104,6 +104,18 @@ const check = (self) => ({
       'Not all elements have the same type'
     )
   },
+  allHaveSameKeyValueTypes() {
+    must(
+      self
+        .slice(1)
+        .every(
+          (e) =>
+            e.key.type === self[0].key.type &&
+            e.value.type === self[0].value.type
+        ),
+      'Not all key_value types have the same types'
+    )
+  },
   // isNotRecursive() {
   //   must(
   //     !self.fields.map((f) => f.type).includes(self),
@@ -120,8 +132,8 @@ const check = (self) => ({
     } else {
       must(
         type.constructor === HolocronType &&
-          type.keyType === self.key &&
-          type.valueType === self.value
+          type.keyType === self.keyType &&
+          type.valueType === self.valueType
       ),
         `Cannot assign a ${type.baseType} to a ${self.baseType}`
     }
@@ -368,24 +380,22 @@ class Context {
   ArrayExpression(a) {
     a.elements = this.analyze(a.elements)
     check(a.elements).allHaveSameType()
+    //check(a.elements[0].hasSameTypeAs())
     //a.type = new ArrayType(a.elements[0].type)
     return a
   }
   DictExpression(d) {
-    //console.log(d.keyType)
     d.elements = this.analyze(d.elements)
-    //console.log('D.elements:   ', d.elements)
-    // for (let c of d.elements) {
-    //   check(c.key).isAssignableTo(d.keyType)
-    // }
+    check(d.elements).allHaveSameKeyValueTypes()
+    //check(d.elements).isAssignableTo(self)
+
+    console.log('D:   ', d)
     return d
   }
 
   DictContent(c) {
-    console.log('CONTENT: ', c)
     c.key = this.analyze(c.key)
     c.value = this.analyze(c.value)
-    //check(c.key).isAssignableTo()
     return c
   }
 

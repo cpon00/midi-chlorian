@@ -1,1 +1,1 @@
-holocron<cred, transmission> carterSmellz = <1: 2, 2: "goodbye">
+holocron<cred, transmission> carterSmellz = <"nice": 2, "nice": 2>
