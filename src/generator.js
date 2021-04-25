@@ -18,7 +18,7 @@ export default function generate(program) {
   })(new Map())
 
   const gen = (node) => {
-    //console.log(node.constructor.name)
+    console.log('NAME:  ', node.constructor.name)
     return generators[node.constructor.name](node)
   }
 
@@ -39,6 +39,7 @@ export default function generate(program) {
     },
 
     Variable(v) {
+      //console.log('V in variable:  ', v)
       return targetName(v)
     },
 
@@ -63,15 +64,17 @@ export default function generate(program) {
     },
 
     Increment(s) {
-      output.push(`${gen(s.variable) + gen(s.op)}`)
+      //console.log(s)
+      output.push(`${gen(s.variable) + s.op}`)
     },
 
     Execute(e) {
+      console.log(e)
       output.push(`return ${gen(e.returnValue)}`)
     },
 
     Print(p) {
-      console.log(p)
+      //console.log(p)
       output.push(`console.log(${gen(p.argument)})`)
     },
 
@@ -120,6 +123,10 @@ export default function generate(program) {
     },
 
     BinaryExpression(e) {
+      console.log('BINARY EXPRESSION:  ')
+      console.log(e)
+      console.log(e.left)
+      console.log(e.right)
       const op = { '==': '===', '!=': '!==' }[e.op] ?? e.op
       return `${gen(e.left)} ${op} ${gen(e.right)}`
     },
@@ -146,7 +153,8 @@ export default function generate(program) {
     },
 
     Call(c) {
-      output.push(`${gen(c.callee)}(${c.args})`)
+      console.log('CALL:   ', c)
+      output.push(`${gen(c.callee)}(${gen(c.args)})`)
     },
 
     id(i) {
@@ -154,9 +162,9 @@ export default function generate(program) {
     },
 
     Literal(l) {
-      //console.log(l)
       if (l.type === 'absolute') {
-        return l.value
+        let bool = l.value === 'light' ? true : false
+        return bool
       }
       return JSON.stringify(l.value)
     },
