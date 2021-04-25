@@ -137,6 +137,12 @@ export class IfStatement {
   }
 }
 
+export class ShortIfStatement {
+  constructor(test, consequent) {
+    Object.assign(this, { test, consequent })
+  }
+}
+
 //While Statement
 export class WhileStatement {
   // Example: while level != 90 { level += random(-3, 8); }

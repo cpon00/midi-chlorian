@@ -64,24 +64,13 @@ const astBuilder = midiChlorianGrammar.createSemantics().addOperation('ast', {
     )
   },
 
-  IfStatement(
-    _should,
-    expression1,
-    body1,
-    _altshould,
-    expression2,
-    body2,
-    _elseshould,
-    body3
-  ) {
-    return new ast.IfStatement(
-      expression1.ast(),
-      body1.ast(),
-      expression2.ast(),
-      body2.ast(),
-      body3.ast()
-    )
+  IfStatement_long(_should, test, consequent, _else, alternate) {
+    return new ast.IfStatement(test.ast(), consequent.ast(), alternate.ast())
   },
+  IfStatement_short(_should, test, consequent) {
+    return new ast.ShortIfStatement(test.ast(), consequent.ast())
+  },
+
   Print(_emit, expression) {
     return new ast.Print(expression.ast())
   },

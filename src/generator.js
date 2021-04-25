@@ -153,8 +153,11 @@ export default function generate(program) {
     },
 
     Call(c) {
-      console.log('CALL:   ', c)
-      output.push(`${gen(c.callee)}(${gen(c.args)})`)
+      const callCode = `${gen(c.callee)}(${gen(c.args)})`
+      if (c.callee.returnType) {
+        return callCode
+      }
+      output.push(callCode)
     },
 
     id(i) {

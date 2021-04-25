@@ -289,6 +289,7 @@ class Context {
     return s
   }
   IfStatement(s) {
+    console.log('IF STATEMENT S:   ', s)
     s.test = this.analyze(s.test)
     check(s.test).isBoolean()
     s.consequent = this.newChild().analyze(s.consequent)
@@ -300,6 +301,11 @@ class Context {
       s.alternate = this.analyze(s.alternate)
     }
     return s
+  }
+  ShortIfStatement(s) {
+    s.test = this.analyze(s.test)
+    check(s.test).isBoolean()
+    s.consequent = this.newChild().analyze(s.consequent)
   }
   WhileStatement(s) {
     s.test = this.analyze(s.test)

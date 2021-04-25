@@ -13,8 +13,8 @@ Midichlorian {
                   | Break
   Command         = lifeform id "=" Exp
   Designation     = id ("["credLit"]")? "=" Exp
-  IfStatement     = should Exp Body (altshould Exp Body)*
-                     (elseshould Body)?
+  IfStatement     = should Exp Body else (Body | IfStatement) --long
+                  | should Exp Body                           --short
   WhileLoop       = as Exp Body
   ForLoop         = force "(" Command "; " Exp "; " Increment ")" Body
   Body            = "{"Directive*"}"
@@ -78,8 +78,7 @@ Midichlorian {
   tome            = "tome" ~alnum
   holocron        = "holocron" ~alnum
   should          = "should" ~alnum
-  altshould       = "altshould" ~alnum
-  elseshould      = "elseshould" ~alnum
+  else            = "else" ~alnum
   as              = "as" ~alnum
   light           = "light" ~alnum
   dark            = "dark" ~alnum
@@ -97,8 +96,7 @@ Midichlorian {
                   | tome
                   | holocron
                   | should
-                  | altshould
-                  | elseshould
+                  | else
                   | as
                   | light
                   | dark
