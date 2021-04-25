@@ -64,8 +64,9 @@ export default function generate(program) {
     },
 
     Increment(s) {
-      //console.log(s)
-      output.push(`${gen(s.variable) + s.op}`)
+      return `${gen(s.variable)}${s.op}`
+
+      //output.push(`${gen(s.variable)}${s.op}`)
     },
 
     Execute(e) {
@@ -102,12 +103,12 @@ export default function generate(program) {
     },
 
     ForStatement(s) {
+      console.log('FOR STATMENT')
+      console.log(s)
       output.push(
         `for (let ${gen(s.assignment.variable)} = ${gen(
           s.assignment.variable
-        )}; ${gen(s.expression.left)} ${gen(s.expression)} ${gen(
-          s.expression.right
-        )}; ${gen(s.increment.variable)} ${gen(s.increment)}) {`
+        )}; ${gen(s.expression)}; ${gen(s.increment)}) {`
       )
       gen(s.body)
       output.push('}')
