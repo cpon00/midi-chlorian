@@ -22,7 +22,6 @@ function must(condition, errorMessage) {
   }
 }
 
-// //TYPE EQUIVALENCE
 Object.assign(Type.prototype, {
   // Equivalence: when are two types the same
   isEquivalentTo(target) {
@@ -52,12 +51,6 @@ Object.assign(TomeType.prototype, {
     return this.isEquivalentTo(target)
   },
 })
-
-//FUNCTIONS
-//Function object has parameters and return type
-//During calls: check arguments against function, as we store params and returnType in function
-//FUNCTION TYPE EQUIVALENCE
-//ONLY NEED FOR BASIC TYPES
 
 const check = (self) => ({
   isNumeric() {
@@ -117,12 +110,6 @@ const check = (self) => ({
       'Not all key_value types have the same types'
     )
   },
-  // isNotRecursive() {
-  //   must(
-  //     !self.fields.map((f) => f.type).includes(self),
-  //     "Struct type must not be recursive"
-  //   );
-  // },
   isAssignableTo(type) {
     // self is a type, can objects of self be assigned to vars of type
     if (typeof self === 'string') {
@@ -250,19 +237,9 @@ class Context {
   }
 
   OrderDeclaration(d) {
-    // d.fun.returnType = d.fun.returnType
-    //   ? this.analyze(d.fun.returnType)
-    //   : Type.VOID
     check(d.fun.returnType).isAType()
-    // When entering a function body, we must reset the inLoop setting,
-    // because it is possible to declare a function inside a loop!
     const childContext = this.newChild({ inLoop: false, forFunction: d.fun })
     d.fun.parameters = childContext.analyze(d.fun.parameters)
-    // d.fun.type = new OrderType(
-    //   d.fun.parameters.map((p) => p.type),
-    //   d.fun.returnType
-    // )
-    // Add before analyzing the body to allow recursion
     this.add(d.fun.name, d.fun)
     d.body = childContext.analyze(d.body)
     return d
@@ -360,7 +337,7 @@ class Context {
     }
     return e
   }
-  //TODO
+
   UnaryExpression(e) {
     e.operand = this.analyze(e.operand)
     if (e.op === '-') {
@@ -382,20 +359,13 @@ class Context {
   ArrayExpression(a) {
     a.elements = this.analyze(a.elements)
     check(a.elements).allHaveSameType()
-    //check(a.elements[0].hasSameTypeAs())
-    //a.type = new ArrayType(a.elements[0].type)
+    a.type = new TomeType(a.elements[0].type)
     return a
   }
   DictExpression(d) {
-    //console.log('SELF:  ', self)
     d.elements = this.analyze(d.elements)
     check(d.elements).allHaveSameKeyValueTypes()
-    // for (let e of d.elements) {
-    //   check(self.keyType).isAssignableTo(self.keyType)
-    //   check(e.value).isAssignableTo(self.valueType)
-    // }
     d.type = new HolocronType(d.elements[0].key.type, d.elements[0].value.type)
-    console.log('D:   ', d)
     return d
   }
 

@@ -41,10 +41,6 @@ export default function generate(program) {
       return targetName(v)
     },
 
-    Type(t) {
-      //table for later, TODO
-    },
-
     OrderDeclaration(o) {
       output.push(
         `function ${gen(o.fun)}(${gen(o.fun.parameters).join(', ')}) {`
@@ -131,7 +127,7 @@ export default function generate(program) {
     SubscriptExpression(e) {
       return `${e}`
     },
-    //TODO
+
     ArrayExpression(e) {
       const array = []
       console.log(' Expression:   ', e)
@@ -142,21 +138,17 @@ export default function generate(program) {
       return `[` + array + `]`
     },
 
-    //TODO
     DictExpression(e) {
       const array = []
       console.log('Dict Expression:   ', e)
       for (let element of e.elements) {
-        array.push(`${gen(element)}`)
+        array.push(` ${gen(element)} `)
       }
-      return `[` + array + `]`
+      return `{` + array + `}`
     },
 
-    //shouldnt these be switched?
-
-    //TODO
     DictContent(c) {
-      return `${c}`
+      return `${gen(c.key)}: ${gen(c.value)}`
     },
 
     Call(c) {
