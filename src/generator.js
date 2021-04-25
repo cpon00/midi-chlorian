@@ -118,7 +118,8 @@ export default function generate(program) {
     },
 
     BinaryExpression(e) {
-      const op = { '==': '===', '!=': '!==' }[e.op] ?? e.op
+      //prettier-ignore
+      const op = { 'onewith': '===', '!onewith': '!==' }[e.op] ?? e.op
       return `${gen(e.left)} ${op} ${gen(e.right)}`
     },
 
