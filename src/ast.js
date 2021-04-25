@@ -198,8 +198,8 @@ export class DictExpression {
 
 //Dictionary Content
 export class DictContent {
-  constructor(literal, expression) {
-    Object.assign(this, { literal, expression })
+  constructor(key, value) {
+    Object.assign(this, { key, value })
   }
 }
 

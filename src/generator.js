@@ -147,11 +147,13 @@ export default function generate(program) {
       const array = []
       console.log('Dict Expression:   ', e)
       for (let element of e.elements) {
-        
         array.push(`${gen(element)}`)
       }
-      return `[` + array + `]
+      return `[` + array + `]`
     },
+
+    //shouldnt these be switched?
+
     //TODO
     DictContent(c) {
       return `${c}`

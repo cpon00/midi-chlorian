@@ -120,8 +120,8 @@ const check = (self) => ({
     } else {
       must(
         type.constructor === HolocronType &&
-          type.keyType === self.keyType &&
-          type.valueType === self.valueType
+          type.keyType === self.key &&
+          type.valueType === self.value
       ),
         `Cannot assign a ${type.baseType} to a ${self.baseType}`
     }
@@ -289,7 +289,6 @@ class Context {
     return s
   }
   IfStatement(s) {
-    console.log('IF STATEMENT S:   ', s)
     s.test = this.analyze(s.test)
     check(s.test).isBoolean()
     s.consequent = this.newChild().analyze(s.consequent)
@@ -371,6 +370,23 @@ class Context {
     check(a.elements).allHaveSameType()
     //a.type = new ArrayType(a.elements[0].type)
     return a
+  }
+  DictExpression(d) {
+    //console.log(d.keyType)
+    d.elements = this.analyze(d.elements)
+    //console.log('D.elements:   ', d.elements)
+    // for (let c of d.elements) {
+    //   check(c.key).isAssignableTo(d.keyType)
+    // }
+    return d
+  }
+
+  DictContent(c) {
+    console.log('CONTENT: ', c)
+    c.key = this.analyze(c.key)
+    c.value = this.analyze(c.value)
+    //check(c.key).isAssignableTo()
+    return c
   }
 
   Call(c) {

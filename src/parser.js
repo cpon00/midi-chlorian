@@ -79,15 +79,8 @@ const astBuilder = midiChlorianGrammar.createSemantics().addOperation('ast', {
     return new ast.TomeType(baseType.ast())
   },
 
-  lifeform_dicttype(
-    _holocron,
-    _left,
-    lifeform_key,
-    _comma,
-    lifeform_value,
-    _right
-  ) {
-    return new ast.HolocronType(lifeform_key.ast(), lifeform_value.ast())
+  lifeform_dicttype(_holocron, _left, keyType, _comma, valueType, _right) {
+    return new ast.HolocronType(keyType.ast(), valueType.ast())
   },
 
   Body(_left, body, _right) {

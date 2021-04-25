@@ -1,0 +1,1 @@
+holocron<cred, transmission> carterSmellz = <1: 2, 2: "goodbye">
