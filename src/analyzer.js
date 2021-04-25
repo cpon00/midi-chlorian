@@ -337,7 +337,7 @@ class Context {
       check(e.left).isNumericOrString()
       check(e.left).hasSameTypeAs(e.right)
       e.type = 'absolute'
-    } else if (['oneWith', '!oneWith'].includes(e.op)) {
+    } else if (['onewith', '!onewith'].includes(e.op)) {
       check(e.left).hasSameTypeAs(e.right)
       e.type = 'absolute'
     } else if (['and', 'or'].includes(e.op)) {

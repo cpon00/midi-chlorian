@@ -18,7 +18,6 @@ export default function generate(program) {
   })(new Map())
 
   const gen = (node) => {
-    console.log('NAME:  ', node.constructor.name)
     return generators[node.constructor.name](node)
   }
 
@@ -39,7 +38,6 @@ export default function generate(program) {
     },
 
     Variable(v) {
-      //console.log('V in variable:  ', v)
       return targetName(v)
     },
 
@@ -70,12 +68,10 @@ export default function generate(program) {
     },
 
     Execute(e) {
-      console.log(e)
       output.push(`return ${gen(e.returnValue)}`)
     },
 
     Print(p) {
-      //console.log(p)
       output.push(`console.log(${gen(p.argument)})`)
     },
 
@@ -103,8 +99,6 @@ export default function generate(program) {
     },
 
     ForStatement(s) {
-      console.log('FOR STATMENT')
-      console.log(s)
       output.push(
         `for (let ${gen(s.assignment.variable)} = ${gen(
           s.assignment.variable
@@ -124,10 +118,6 @@ export default function generate(program) {
     },
 
     BinaryExpression(e) {
-      console.log('BINARY EXPRESSION:  ')
-      console.log(e)
-      console.log(e.left)
-      console.log(e.right)
       const op = { '==': '===', '!=': '!==' }[e.op] ?? e.op
       return `${gen(e.left)} ${op} ${gen(e.right)}`
     },
