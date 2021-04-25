@@ -4,6 +4,7 @@
 //
 // Analyzes the AST by look r semantic errors and resolving references.
 
+import { assert } from 'console'
 import util from 'util'
 import {
   Type,
@@ -125,17 +126,19 @@ const check = (self) => ({
   isAssignableTo(type) {
     // self is a type, can objects of self be assigned to vars of type
     if (typeof self === 'string') {
-      must(self === type), `Cannot assign a ${type} to a ${self}`
+      must(self === type, `Cannot assign a ${type} to a ${self}`)
     } else if (self.constructor === TomeType) {
-      must(type.constructor === TomeType && type.baseType === self.baseType),
+      must(
+        type.constructor === TomeType && type.baseType === self.baseType,
         `Cannot assign a ${type.baseType} to a ${self.baseType}`
+      )
     } else {
       must(
         type.constructor === HolocronType &&
           type.keyType === self.keyType &&
-          type.valueType === self.valueType
-      ),
-        `Cannot assign a ${type.baseType} to a ${self.baseType}`
+          type.valueType === self.valueType,
+        `Cannot assign a ${type} to a ${self}`
+      )
     }
   },
   isInTheObject(object) {
@@ -222,9 +225,8 @@ class Context {
     return p
   }
   Command(d) {
-    // Only analyze the declaration, not the variable
     d.initializer = this.analyze(d.initializer)
-    //d.variable.type = d.initializer.type
+    check(d.initializer.type).isAssignableTo(d.variable.type)
     this.add(d.variable.name, d.variable)
     return d
   }
@@ -392,7 +394,7 @@ class Context {
     //   check(self.keyType).isAssignableTo(self.keyType)
     //   check(e.value).isAssignableTo(self.valueType)
     // }
-
+    d.type = new HolocronType(d.elements[0].key.type, d.elements[0].value.type)
     console.log('D:   ', d)
     return d
   }
