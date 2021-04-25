@@ -385,9 +385,13 @@ class Context {
     return a
   }
   DictExpression(d) {
+    //console.log('SELF:  ', self)
     d.elements = this.analyze(d.elements)
     check(d.elements).allHaveSameKeyValueTypes()
-    //check(d.elements).isAssignableTo(self)
+    // for (let e of d.elements) {
+    //   check(self.keyType).isAssignableTo(self.keyType)
+    //   check(e.value).isAssignableTo(self.valueType)
+    // }
 
     console.log('D:   ', d)
     return d
