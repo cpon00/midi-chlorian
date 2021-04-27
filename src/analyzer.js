@@ -296,6 +296,7 @@ class Context {
     s.test = this.analyze(s.test)
     check(s.test).isBoolean()
     s.consequent = this.newChild().analyze(s.consequent)
+    return s
   }
   WhileStatement(s) {
     s.test = this.analyze(s.test)

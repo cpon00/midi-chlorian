@@ -88,6 +88,12 @@ export default function generate(program) {
       }
     },
 
+    ShortIfStatement(s) {
+      output.push(`if (${gen(s.test)}) {`)
+      gen(s.consequent)
+      output.push('}')
+    },
+
     WhileStatement(s) {
       output.push(`while (${gen(s.test)}) {`)
       gen(s.body)
@@ -130,9 +136,7 @@ export default function generate(program) {
 
     ArrayExpression(e) {
       const array = []
-      console.log(' Expression:   ', e)
       for (let element of e.elements) {
-        console.log('Element:  ', element)
         array.push(`${gen(element)}`)
       }
       return `[` + array + `]`
@@ -140,7 +144,6 @@ export default function generate(program) {
 
     DictExpression(e) {
       const array = []
-      console.log('Dict Expression:   ', e)
       for (let element of e.elements) {
         array.push(` ${gen(element)} `)
       }
