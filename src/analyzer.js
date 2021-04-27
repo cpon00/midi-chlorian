@@ -4,6 +4,7 @@
 //
 // Analyzes the AST by look r semantic errors and resolving references.
 
+import { assert } from 'console'
 import util from 'util'
 import {
   Type,
@@ -21,7 +22,6 @@ function must(condition, errorMessage) {
   }
 }
 
-// //TYPE EQUIVALENCE
 Object.assign(Type.prototype, {
   // Equivalence: when are two types the same
   isEquivalentTo(target) {
@@ -51,12 +51,6 @@ Object.assign(TomeType.prototype, {
     return this.isEquivalentTo(target)
   },
 })
-
-//FUNCTIONS
-//Function object has parameters and return type
-//During calls: check arguments against function, as we store params and returnType in function
-//FUNCTION TYPE EQUIVALENCE
-//ONLY NEED FOR BASIC TYPES
 
 const check = (self) => ({
   isNumeric() {
@@ -100,30 +94,38 @@ const check = (self) => ({
   },
   allHaveSameType() {
     must(
-      self.slice(1).every((e) => e.type.isEquivalentTo(self[0].type)),
+      self.slice(1).every((e) => e.type === self[0].type),
       'Not all elements have the same type'
     )
   },
-  // isNotRecursive() {
-  //   must(
-  //     !self.fields.map((f) => f.type).includes(self),
-  //     "Struct type must not be recursive"
-  //   );
-  // },
+  allHaveSameKeyValueTypes() {
+    must(
+      self
+        .slice(1)
+        .every(
+          (e) =>
+            e.key.type === self[0].key.type &&
+            e.value.type === self[0].value.type
+        ),
+      'Not all key_value types have the same types'
+    )
+  },
   isAssignableTo(type) {
     // self is a type, can objects of self be assigned to vars of type
     if (typeof self === 'string') {
-      must(self === type), `Cannot assign a ${type} to a ${self}`
+      must(self === type, `Cannot assign a ${type} to a ${self}`)
     } else if (self.constructor === TomeType) {
-      must(type.constructor === TomeType && type.baseType === self.baseType),
+      must(
+        type.constructor === TomeType && type.baseType === self.baseType,
         `Cannot assign a ${type.baseType} to a ${self.baseType}`
+      )
     } else {
       must(
         type.constructor === HolocronType &&
           type.keyType === self.keyType &&
-          type.valueType === self.valueType
-      ),
-        `Cannot assign a ${type.baseType} to a ${self.baseType}`
+          type.valueType === self.valueType,
+        `Cannot assign a ${type} to a ${self}`
+      )
     }
   },
   isInTheObject(object) {
@@ -210,9 +212,8 @@ class Context {
     return p
   }
   Command(d) {
-    // Only analyze the declaration, not the variable
     d.initializer = this.analyze(d.initializer)
-    //d.variable.type = d.initializer.type
+    check(d.initializer.type).isAssignableTo(d.variable.type)
     this.add(d.variable.name, d.variable)
     return d
   }
@@ -220,7 +221,7 @@ class Context {
     if (typeof t === 'string') {
       return t
     } else if (t.constructor === TomeType) {
-      t.baseType = this.Type(t.baseType)
+      t.baseType = this.TomeType(t.baseType)
       return t
     } else {
       t.keyType = this.Type(t.keyType)
@@ -236,19 +237,9 @@ class Context {
   }
 
   OrderDeclaration(d) {
-    // d.fun.returnType = d.fun.returnType
-    //   ? this.analyze(d.fun.returnType)
-    //   : Type.VOID
     check(d.fun.returnType).isAType()
-    // When entering a function body, we must reset the inLoop setting,
-    // because it is possible to declare a function inside a loop!
     const childContext = this.newChild({ inLoop: false, forFunction: d.fun })
     d.fun.parameters = childContext.analyze(d.fun.parameters)
-    // d.fun.type = new OrderType(
-    //   d.fun.parameters.map((p) => p.type),
-    //   d.fun.returnType
-    // )
-    // Add before analyzing the body to allow recursion
     this.add(d.fun.name, d.fun)
     d.body = childContext.analyze(d.body)
     return d
@@ -301,6 +292,11 @@ class Context {
     }
     return s
   }
+  ShortIfStatement(s) {
+    s.test = this.analyze(s.test)
+    check(s.test).isBoolean()
+    s.consequent = this.newChild().analyze(s.consequent)
+  }
   WhileStatement(s) {
     s.test = this.analyze(s.test)
     check(s.test).isBoolean()
@@ -331,7 +327,7 @@ class Context {
       check(e.left).isNumericOrString()
       check(e.left).hasSameTypeAs(e.right)
       e.type = 'absolute'
-    } else if (['oneWith', '!oneWith'].includes(e.op)) {
+    } else if (['onewith', '!onewith'].includes(e.op)) {
       check(e.left).hasSameTypeAs(e.right)
       e.type = 'absolute'
     } else if (['and', 'or'].includes(e.op)) {
@@ -341,7 +337,7 @@ class Context {
     }
     return e
   }
-  //TODO
+
   UnaryExpression(e) {
     e.operand = this.analyze(e.operand)
     if (e.op === '-') {
@@ -363,9 +359,22 @@ class Context {
   ArrayExpression(a) {
     a.elements = this.analyze(a.elements)
     check(a.elements).allHaveSameType()
-    a.type = new ArrayType(a.elements[0].type)
+    a.type = new TomeType(a.elements[0].type)
     return a
   }
+  DictExpression(d) {
+    d.elements = this.analyze(d.elements)
+    check(d.elements).allHaveSameKeyValueTypes()
+    d.type = new HolocronType(d.elements[0].key.type, d.elements[0].value.type)
+    return d
+  }
+
+  DictContent(c) {
+    c.key = this.analyze(c.key)
+    c.value = this.analyze(c.value)
+    return c
+  }
+
   Call(c) {
     c.callee = this.analyze(c.callee)
     check(c.callee).isCallable()

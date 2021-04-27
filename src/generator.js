@@ -18,7 +18,6 @@ export default function generate(program) {
   })(new Map())
 
   const gen = (node) => {
-    //console.log(node.constructor.name)
     return generators[node.constructor.name](node)
   }
 
@@ -42,10 +41,6 @@ export default function generate(program) {
       return targetName(v)
     },
 
-    Type(t) {
-      //table for later, TODO
-    },
-
     OrderDeclaration(o) {
       output.push(
         `function ${gen(o.fun)}(${gen(o.fun.parameters).join(', ')}) {`
@@ -63,7 +58,9 @@ export default function generate(program) {
     },
 
     Increment(s) {
-      output.push(`${gen(s.variable) + gen(s.op)}`)
+      return `${gen(s.variable)}${s.op}`
+
+      //output.push(`${gen(s.variable)}${s.op}`)
     },
 
     Execute(e) {
@@ -71,7 +68,6 @@ export default function generate(program) {
     },
 
     Print(p) {
-      console.log(p)
       output.push(`console.log(${gen(p.argument)})`)
     },
 
@@ -102,9 +98,7 @@ export default function generate(program) {
       output.push(
         `for (let ${gen(s.assignment.variable)} = ${gen(
           s.assignment.variable
-        )}; ${gen(s.expression.left)} ${gen(s.expression)} ${gen(
-          s.expression.right
-        )}; ${gen(s.increment.variable)} ${gen(s.increment)}) {`
+        )}; ${gen(s.expression)}; ${gen(s.increment)}) {`
       )
       gen(s.body)
       output.push('}')
@@ -120,7 +114,8 @@ export default function generate(program) {
     },
 
     BinaryExpression(e) {
-      const op = { '==': '===', '!=': '!==' }[e.op] ?? e.op
+      //prettier-ignore
+      const op = { 'onewith': '===', '!onewith': '!==' }[e.op] ?? e.op
       return `${gen(e.left)} ${op} ${gen(e.right)}`
     },
 
@@ -132,21 +127,36 @@ export default function generate(program) {
     SubscriptExpression(e) {
       return `${e}`
     },
-    //TODO
+
     ArrayExpression(e) {
-      return `${e}`
+      const array = []
+      console.log(' Expression:   ', e)
+      for (let element of e.elements) {
+        console.log('Element:  ', element)
+        array.push(`${gen(element)}`)
+      }
+      return `[` + array + `]`
     },
-    //TODO
+
     DictExpression(e) {
-      return `${e}`
+      const array = []
+      console.log('Dict Expression:   ', e)
+      for (let element of e.elements) {
+        array.push(` ${gen(element)} `)
+      }
+      return `{` + array + `}`
     },
-    //TODO
+
     DictContent(c) {
-      return `${c}`
+      return `${gen(c.key)}: ${gen(c.value)}`
     },
 
     Call(c) {
-      output.push(`${gen(c.callee)}(${c.args})`)
+      const callCode = `${gen(c.callee)}(${gen(c.args)})`
+      if (c.callee.returnType) {
+        return callCode
+      }
+      output.push(callCode)
     },
 
     id(i) {
@@ -154,9 +164,9 @@ export default function generate(program) {
     },
 
     Literal(l) {
-      //console.log(l)
       if (l.type === 'absolute') {
-        return l.value
+        let bool = l.value === 'light' ? true : false
+        return bool
       }
       return JSON.stringify(l.value)
     },

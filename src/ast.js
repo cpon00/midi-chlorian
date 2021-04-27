@@ -49,18 +49,18 @@ export class Type {
   constructor(name) {
     this.name = name
   }
-  static BOOLEAN = new Type('absolute')
-  static INT = new Type('cred')
-  static FLOAT = new Type('ket')
-  static STRING = new Type('transmission')
+  // static BOOLEAN = new Type('absolute')
+  // static INT = new Type('cred')
+  // static FLOAT = new Type('ket')
+  // static STRING = new Type('transmission')
 
-  isEquivalentTo(target) {
-    return this == target
-  }
+  // isEquivalentTo(target) {
+  //   return this == target
+  // }
 
-  isAssignableTo(target) {
-    return this.isEquivalentTo(target)
-  }
+  // isAssignableTo(target) {
+  //   return this.isEquivalentTo(target)
+  // }
 }
 
 //Function Declaration
@@ -85,17 +85,17 @@ export class Parameter {
 }
 
 //Array Type
-export class TomeType extends Type {
+export class TomeType {
   constructor(baseType) {
-    super(`[${baseType}]`)
+    // super(`[${baseType}]`)
     this.baseType = baseType
   }
 }
 
 //Dictionary Type
-export class HolocronType extends Type {
+export class HolocronType {
   constructor(keyType, valueType) {
-    super(`[${keyType}], [${valueType}]`)
+    //super(`[${keyType}], [${valueType}]`)
     this.keyType = keyType
     this.valueType = valueType
   }
@@ -134,6 +134,12 @@ export class IfStatement {
   // Example: if x < 3 { print(100); } else { break; }
   constructor(test, consequent, alternate) {
     Object.assign(this, { test, consequent, alternate })
+  }
+}
+
+export class ShortIfStatement {
+  constructor(test, consequent) {
+    Object.assign(this, { test, consequent })
   }
 }
 
@@ -192,8 +198,8 @@ export class DictExpression {
 
 //Dictionary Content
 export class DictContent {
-  constructor(literal, expression) {
-    Object.assign(this, { literal, expression })
+  constructor(key, value) {
+    Object.assign(this, { key, value })
   }
 }
 

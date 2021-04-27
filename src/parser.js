@@ -64,24 +64,13 @@ const astBuilder = midiChlorianGrammar.createSemantics().addOperation('ast', {
     )
   },
 
-  IfStatement(
-    _should,
-    expression1,
-    body1,
-    _altshould,
-    expression2,
-    body2,
-    _elseshould,
-    body3
-  ) {
-    return new ast.IfStatement(
-      expression1.ast(),
-      body1.ast(),
-      expression2.ast(),
-      body2.ast(),
-      body3.ast()
-    )
+  IfStatement_long(_should, test, consequent, _else, alternate) {
+    return new ast.IfStatement(test.ast(), consequent.ast(), alternate.ast())
   },
+  IfStatement_short(_should, test, consequent) {
+    return new ast.ShortIfStatement(test.ast(), consequent.ast())
+  },
+
   Print(_emit, expression) {
     return new ast.Print(expression.ast())
   },
@@ -90,15 +79,8 @@ const astBuilder = midiChlorianGrammar.createSemantics().addOperation('ast', {
     return new ast.TomeType(baseType.ast())
   },
 
-  lifeform_dicttype(
-    _holocron,
-    _left,
-    lifeform_key,
-    _comma,
-    lifeform_value,
-    _right
-  ) {
-    return new ast.HolocronType(lifeform_key.ast(), lifeform_value.ast())
+  lifeform_dicttype(_holocron, _left, keyType, _comma, valueType, _right) {
+    return new ast.HolocronType(keyType.ast(), valueType.ast())
   },
 
   Body(_left, body, _right) {
@@ -127,7 +109,6 @@ const astBuilder = midiChlorianGrammar.createSemantics().addOperation('ast', {
     return typename.sourceString
   },
   transmissionLit(_open, midichlorians, _close) {
-    console.log('tranmission')
     return new ast.Literal(midichlorians.sourceString, 'transmission')
   },
   credLit(digits) {
