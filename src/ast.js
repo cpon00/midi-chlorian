@@ -49,18 +49,6 @@ export class Type {
   constructor(name) {
     this.name = name
   }
-  // static BOOLEAN = new Type('absolute')
-  // static INT = new Type('cred')
-  // static FLOAT = new Type('ket')
-  // static STRING = new Type('transmission')
-
-  // isEquivalentTo(target) {
-  //   return this == target
-  // }
-
-  // isAssignableTo(target) {
-  //   return this.isEquivalentTo(target)
-  // }
 }
 
 //Function Declaration
@@ -103,6 +91,14 @@ export class HolocronType {
 
 //Increment
 export class Increment {
+  constructor(variable, op) {
+    this.variable = variable
+    this.op = op
+  }
+}
+
+//Next
+export class Next {
   constructor(variable, op) {
     this.variable = variable
     this.op = op
@@ -153,8 +149,8 @@ export class WhileStatement {
 
 //For Statement
 export class ForStatement {
-  constructor(assignment, expression, increment, body) {
-    Object.assign(this, { assignment, expression, increment, body })
+  constructor(assignment, expression, next, body) {
+    Object.assign(this, { assignment, expression, next, body })
   }
 }
 

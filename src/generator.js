@@ -58,13 +58,15 @@ export default function generate(program) {
     },
 
     Increment(s) {
-      return `${gen(s.variable)}${s.op}`
+      output.push(`${gen(s.variable)}${s.op}`)
+    },
 
-      //output.push(`${gen(s.variable)}${s.op}`)
+    Next(e) {
+      return `${gen(e.variable)}${e.op}`
     },
 
     Execute(e) {
-      output.push(`return ${gen(e.returnValue)}`)
+      output.push(`return (${gen(e.returnValue)})`)
     },
 
     Print(p) {
@@ -79,7 +81,7 @@ export default function generate(program) {
       output.push(`if (${gen(s.test)}) {`)
       gen(s.consequent)
       if (s.alternate.constructor === IfStatement) {
-        output.push('} else')
+        output.push('} else ')
         gen(s.alternate)
       } else {
         output.push('} else {')
@@ -103,20 +105,11 @@ export default function generate(program) {
     ForStatement(s) {
       output.push(
         `for (let ${gen(s.assignment.variable)} = ${gen(
-          s.assignment.variable
-        )}; ${gen(s.expression)}; ${gen(s.increment)}) {`
+          s.assignment.initializer
+        )}; ${gen(s.expression)}; ${gen(s.next)}) {`
       )
       gen(s.body)
       output.push('}')
-      // output.push(
-      //   `for (let ${gen(s.assignment.variable.name)} = ${gen(
-      //     s.assignment.variable.initializer
-      //   )}; ${gen(s.expression.left.name)} ${gen(s.expression.op)} ${gen(
-      //     s.expression.right.value
-      //   )}; ${gen(s.increment.variable.name)} ${gen(s.increment.op)}) {`
-      // )
-      // gen(s.body)
-      // output.push('}')
     },
 
     BinaryExpression(e) {
@@ -129,9 +122,8 @@ export default function generate(program) {
       return `${e.op}${gen(e.operand)}`
     },
 
-    //TODO
     SubscriptExpression(e) {
-      return `${e}`
+      return `${gen(e.array)}[${gen(e.index)}]`
     },
 
     ArrayExpression(e) {
@@ -160,10 +152,6 @@ export default function generate(program) {
         return callCode
       }
       output.push(callCode)
-    },
-
-    id(i) {
-      return `${i.name}`
     },
 
     Literal(l) {

@@ -16,7 +16,7 @@ Midichlorian {
   IfStatement     = should Exp Body else (Body | IfStatement) --long
                   | should Exp Body                           --short
   WhileLoop       = as Exp Body
-  ForLoop         = force "(" Command "; " Exp "; " Increment ")" Body
+  ForLoop         = force "(" Command "; " Exp "; " Next ")" Body
   Body            = "{"Directive*"}"
   Order           = order lifeform id Params Body
   Print           = emit Exp
@@ -49,6 +49,7 @@ Midichlorian {
                   | "(" Exp ")"                    --parens
                   | "[" NonemptyListOf<Exp, ","> "]" --arraylit
   Increment       = id ("++" | "--")
+  Next            = id ("++" | "--")
   relop           = "<=" | ">=" | "<" | ">" | "onewith"
   addop           = "+" | "-"
   mulop           = "*" | "/" | "%"

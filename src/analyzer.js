@@ -38,19 +38,19 @@ Object.assign(Type.prototype, {
 })
 
 //ARRAY TYPE EQUIVALENCE
-Object.assign(TomeType.prototype, {
-  isEquivalentTo(target) {
-    // [T] equivalent to [U] only when T is equivalent to U.
-    return (
-      target.constructor === TomeType &&
-      this.baseType.isEquivalentTo(target.baseType)
-    )
-  },
-  isAssignableTo(target) {
-    // Arrays are INVARIANT in Carlos!
-    return this.isEquivalentTo(target)
-  },
-})
+// Object.assign(TomeType.prototype, {
+//   isEquivalentTo(target) {
+//     // [T] equivalent to [U] only when T is equivalent to U.
+//     return (
+//       target.constructor === TomeType &&
+//       this.baseType.isEquivalentTo(target.baseType)
+//     )
+//   },
+//   // isAssignableTo(target) {
+//   //   // Arrays are INVARIANT in Carlos!
+//   //   return this.isEquivalentTo(target)
+//   // },
+// })
 
 const check = (self) => ({
   isNumeric() {
@@ -83,12 +83,13 @@ const check = (self) => ({
     )
   },
 
-  isAnArray() {
-    must(self.type.constructor === TomeType, 'Tome expected')
-  },
-  isADict() {
-    must(self.type.constructor === HolocronType, 'Holocron expected')
-  },
+  // isAnArray() {
+  //   console.log('self: ', self)
+  //   must(self.constructor === Array, console.log(self.constructor))
+  // },
+  // isADict() {
+  //   must(self.constructor === HolocronType, console.log(self.constructor))
+  // },
   hasSameTypeAs(other) {
     must(self.type === other.type, 'Operands do not have the same type')
   },
@@ -128,27 +129,27 @@ const check = (self) => ({
       )
     }
   },
-  isInTheObject(object) {
-    must(object.type.fields.map((f) => f.name).includes(self), 'No such field')
-  },
+  // isInTheObject(object) {
+  //   must(object.type.fields.map((f) => f.name).includes(self), 'No such field')
+  // },
   isInsideALoop() {
     must(self.inLoop, 'Break can only appear in a loop')
   },
-  isInsideAFunction(context) {
-    must(self.function, 'Return can only appear in a function')
-  },
+  // isInsideAFunction(context) {
+  //   must(self.function, 'Return can only appear in a function')
+  // },
   isCallable() {
     must(self.constructor == Order, 'Call of non-function or non-constructor')
   },
-  returnsNothing() {
-    must(
-      self.type.returnType === Type.VOID,
-      'Something should be returned here'
-    )
-  },
-  returnsSomething() {
-    must(self.type.returnType !== Type.VOID, 'Cannot return a value here')
-  },
+  // returnsNothing() {
+  //   must(
+  //     self.type.returnType === Type.VOID,
+  //     'Something should be returned here'
+  //   )
+  // },
+  // returnsSomething() {
+  //   must(self.type.returnType !== Type.VOID, 'Cannot return a value here')
+  // },
   isReturnableFrom(f) {
     check(self.type).isAssignableTo(f.returnType)
   },
@@ -205,6 +206,7 @@ class Context {
     return new Context(this, configuration)
   }
   analyze(node) {
+    console.log(node.constructor.name)
     return this[node.constructor.name](node)
   }
   Program(p) {
@@ -217,24 +219,24 @@ class Context {
     this.add(d.variable.name, d.variable)
     return d
   }
-  Type(t) {
-    if (typeof t === 'string') {
-      return t
-    } else if (t.constructor === TomeType) {
-      t.baseType = this.TomeType(t.baseType)
-      return t
-    } else {
-      t.keyType = this.Type(t.keyType)
-      t.valueType = this.Type(t.valueType)
-      return t
-    }
-  }
+  // Type(t) {
+  //   if (typeof t === 'string') {
+  //     return t
+  //   } else if (t.constructor === TomeType) {
+  //     t.baseType = this.TomeType(t.baseType)
+  //     return t
+  //   } else {
+  //     t.keyType = this.Type(t.keyType)
+  //     t.valueType = this.Type(t.valueType)
+  //     return t
+  //   }
+  // }
 
-  Body(f) {
-    f.type = this.analyze(f.type)
-    check(f.type).isAType()
-    return f
-  }
+  // Body(f) {
+  //   f.type = this.analyze(f.type)
+  //   check(f.type).isAType()
+  //   return f
+  // }
 
   OrderDeclaration(d) {
     check(d.fun.returnType).isAType()
@@ -250,12 +252,18 @@ class Context {
     this.add(p.name, p)
     return p
   }
-  TomeType(t) {
-    t.baseType = this.analyze(t.baseType)
-    return t
-  }
+  // TomeType(t) {
+  //   t.baseType = this.analyze(t.baseType)
+  //   return t
+  // }
 
   Increment(s) {
+    s.variable = this.analyze(s.variable)
+    check(s.variable).isInteger()
+    return s
+  }
+
+  Next(s) {
     s.variable = this.analyze(s.variable)
     check(s.variable).isInteger()
     return s
@@ -308,7 +316,7 @@ class Context {
   ForStatement(s) {
     s.assignment = this.analyze(s.assignment)
     s.expression = this.analyze(s.expression)
-    s.increment = this.analyze(s.increment)
+    s.next = this.analyze(s.next)
     s.body = this.newChild({ inLoop: true }).analyze(s.body)
     return s
   }
@@ -396,19 +404,19 @@ class Context {
     }
     return e
   }
-  Symbol(e) {
-    // Symbols represent identifiers so get resolved to the entities referred to
-    return this.lookup(e.description)
-  }
-  Number(e) {
-    return e
-  }
-  BigInt(e) {
-    return e
-  }
-  Boolean(e) {
-    return e
-  }
+  // Symbol(e) {
+  //   // Symbols represent identifiers so get resolved to the entities referred to
+  //   return this.lookup(e.description)
+  // }
+  // Number(e) {
+  //   return e
+  // }
+  // BigInt(e) {
+  //   return e
+  // }
+  // Boolean(e) {
+  //   return e
+  // }
   String(e) {
     return e
   }
@@ -422,11 +430,11 @@ class Context {
 
 export default function analyze(node) {
   // Allow primitives to be automatically typed
-  Number.prototype.type = Type.KET
-  BigInt.prototype.type = Type.CRED
-  Boolean.prototype.type = Type.ABSOLUTE
-  String.prototype.type = Type.TRANSMISSION
-  Type.prototype.type = Type.TYPE
+  // Number.prototype.type = Type.KET
+  // BigInt.prototype.type = Type.CRED
+  // Boolean.prototype.type = Type.ABSOLUTE
+  // String.prototype.type = Type.TRANSMISSION
+  // Type.prototype.type = Type.TYPE
   const initialContext = new Context()
 
   // Add in all the predefined identifiers from the stdlib module

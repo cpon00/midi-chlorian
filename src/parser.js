@@ -52,14 +52,14 @@ const astBuilder = midiChlorianGrammar.createSemantics().addOperation('ast', {
     _semicolon1,
     expression,
     _semicolon2,
-    increment,
+    next,
     _close,
     body
   ) {
     return new ast.ForStatement(
       assignment.ast(),
       expression.ast(),
-      increment.ast(),
+      next.ast(),
       body.ast()
     )
   },
@@ -105,6 +105,9 @@ const astBuilder = midiChlorianGrammar.createSemantics().addOperation('ast', {
   Increment(variable, op) {
     return new ast.Increment(variable.ast(), op.sourceString)
   },
+  Next(variable, op) {
+    return new ast.Next(variable.ast(), op.sourceString)
+  },
   primitive(typename) {
     return typename.sourceString
   },
@@ -118,7 +121,6 @@ const astBuilder = midiChlorianGrammar.createSemantics().addOperation('ast', {
     return new ast.Literal(Number(this.sourceString), 'ket')
   },
   absoluteLit(value) {
-    console.log('absolute')
     return new ast.Literal(value.sourceString, 'absolute')
   },
   Exp_binary(left, op, right) {
