@@ -166,10 +166,22 @@ const successfulTests = [
     transmission abc = "You are my only hope"
   `,
   ],
+  [
+    'Return a holocron',
+    `
+    order holocron<cred, cred> z() {
+    }
+    `,
+  ],
 ]
 
 const semanticErrors = [
-  // ['redeclarations', 'emit x', /Identifier x not declared/],
+  ['redeclarations', 'emit x', /Identifier x not declared/],
+  [
+    'type mismatch',
+    'cred x = "uh-oh"',
+    /Cannot assign a cred to a transmission/,
+  ],
   // [
   //   'non declared ids',
   //   'cred x = 1\ncred x = 1',

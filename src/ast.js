@@ -45,11 +45,7 @@ export class Variable {
 //TODO: Designation? Reassignment?
 
 //Type of primitive lifeform: transmission, ket, cred, absolute, superclass of other types
-export class Type {
-  constructor(name) {
-    this.name = name
-  }
-}
+export class Type {}
 
 //Function Declaration
 export class OrderDeclaration {

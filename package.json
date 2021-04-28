@@ -10,7 +10,8 @@
   },
   "dependencies": {
     "c8": "^7.5.0",
-    "ohm-js": "^15.4.1"
+    "ohm-js": "^15.4.1",
+    "pretty-js": "^0.2.1"
   },
   "devDependencies": {
     "c8": "^7.5.0",

@@ -1,5 +1,6 @@
 import { IfStatement, Increment, Literal, Type } from './ast.js'
 import * as stdlib from './stdlib.js'
+import prettyJs from 'pretty-js'
 
 export default function generate(program) {
   const output = []
@@ -148,7 +149,7 @@ export default function generate(program) {
 
     Call(c) {
       const callCode = `${gen(c.callee)}(${gen(c.args)})`
-      if (c.callee.returnType) {
+      if (!c.callee.returnType) {
         return callCode
       }
       output.push(callCode)
@@ -168,5 +169,5 @@ export default function generate(program) {
   }
 
   gen(program)
-  return output.join('\n')
+  return prettyJs(output.join('\n'))
 }
