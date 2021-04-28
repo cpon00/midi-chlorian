@@ -26,15 +26,21 @@ Midi-Chlorian is created by [Carter Pon](https://github.com/cpon00), [Adrian Leu
 
 # Types
 
+| Type in Javascript | Midi-chlorian |          Declaration           |
+| :----------------: | :-----------: | :----------------------------: |
+|        int         |     cred      |           Cred a = 9           |
+|       double       |      ket      |          ket c = 0.5           |
+|      boolean       |   absolute    |       absolute d = true        |
+|        char        | midichlorian  |      midichlorian e = 's'      |
+|       string       | transmission  | transmission f = 'Hello There' |
+
+<br>
+
+# Complex Types
+
 | Type in Javascript | Midi-chlorian |                       Declaration                       |
 | :----------------: | :-----------: | :-----------------------------------------------------: |
-|        int         |     cred      |                       Cred a = 9                        |
-|        long        |    parsec     |                    Parsec b = 900000                    |
-|       double       |      ket      |                       ket c = 0.5                       |
-|      boolean       |   absolute    |                    absolute d = true                    |
-|        char        | midichlorian  |                  midichlorian e = "s"                   |
-|       string       | transmission  |             transmission f = "Hello There"              |
-|       array        |     tome      | tome\<transmission> g = ["Execute","Order","Sixty-Six"] |
+|       array        |     tome      | tome\<transmission> g = ['Execute',"Order','Sixty-Six'] |
 |     dictionary     |   holocron    |   holocron\<transmission,cred> g = <exe:34, evc: 32>    |
 
 </br>
