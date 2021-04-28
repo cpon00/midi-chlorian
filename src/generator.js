@@ -5,10 +5,6 @@ import prettyJs from 'pretty-js'
 export default function generate(program) {
   const output = []
 
-  const standardFunctions = new Map([
-    //add stdlib functions here
-  ])
-
   const targetName = ((mapping) => {
     return (entity) => {
       if (!mapping.has(entity)) {
