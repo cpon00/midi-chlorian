@@ -1,5 +1,4 @@
 // from https://github.com/rtoal/ael-ohm/blob/master/src/compiler.js
-
 //Compiler
 //
 // This module exports a single function
@@ -10,8 +9,6 @@
 //   analyzed   the semantically analyzed representation
 //   optimized  the optimized semantically analyzed representation
 //   js         the translation to JavaScript
-//   c          the translation to C
-//   llvm       the translation to LLVM
 
 import parse from './parser.js'
 import analyze from './analyzer.js'
@@ -19,9 +16,6 @@ import analyze from './analyzer.js'
 import generate from './generator.js'
 
 function prettied(node) {
-  // Return a compact and pretty string representation of the node graph,
-  // taking care of cycles. Written here from scratch because the built-in
-  // inspect function, while nice, isn't nice enough.
   const tags = new Map()
 
   function tag(node) {

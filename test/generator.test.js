@@ -188,6 +188,25 @@ const tests = [
     console.log(fibonacci_1(2))
     `,
   },
+  {
+    name: 'call',
+    source: `
+    order cred f() {
+    }
+    order cred g() {
+    }
+    f()   >< call in a statement
+    emit(g())  >< call in an expression  
+    `,
+    expected: dedent`
+    function f_1() {
+    }
+    function g_2() {
+    }
+    f_1()
+    console.log(g_2())
+    `,
+  },
 ]
 
 const badTests = [

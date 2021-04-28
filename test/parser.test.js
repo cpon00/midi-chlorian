@@ -2,20 +2,6 @@ import assert from 'assert'
 import util from 'util'
 import parse from '../src/parser.js'
 
-const badPrograms = [
-  `.awessfgsdf`,
-  `absolute x  5`,
-  `"hello`,
-  `foce (cred x = 3; x < 3; x ++) {
-    should (x) {
-        break
-    }
-    x++
-}`,
-  `[1,2,3}`,
-  `[1,2,3)`,
-  `<3, 4)`,
-]
 const goodPrograms = [
   `cred x = 3 * 4`,
   `cred y = 2**2`,
@@ -62,11 +48,24 @@ const goodPrograms = [
   ``,
 ]
 
+const badPrograms = [
+  `.awessfgsdf`,
+  `absolute x  5`,
+  `"hello`,
+  `foce (cred x = 3; x < 3; x ++) {
+    should (x) {
+        break
+    }
+    x++
+}`,
+  `[1,2,3}`,
+  `[1,2,3)`,
+  `<3, 4)`,
+]
+
 describe('The Parser ', () => {
   for (let program of goodPrograms) {
     it(`accepts the good program starting with ${program.slice(0, 10)}`, () => {
-      //prints ast
-      //console.log(util.inspect(parse(program), { depth: 'null' }))
       assert.ok(parse(program))
     })
   }

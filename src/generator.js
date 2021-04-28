@@ -14,7 +14,8 @@ export default function generate(program) {
       if (!mapping.has(entity)) {
         mapping.set(entity, mapping.size + 1)
       }
-      return `${entity.name ?? entity.description}_${mapping.get(entity)}`
+      console.log('hi')
+      return `${entity.name}_${mapping.get(entity)}`
     }
   })(new Map())
 
@@ -29,19 +30,15 @@ export default function generate(program) {
     Program(p) {
       gen(p.statements)
     },
-
     Command(c) {
       output.push(`let ${gen(c.variable)} = ${gen(c.initializer)}`)
     },
-
     Designation(d) {
       output.push(`${gen(d.target)} = ${gen(d.source)}`)
     },
-
     Variable(v) {
       return targetName(v)
     },
-
     OrderDeclaration(o) {
       output.push(
         `function ${gen(o.fun)}(${gen(o.fun.parameters).join(', ')}) {`
@@ -49,35 +46,27 @@ export default function generate(program) {
       gen(o.body)
       output.push('}')
     },
-
     Order(o) {
       return targetName(o)
     },
-
     Parameter(p) {
       return targetName(p)
     },
-
     Increment(s) {
       output.push(`${gen(s.variable)}${s.op}`)
     },
-
     Next(e) {
       return `${gen(e.variable)}${e.op}`
     },
-
     Execute(e) {
       output.push(`return (${gen(e.returnValue)})`)
     },
-
     Print(p) {
       output.push(`console.log(${gen(p.argument)})`)
     },
-
     Unleash() {
       output.push(`break`)
     },
-
     IfStatement(s) {
       output.push(`if (${gen(s.test)}) {`)
       gen(s.consequent)
@@ -90,19 +79,16 @@ export default function generate(program) {
         output.push('}')
       }
     },
-
     ShortIfStatement(s) {
       output.push(`if (${gen(s.test)}) {`)
       gen(s.consequent)
       output.push('}')
     },
-
     WhileStatement(s) {
       output.push(`while (${gen(s.test)}) {`)
       gen(s.body)
       output.push('}')
     },
-
     ForStatement(s) {
       output.push(
         `for (let ${gen(s.assignment.variable)} = ${gen(
@@ -112,21 +98,17 @@ export default function generate(program) {
       gen(s.body)
       output.push('}')
     },
-
     BinaryExpression(e) {
       //prettier-ignore
       const op = { 'onewith': '===', '!onewith': '!==' }[e.op] ?? e.op
       return `${gen(e.left)} ${op} ${gen(e.right)}`
     },
-
     UnaryExpression(e) {
       return `${e.op}${gen(e.operand)}`
     },
-
     SubscriptExpression(e) {
       return `${gen(e.array)}[${gen(e.index)}]`
     },
-
     ArrayExpression(e) {
       const array = []
       for (let element of e.elements) {
@@ -134,7 +116,6 @@ export default function generate(program) {
       }
       return `[` + array + `]`
     },
-
     DictExpression(e) {
       const array = []
       for (let element of e.elements) {
@@ -142,19 +123,16 @@ export default function generate(program) {
       }
       return `{` + array + `}`
     },
-
     DictContent(c) {
       return `${gen(c.key)}: ${gen(c.value)}`
     },
-
     Call(c) {
+      return `${gen(c.callee)}(${gen(c.args)})`
+    },
+    CallStmt(c) {
       const callCode = `${gen(c.callee)}(${gen(c.args)})`
-      if (!c.callee.returnType) {
-        return callCode
-      }
       output.push(callCode)
     },
-
     Literal(l) {
       if (l.type === 'absolute') {
         let bool = l.value === 'light' ? true : false
@@ -162,12 +140,11 @@ export default function generate(program) {
       }
       return JSON.stringify(l.value)
     },
-
     Array(a) {
       return a.map(gen)
     },
   }
 
   gen(program)
-  return prettyJs(output.join('\n'))
+  return output.join('\n')
 }

@@ -9,21 +9,19 @@ const astBuilder = midiChlorianGrammar.createSemantics().addOperation('ast', {
   Program(body) {
     return new ast.Program(body.ast())
   },
-  //VarDecl
   Command(lifeform, id, _eq, expression) {
-    //initializer in Declaration, type and name in actual Variable
-    //In SA, check that type in initializer is same type in variable
     const variable = new ast.Variable(lifeform.ast(), id.sourceString)
     return new ast.Command(variable, expression.ast())
   },
   Designation(variable, _open, _credLit, _close, _eq, expression) {
     return new ast.Designation(variable.ast(), expression.ast())
   },
-
   Call(callee, _left, args, _right) {
     return new ast.Call(callee.ast(), args.asIteration().ast())
   },
-
+  CallStmt(callee, _left, args, _right) {
+    return new ast.CallStmt(callee.ast(), args.asIteration().ast())
+  },
   Return(_execute, expression) {
     const returnValue =
       expression.ast().length === 0 ? null : expression.ast()[0]
@@ -32,7 +30,6 @@ const astBuilder = midiChlorianGrammar.createSemantics().addOperation('ast', {
   Break(_unleash) {
     return new ast.Unleash()
   },
-
   Order(_order, lifeform, id, parameters, body) {
     const order = new ast.Order(
       id.sourceString,
@@ -41,7 +38,6 @@ const astBuilder = midiChlorianGrammar.createSemantics().addOperation('ast', {
     )
     return new ast.OrderDeclaration(order, body.ast())
   },
-
   WhileLoop(_as, expression, body) {
     return new ast.WhileStatement(expression.ast(), body.ast())
   },
@@ -63,44 +59,38 @@ const astBuilder = midiChlorianGrammar.createSemantics().addOperation('ast', {
       body.ast()
     )
   },
-
   IfStatement_long(_should, test, consequent, _else, alternate) {
     return new ast.IfStatement(test.ast(), consequent.ast(), alternate.ast())
   },
   IfStatement_short(_should, test, consequent) {
     return new ast.ShortIfStatement(test.ast(), consequent.ast())
   },
-
   Print(_emit, expression) {
     return new ast.Print(expression.ast())
   },
-
   lifeform_tometype(_tome, _left, baseType, _right) {
     return new ast.TomeType(baseType.ast())
   },
-
   lifeform_dicttype(_holocron, _left, keyType, _comma, valueType, _right) {
     return new ast.HolocronType(keyType.ast(), valueType.ast())
-  },
-
-  Body(_left, body, _right) {
-    return body.ast()
-  },
-  Params(_left, param, _right) {
-    return param.asIteration().ast()
-  },
-
-  Param(lifeform, id) {
-    return new ast.Parameter(id.sourceString, lifeform.ast())
-  },
-  id(_first, _rest) {
-    return new ast.id(this.sourceString)
   },
   HolocronObj(_leftarrow, content, _rightarrow) {
     return new ast.DictExpression(content.asIteration().ast())
   },
   HolocronContent(literal, _colon, expression) {
     return new ast.DictContent(literal.ast(), expression.ast())
+  },
+  Body(_left, body, _right) {
+    return body.ast()
+  },
+  Params(_left, param, _right) {
+    return param.asIteration().ast()
+  },
+  Param(lifeform, id) {
+    return new ast.Parameter(id.sourceString, lifeform.ast())
+  },
+  id(_first, _rest) {
+    return new ast.id(this.sourceString)
   },
   Increment(variable, op) {
     return new ast.Increment(variable.ast(), op.sourceString)

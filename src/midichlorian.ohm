@@ -1,11 +1,11 @@
 Midichlorian {
   Program         = Directive*
-  Directive       =  Command
+  Directive       = Command
                   | Order
                   | Designation
                   | WhileLoop
                   | ForLoop
-                  | Call                      
+                  | CallStmt                    
                   | IfStatement
                   | Print
                   | Return
@@ -23,31 +23,32 @@ Midichlorian {
   Return          = execute Exp?
   Break           = unleash
   Call            = id "(" ListOf<Exp, ","> ")"
+  CallStmt        = id "(" ListOf<Exp, ","> ")"
   Params          = "(" ListOf<Param, ","> ")"
   Param           = lifeform id
   HolocronObj     = "<" ListOf<HolocronContent, ","> ">"
   HolocronContent = Literal ":" Exp
-  Exp             = Exp or Exp1                   --binary
+  Exp             = Exp or Exp1                           --binary
                   | Exp1
-  Exp1            = Exp1 and Exp2                 --binary
+  Exp1            = Exp1 and Exp2                         --binary
                   | Exp2
-  Exp2            = Exp2 relop Exp3               --binary
+  Exp2            = Exp2 relop Exp3                       --binary
                   | Exp3
-  Exp3            = Exp3 addop Exp4               --binary
+  Exp3            = Exp3 addop Exp4                       --binary
                   | Exp4
-  Exp4            = Exp4 mulop Exp5               --binary
+  Exp4            = Exp4 mulop Exp5                       --binary
                   | Exp5
   Exp5            = Exp5 power Exp6  --binary
                   | Exp6
-  Exp6            = prefix Exp7                   --unary
+  Exp6            = prefix Exp7                           --unary
                   | Exp7
-  Exp7            = Exp7("[" | "?[") Exp "]"      --subscript
+  Exp7            = Exp7("[" | "?[") Exp "]"              --subscript
                   | Call
                   | Literal
                   | HolocronObj
                   | id
-                  | "(" Exp ")"                    --parens
-                  | "[" NonemptyListOf<Exp, ","> "]" --arraylit
+                  | "(" Exp ")"                           --parens
+                  | "[" NonemptyListOf<Exp, ","> "]"      --arraylit
   Increment       = id ("++" | "--")
   Next            = id ("++" | "--")
   relop           = "<=" | ">=" | "<" | ">" | "onewith"
@@ -60,7 +61,7 @@ Midichlorian {
                   | credLit
                   | absoluteLit
   lifeform        = primitive
-                  | tome "<"lifeform">"             --tometype
+                  | tome "<"lifeform">"                   --tometype
                   | holocron "<"lifeform", " lifeform ">" --dicttype
   primitive       = transmission
                   | ket

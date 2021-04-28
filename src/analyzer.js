@@ -1,9 +1,4 @@
-//Imported from https://github.com/rtoal/carlos-lang/blob/main/src/analyzer.js
-
-// Semantic Analyzer
-//
-// Analyzes the AST by look r semantic errors and resolving references.
-
+//sourced from https://github.com/rtoal/carlos-lang/blob/main/src/analyzer.js
 import { assert } from 'console'
 import util from 'util'
 import {
@@ -21,36 +16,6 @@ function must(condition, errorMessage) {
     throw new Error(errorMessage)
   }
 }
-
-// Object.assign(Type.prototype, {
-//   // Equivalence: when are two types the same
-//   isEquivalentTo(target) {
-//     return this == target
-//   },
-//   // T1 assignable to T2 is when x:T1 can be assigned to y:T2. By default
-//   // this is only when two types are equivalent; however, for other kinds
-//   // of types there may be special rules. For example, in a language with
-//   // supertypes and subtypes, an object of a subtype would be assignable
-//   // to a variable constrained to a supertype.
-//   isAssignableTo(target) {
-//     return this.isEquivalentTo(target)
-//   },
-// })
-
-//ARRAY TYPE EQUIVALENCE
-// Object.assign(TomeType.prototype, {
-//   isEquivalentTo(target) {
-//     // [T] equivalent to [U] only when T is equivalent to U.
-//     return (
-//       target.constructor === TomeType &&
-//       this.baseType.isEquivalentTo(target.baseType)
-//     )
-//   },
-//   // isAssignableTo(target) {
-//   //   // Arrays are INVARIANT in Carlos!
-//   //   return this.isEquivalentTo(target)
-//   // },
-// })
 
 const check = (self) => ({
   isNumeric() {
@@ -83,13 +48,6 @@ const check = (self) => ({
     )
   },
 
-  // isAnArray() {
-  //   console.log('self: ', self)
-  //   must(self.constructor === Array, console.log(self.constructor))
-  // },
-  // isADict() {
-  //   must(self.constructor === HolocronType, console.log(self.constructor))
-  // },
   hasSameTypeAs(other) {
     must(self.type === other.type, 'Operands do not have the same type')
   },
@@ -112,7 +70,6 @@ const check = (self) => ({
     )
   },
   isAssignableTo(type) {
-    // self is a type, can objects of self be assigned to vars of type
     if (typeof self === 'string') {
       must(self === type, `Cannot assign a ${type} to a ${self}`)
     } else if (self.constructor === TomeType) {
@@ -129,32 +86,16 @@ const check = (self) => ({
       )
     }
   },
-  // isInTheObject(object) {
-  //   must(object.type.fields.map((f) => f.name).includes(self), 'No such field')
-  // },
   isInsideALoop() {
     must(self.inLoop, 'Break can only appear in a loop')
   },
-  // isInsideAFunction(context) {
-  //   must(self.function, 'Return can only appear in a function')
-  // },
   isCallable() {
     must(self.constructor == Order, 'Call of non-function or non-constructor')
   },
-  // returnsNothing() {
-  //   must(
-  //     self.type.returnType === Type.VOID,
-  //     'Something should be returned here'
-  //   )
-  // },
-  // returnsSomething() {
-  //   must(self.type.returnType !== Type.VOID, 'Cannot return a value here')
-  // },
   isReturnableFrom(f) {
     check(self.type).isAssignableTo(f.returnType)
   },
   match(params) {
-    // self is the array of arguments
     must(
       params.length === self.length,
       `${params.length} argument(s) required but ${self.length} passed`
@@ -168,24 +109,15 @@ const check = (self) => ({
 
 class Context {
   constructor(parent = null, configuration = {}) {
-    // Parent (enclosing scope) for static scope analysis
     this.parent = parent
-    // All local declarations. Names map to variable declarations, types, and
-    // function declarations
     this.locals = new Map()
-    // Whether we are in a loop, so that we know whether breaks and continues
-    // are legal here
     this.inLoop = configuration.inLoop ?? parent?.inLoop ?? false
-    // Whether we are in a function, so that we know whether a return
-    // statement can appear here, and if so, how we typecheck it
     this.function = configuration.forFunction ?? parent?.function ?? null
   }
   sees(name) {
-    // Search "outward" through enclosing scopes
     return this.locals.has(name) || this.parent?.sees(name)
   }
   add(name, entity) {
-    // No shadowing! Prevent addition if id anywhere in scope chain!
     if (this.sees(name)) {
       throw new Error(`Identifier ${name} already declared`)
     }
@@ -201,8 +133,6 @@ class Context {
     throw new Error(`Identifier ${name} not declared`)
   }
   newChild(configuration = {}) {
-    // Create new (nested) context, which is just like the current context
-    // except that certain fields can be overridden
     return new Context(this, configuration)
   }
   analyze(node) {
@@ -219,25 +149,6 @@ class Context {
     this.add(d.variable.name, d.variable)
     return d
   }
-  // Type(t) {
-  //   if (typeof t === 'string') {
-  //     return t
-  //   } else if (t.constructor === TomeType) {
-  //     t.baseType = this.TomeType(t.baseType)
-  //     return t
-  //   } else {
-  //     t.keyType = this.Type(t.keyType)
-  //     t.valueType = this.Type(t.valueType)
-  //     return t
-  //   }
-  // }
-
-  // Body(f) {
-  //   f.type = this.analyze(f.type)
-  //   check(f.type).isAType()
-  //   return f
-  // }
-
   OrderDeclaration(d) {
     check(d.fun.returnType).isAType()
     const childContext = this.newChild({ inLoop: false, forFunction: d.fun })
@@ -252,17 +163,11 @@ class Context {
     this.add(p.name, p)
     return p
   }
-  // TomeType(t) {
-  //   t.baseType = this.analyze(t.baseType)
-  //   return t
-  // }
-
   Increment(s) {
     s.variable = this.analyze(s.variable)
     check(s.variable).isInteger()
     return s
   }
-
   Next(s) {
     s.variable = this.analyze(s.variable)
     check(s.variable).isInteger()
@@ -312,7 +217,6 @@ class Context {
     s.body = this.newChild({ inLoop: true }).analyze(s.body)
     return s
   }
-
   ForStatement(s) {
     s.assignment = this.analyze(s.assignment)
     s.expression = this.analyze(s.expression)
@@ -320,7 +224,6 @@ class Context {
     s.body = this.newChild({ inLoop: true }).analyze(s.body)
     return s
   }
-
   BinaryExpression(e) {
     e.left = this.analyze(e.left)
     e.right = this.analyze(e.right)
@@ -346,7 +249,6 @@ class Context {
     }
     return e
   }
-
   UnaryExpression(e) {
     e.operand = this.analyze(e.operand)
     if (e.op === '-') {
@@ -377,14 +279,20 @@ class Context {
     d.type = new HolocronType(d.elements[0].key.type, d.elements[0].value.type)
     return d
   }
-
   DictContent(c) {
     c.key = this.analyze(c.key)
     c.value = this.analyze(c.value)
     return c
   }
-
   Call(c) {
+    c.callee = this.analyze(c.callee)
+    check(c.callee).isCallable()
+    c.args = this.analyze(c.args)
+    check(c.args).matchParametersOf(c.callee)
+    c.type = c.callee.returnType
+    return c
+  }
+  CallStmt(c) {
     c.callee = this.analyze(c.callee)
     check(c.callee).isCallable()
     c.args = this.analyze(c.args)
@@ -404,19 +312,6 @@ class Context {
     }
     return e
   }
-  // Symbol(e) {
-  //   // Symbols represent identifiers so get resolved to the entities referred to
-  //   return this.lookup(e.description)
-  // }
-  // Number(e) {
-  //   return e
-  // }
-  // BigInt(e) {
-  //   return e
-  // }
-  // Boolean(e) {
-  //   return e
-  // }
   String(e) {
     return e
   }
@@ -429,18 +324,6 @@ class Context {
 }
 
 export default function analyze(node) {
-  // Allow primitives to be automatically typed
-  // Number.prototype.type = Type.KET
-  // BigInt.prototype.type = Type.CRED
-  // Boolean.prototype.type = Type.ABSOLUTE
-  // String.prototype.type = Type.TRANSMISSION
-  // Type.prototype.type = Type.TYPE
   const initialContext = new Context()
-
-  // Add in all the predefined identifiers from the stdlib module
-  const library = { ...stdlib.types, ...stdlib.constants, ...stdlib.functions }
-  for (const [name, type] of Object.entries(library)) {
-    initialContext.add(name, type)
-  }
   return initialContext.analyze(node)
 }
