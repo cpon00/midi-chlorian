@@ -1,6 +1,5 @@
 import { IfStatement, Increment, Literal, Type } from './ast.js'
 import * as stdlib from './stdlib.js'
-import prettyJs from 'pretty-js'
 
 export default function generate(program) {
   const output = []
