@@ -9,6 +9,11 @@ This repository is the home of Midi-Chlorian, a language inspired by the mind of
 Midi-Chlorian is created by [Carter Pon](https://github.com/cpon00), [Adrian Leung](https://github.com/AdrianLearn), [Isaiah Anyimi](https://github.com/ianyimi), and [Jason Kalili](https://github.com/jkalili).
 
 </br>
+[Our Website](https://cpon00.github.io/midi-chlorian/)
+</br>
+[Our Powerpoint](https://docs.google.com/presentation/d/1QRBQvvNrZC9lY7m_KMOvKzqEQZ4lsaMc8AfR7qTfnes/edit?usp=sharing)
+
+</br>
 
 # Shortcuts
 
