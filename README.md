@@ -10,6 +10,13 @@ Midi-Chlorian is created by [Carter Pon](https://github.com/cpon00), [Adrian Leu
 
 </br>
 
+[Website](https://cpon00.github.io/midi-chlorian/)
+</br>
+
+[Our Powerpoint](https://docs.google.com/presentation/d/1QRBQvvNrZC9lY7m_KMOvKzqEQZ4lsaMc8AfR7qTfnes/edit?usp=sharing)
+
+</br>
+
 # Shortcuts
 
 - [ Types ](#types)
@@ -26,20 +33,26 @@ Midi-Chlorian is created by [Carter Pon](https://github.com/cpon00), [Adrian Leu
 
 # Types
 
+| Type in Javascript | Midi-chlorian |          Declaration           |
+| :----------------: | :-----------: | :----------------------------: |
+|        int         |     cred      |           Cred a = 9           |
+|       double       |      ket      |          ket c = 0.5           |
+|      boolean       |   absolute    |       absolute d = true        |
+|        char        | midichlorian  |      midichlorian e = 's'      |
+|       string       | transmission  | transmission f = 'Hello There' |
+
+<br>
+
+# Complex Types
+
 | Type in Javascript | Midi-chlorian |                       Declaration                       |
 | :----------------: | :-----------: | :-----------------------------------------------------: |
-|        int         |     cred      |                       Cred a = 9                        |
-|        long        |    parsec     |                    Parsec b = 900000                    |
-|       double       |      ket      |                       ket c = 0.5                       |
-|      boolean       |   absolute    |                    absolute d = true                    |
-|        char        | midichlorian  |                  midichlorian e = "s"                   |
-|       string       | transmission  |             transmission f = "Hello There"              |
-|       array        |     tome      | tome\<transmission> g = ["Execute","Order","Sixty-Six"] |
-|     dictionary     |   holocron    |   holocron\<transmission,cred> g = [exe:34, evc: 32]    |
+|       array        |     tome      | tome\<transmission> g = ['Execute',"Order','Sixty-Six'] |
+|     dictionary     |   holocron    |   holocron\<transmission,cred> g = <exe:34, evc: 32>    |
 
 </br>
 
-# Boolean Values
+# Boolean/Absolute Values
 
 | Javascript | Midi-chlorian |
 | :--------: | :-----------: |
@@ -52,12 +65,10 @@ Midi-Chlorian is created by [Carter Pon](https://github.com/cpon00), [Adrian Leu
 | :--------: | :-----------: |
 |   a + b    |     a + b     |
 |   a - b    |     a - b     |
-|   a \_ b   |    a \_ b     |
 |   a / b    |     a / b     |
 |   a \* b   |    a \* b     |
 |   a % b    |     a % b     |
 |   a == b   |  a oneWith b  |
-|   a != b   | a !oneWith b  |
 |   a > b    |     a > b     |
 |   a < b    |     a < b     |
 |   a <= b   |    a <= b     |
@@ -80,7 +91,6 @@ Midi-Chlorian is created by [Carter Pon](https://github.com/cpon00), [Adrian Leu
 # Comments
 
 - Single Line: `>< comment goes here`
-- Block: `>> comment goes here << `
 
 <br/>
 
@@ -102,10 +112,11 @@ cred numberOfSith = 9
 ## If Statements
 
 ```
-should (i > j) {
-    execute i
-} orElse {
-    execute j
+cred x = 5
+should (x onewith 5) {
+  emit x
+} else {
+  emit "nope"
 }
 ```
 
@@ -113,17 +124,21 @@ should (i > j) {
 
 ```
 force (cred i = 0; i < 5; i++) {
-    should (i onewith 3) {
-        unleash >< break from loop
-    }
+  emit i
 }
+i++
 ```
 
 ## While Loop
 
 ```
-while (i < 3) {
-    unleash >< break from loop
+cred x = 0
+as (x < 5) {
+    emit x
+    should (x onewith 2) {
+      unleash
+    }
+    x++
 }
 
 ```
@@ -132,21 +147,25 @@ while (i < 3) {
 
 ## Fibonacci
 
+> ### Javascript
+
 ```Javascript
 function fibonacci (n) {
-    if (n <= 1) {
+    if (count <= 1) {
         return 1
     }
-    return fibonacci(n-1) + fibonacci(n-2)
+    return fibonacci(count-1) + fibonacci(count-2)
 }
 ```
 
+> ### Midi-Chlorian
+
 ```
-order fibonacci (cred count) {
-    should (count <= 1) {
-        execute 1
+order cred fibonacci (cred count) {
+  should (count <= 1) {
+    execute 1
     }
-    execute fibonacci(n-1) + fibonacci(n-2)
+    execute (fibonacci(count-1) + fibonacci(count-2))
 }
 ```
 
@@ -170,39 +189,83 @@ function max (i, j) {
 order cred max (cred i, cred j) {
     should (i > j) {
         execute i
-    } elseshould {
+    } else {
         execute j
     }
 }
 ```
 
-## Two Sum Leetcode Problem
+## Else If
 
-> ### Javscript
+> ### Javascript
 
 ```JavaScript
-function twoSum(nums, target) {
-    const comp = {};
-    for (let i = 0; i < nums.length; i++) {
-        if (comp[nums[i]] >= 0) {
-            return [comp[nums[i]], i]
-        }
-        comp[target-nums[i]] = i
+let i = 0
+    if (i < 5) {
+      console.log("hello")
+    } else
+    if (i > 0) {
+      console.log("deathStar")
+    } else {
+      console.log("order66")
     }
-}
+    i++
 ```
 
 > ### Midi-Chlorian
 
 ```
-order cred twoSum (tome nums, cred target) {
-    const comp = {};
-    cred i = 0;
-    force (i until nums.length) {
-        should (comp[nums[i]] >= 0) {
-            execute [comp[nums[i]], i]
-        }
-        comp[target-nums[i]] = i
+ cred i = 0
+    should (i < 5) {
+      emit("hello")
+    } else should (i > 0) {
+      emit("deathStar")
+    } else {
+      emit("order66")
     }
-}
+    i++
+```
+
+## Call
+
+> ### Javascript
+
+```JavaScript
+function f() {}
+function g() {}
+f() //call in a statement
+console.log(g()) // call in an expression
+```
+
+> ### Midi-Chlorian
+
+```
+order cred f() {}
+order cred g() {}
+f()   >< call in a statement
+emit(g())  >< call in an expression
+```
+
+## Functions
+
+> ### Javascript
+
+```JavaScript
+function square(x) {
+    return (x)
+    }
+function fncall() {
+    console.log(square(2))
+    }
+```
+
+> ### Midi-Chlorian
+
+```
+order cred square(cred x) {
+    execute x
+    }
+order cred fncall() {
+    emit square(2)
+    }
 ```
