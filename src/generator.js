@@ -14,6 +14,7 @@ export default function generate(program) {
   })(new Map())
 
   const gen = (node) => {
+    console.log('NODE IN GEN:   ', node.constructor.name)
     return generators[node.constructor.name](node)
   }
 
@@ -94,11 +95,13 @@ export default function generate(program) {
     },
     BinaryExpression(e) {
       //prettier-ignore
-      const op = { 'onewith': '===', '!onewith': '!==' }[e.op] ?? e.op
+      const op = { 'onewith': '===', '!onewith': '!==', 'darth': '!' }[e.op] ?? e.op
       return `${gen(e.left)} ${op} ${gen(e.right)}`
     },
     UnaryExpression(e) {
-      return `${e.op}${gen(e.operand)}`
+      //prettier-ignore
+      const op = { '-': '-', 'darth': '!' }[e.op] ?? e.op
+      return `${op}${gen(e.operand)}`
     },
     SubscriptExpression(e) {
       return `${gen(e.array)}[${gen(e.index)}]`
@@ -133,6 +136,9 @@ export default function generate(program) {
         return bool
       }
       return JSON.stringify(l.value)
+    },
+    Number(n) {
+      return n
     },
     Array(a) {
       return a.map(gen)
