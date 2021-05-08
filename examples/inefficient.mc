@@ -1,2 +1,1 @@
-cred x = 5
-emit(x+0)
+emit(1 + 1)

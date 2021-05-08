@@ -57,6 +57,7 @@ export default function generate(program) {
       output.push(`return (${gen(e.returnValue)})`)
     },
     Print(p) {
+      console.log('P in print: ', p)
       output.push(`console.log(${gen(p.argument)})`)
     },
     Unleash() {
@@ -139,6 +140,9 @@ export default function generate(program) {
     },
     Number(n) {
       return n
+    },
+    String(e) {
+      return e
     },
     Array(a) {
       return a.map(gen)

@@ -21,6 +21,7 @@ import * as ast from './ast.js'
 import util from 'util'
 
 export default function optimize(node) {
+  //console.log(util.inspect(node))
   return optimizers[node.constructor.name](node)
 }
 
@@ -80,7 +81,11 @@ const optimizers = {
     return s
   },
   Print(s) {
+    // console.log('Printing')
+    console.log('S BEFORE:  ', s)
     s.argument = optimize(s.argument)
+    console.log('S AfTER:  ', s)
+    // console.log(s)
     return s
   },
   Unleash(s) {
@@ -122,8 +127,10 @@ const optimizers = {
     return (s = optimize(s.expression))
   },
   BinaryExpression(e) {
+    // console.log('E before: ', e)
     e.left = optimize(e.left)
     e.right = optimize(e.right)
+    // console.log('E after: ', e)
     if (e.op === 'and') {
       // Optimize boolean constants in "and" and "or"
       if (e.left === true) return e.right
@@ -132,7 +139,9 @@ const optimizers = {
       if (e.left === false) return e.right
       else if (e.right === false) return e.left
     } else if (['cred', 'ket'].includes(e.left.type)) {
+      console.log('left type is cred or ket')
       // Numeric constant folding when left operand is constant
+      //console.log(e.right.constructor)
       if (['cred', 'ket'].includes(e.right.type)) {
         if (e.op === '+') return e.left + e.right
         else if (e.op === '-') return e.left - e.right
@@ -151,13 +160,18 @@ const optimizers = {
         return new ast.UnaryExpression('-', e.right)
       else if (e.left === 1 && e.op === '**') return 1
       else if (e.left === 0 && ['*', '/'].includes(e.op)) return 0
-    } else if (e.right.type === 'cred') {
+      console.log('reached end of conditional: ', e)
+    }
+    if (true) {
+      console.log('CONSTANT FOLDING ***************************************')
       // Numeric constant folding when right operand is constant
       if (['+', '-'].includes(e.op) && e.right === 0) return e.left
       else if (['*', '/'].includes(e.op) && e.right === 1) return e.left
       else if (e.op === '*' && e.right === 0) return 0
       else if (e.op === '**' && e.right === 0) return 1
     }
+    console.log('should not get here')
+    console.log(e)
     return e
   },
   UnaryExpression(e) {
@@ -200,7 +214,7 @@ const optimizers = {
     return c
   },
   Literal(e) {
-    return e.value
+    return e
   },
   BigInt(e) {
     return e
