@@ -12,8 +12,8 @@ const onePlusTwo = new ast.BinaryExpression('+', 1, 2)
 const identity = Object.assign(new ast.Function('id'), { body: returnX })
 const intFun = (body) => new ast.FunctionDeclaration('f', [], 'int', body)
 const callIdentity = (args) => new ast.Call(identity, args)
-const or = (...d) => d.reduce((x, y) => new ast.BinaryExpression('||', x, y))
-const and = (...c) => c.reduce((x, y) => new ast.BinaryExpression('&&', x, y))
+const or = (...d) => d.reduce((x, y) => new ast.BinaryExpression('or', x, y))
+const and = (...c) => c.reduce((x, y) => new ast.BinaryExpression('and', x, y))
 const less = (x, y) => new ast.BinaryExpression('<', x, y)
 const eq = (x, y) => new ast.BinaryExpression('==', x, y)
 const times = (x, y) => new ast.BinaryExpression('*', x, y)
@@ -21,9 +21,7 @@ const neg = (x) => new ast.UnaryExpression('-', x)
 const array = (...elements) => new ast.ArrayExpression(elements)
 const emptyArray = new ast.EmptyArray(ast.Type.INT)
 const sub = (a, e) => new ast.SubscriptExpression(a, e)
-const unwrapElse = (o, e) => new ast.BinaryExpression('??', o, e)
 const conditional = (x, y, z) => new ast.Conditional(x, y, z)
-const emptyOptional = new ast.EmptyOptional(ast.Type.INT)
 const some = (x) => new ast.UnaryExpression('some', x)
 
 const tests = [
@@ -71,7 +69,6 @@ const tests = [
     new ast.ShortIfStatement(eq(1, 1), xpp),
     xpp,
   ],
-  ['optimizes away nil', unwrapElse(emptyOptional, 3), 3],
   ['optimizes left conditional true', conditional(true, 55, 89), 55],
   ['optimizes left conditional false', conditional(false, 55, 89), 89],
   ['optimizes in functions', intFun(return1p1), intFun(return2)],
@@ -92,11 +89,14 @@ const tests = [
         false,
         new ast.EmptyArray(ast.Type.FLOAT)
       ),
+
+      //needs to be fixed
       new ast.VariableDeclaration(
         'r',
         false,
         new ast.EmptyOptional(ast.Type.INT)
       ),
+
       new ast.WhileStatement(true, [new ast.BreakStatement()]),
       new ast.RepeatStatement(5, [new ast.ReturnStatement(1)]),
       conditional(x, 1, 2),
