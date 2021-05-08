@@ -14,7 +14,6 @@ export default function generate(program) {
   })(new Map())
 
   const gen = (node) => {
-    //console.log('NODE IN GEN:   ', node.constructor.name)
     return generators[node.constructor.name](node)
   }
 
@@ -57,7 +56,6 @@ export default function generate(program) {
       output.push(`return (${gen(e.returnValue)})`)
     },
     Print(p) {
-      //console.log('P in print: ', p)
       output.push(`console.log(${gen(p.argument)})`)
     },
     Unleash() {
@@ -101,7 +99,7 @@ export default function generate(program) {
     },
     UnaryExpression(e) {
       //prettier-ignore
-      const op = { '-': '-', 'darth': '!' }[e.op] ?? e.op
+      const op = {'darth': '!' }[e.op] ?? e.op
       return `${op}${gen(e.operand)}`
     },
     SubscriptExpression(e) {
@@ -138,12 +136,12 @@ export default function generate(program) {
       }
       return JSON.stringify(l.value)
     },
-    Number(n) {
-      return n
-    },
-    String(e) {
-      return e
-    },
+    // Number(n) {
+    //   return n
+    // },
+    // String(e) {
+    //   return e
+    // },
     Array(a) {
       return a.map(gen)
     },

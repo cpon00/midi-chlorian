@@ -19,6 +19,7 @@ const tests = [
     transmission onlyhope = "Obi-Wan"
     absolute t = light and dark
     absolute s = dark or light
+    absolute h = darth dark
     `,
     expected: dedent`
       let y_1 = true
@@ -28,6 +29,7 @@ const tests = [
       let onlyhope_5 = "Obi-Wan"
       let t_6 = true and false
       let s_7 = false or true
+      let h_8 = !false
 
     `,
   },

@@ -201,7 +201,7 @@ const optimizers = {
     return c
   },
   Literal(e) {
-    e.value = optimize(e.value)
+    //e.value = optimize(e.value)
     return e
   },
   BigInt(e) {
@@ -214,9 +214,6 @@ const optimizers = {
     return e
   },
   String(e) {
-    return e
-  },
-  id(e) {
     return e
   },
   Array(a) {
