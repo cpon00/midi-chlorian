@@ -18,7 +18,6 @@ const dictExp = new ast.DictExpression(dictCont)
 const param = new ast.Parameter('x', 'cred')
 const tt = new ast.TomeType('cred')
 
-//fix order params
 const identity = Object.assign(new ast.Order('id'), { body: returnX })
 const intFun = (body) => new ast.OrderDeclaration('f', body)
 const callIdentity = (args) => new ast.Call(identity, args)
@@ -38,9 +37,7 @@ const dictexp = new ast.DictExpression(dictcont)
 const dictvar = new ast.Variable(htype, dictexp)
 
 const array = (...elements) => new ast.ArrayExpression(elements)
-//const emptyArray = new ast.EmptyArray(ast.Type.INT)
 const sub = (a, e) => new ast.SubscriptExpression(a, e)
-//const conditional = (x, y, z) => new ast.Conditional(x, y, z)
 const some = (x) => new ast.UnaryExpression('some', x)
 
 const tests = [
@@ -131,9 +128,6 @@ const tests = [
 
 describe('The optimizer', () => {
   for (const [scenario, before, after] of tests) {
-    console.log(scenario)
-    console.log('ACTUAL:   ', optimize(before))
-    console.log('EXPECTED:   ', after)
     it(`${scenario}`, () => {
       assert.deepStrictEqual(optimize(before), after)
     })

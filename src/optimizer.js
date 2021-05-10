@@ -1,22 +1,3 @@
-// Optimizer
-//
-// This module exports a single function to perform machine-independent
-// optimizations on the analyzed semantic graph.
-//
-// The only optimizations supported here are:
-//
-//   - assignments to self (x = x) turn into no-ops
-//   - constant folding
-//   - some strength reductions (+0, -0, *0, *1, etc.)
-//   - turn references to built-ins true and false to be literals
-//   - remove all disjuncts in || list after literal true
-//   - remove all conjuncts in && list after literal false
-//   - while-false becomes a no-op
-//   - repeat-0 is a no-op
-//   - for-loop over empty array is a no-op
-//   - for-loop with low > high is a no-op
-//   - if-true and if-false reduce to only the taken arm
-
 import * as ast from './ast.js'
 import util from 'util'
 
@@ -29,6 +10,7 @@ const optimizers = {
     p.statements = optimize(p.statements)
     return p
   },
+
   Command(c) {
     c.initializer = optimize(c.initializer)
     return c
@@ -47,23 +29,23 @@ const optimizers = {
     return v
   },
 
-  // Type(t) {
-  //   return t
-  // },
-
   OrderDeclaration(d) {
     d.body = optimize(d.body)
     return d
   },
+
   Order(o) {
     return o
   },
+
   Function(f) {
     return f
   },
+
   Parameter(p) {
     return p
   },
+
   TomeType(t) {
     return t
   },
@@ -75,6 +57,7 @@ const optimizers = {
   Increment(s) {
     return s
   },
+
   Next(s) {
     return s
   },
@@ -83,13 +66,16 @@ const optimizers = {
     s.returnValue = optimize(s.returnValue)
     return s
   },
+
   Print(s) {
     s.argument = optimize(s.argument)
     return s
   },
+
   Unleash(s) {
     return s
   },
+
   IfStatement(s) {
     s.test = optimize(s.test)
     s.consequent = optimize(s.consequent)
@@ -99,6 +85,7 @@ const optimizers = {
     }
     return s
   },
+
   ShortIfStatement(s) {
     s.test = optimize(s.test)
     s.consequent = optimize(s.consequent)
@@ -107,6 +94,7 @@ const optimizers = {
     }
     return s
   },
+
   WhileStatement(s) {
     s.test = optimize(s.test)
     if (s.test === false) {
@@ -116,6 +104,7 @@ const optimizers = {
     s.body = optimize(s.body)
     return s
   },
+
   ForStatement(s) {
     s.expression = optimize(s.expression)
     if (!s.expression) {
@@ -125,6 +114,7 @@ const optimizers = {
     s.body = optimize(s.body)
     return s
   },
+
   BinaryExpression(e) {
     e.left = optimize(e.left)
     e.right = optimize(e.right)
@@ -163,6 +153,7 @@ const optimizers = {
     }
     return e
   },
+
   UnaryExpression(e) {
     e.operand = optimize(e.operand)
     if (e.operand.constructor === Number) {
@@ -175,45 +166,56 @@ const optimizers = {
     }
     return e
   },
+
   SubscriptExpression(e) {
     e.array = optimize(e.array)
     e.index = optimize(e.index)
     return e
   },
+
   ArrayExpression(e) {
     e.elements = optimize(e.elements)
     return e
   },
+
   DictExpression(e) {
     return e
   },
+
   DictContent(c) {
     c.key = optimize(c.key)
     c.value = optimize(c.value)
     return c
   },
+
   Call(c) {
     c.callee = optimize(c.callee)
     c.args = optimize(c.args)
     return c
   },
+
   CallStmt(c) {
     c.callee = optimize(c.callee)
     c.args = optimize(c.args)
     return c
   },
+
   Literal(e) {
     return e
   },
+
   Number(e) {
     return e
   },
+
   Boolean(e) {
     return e
   },
+
   String(e) {
     return e
   },
+
   Array(a) {
     // Flatmap since each element can be an array
     return a.flatMap(optimize)
