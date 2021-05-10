@@ -47,9 +47,9 @@ const optimizers = {
     return v
   },
 
-  Type(t) {
-    return t
-  },
+  // Type(t) {
+  //   return t
+  // },
 
   OrderDeclaration(d) {
     d.body = optimize(d.body)
@@ -57,6 +57,9 @@ const optimizers = {
   },
   Order(o) {
     return o
+  },
+  Function(f) {
+    return f
   },
   Parameter(p) {
     return p
@@ -77,6 +80,7 @@ const optimizers = {
   },
 
   Execute(s) {
+    s.returnValue = optimize(s.returnValue)
     return s
   },
   Print(s) {
@@ -114,12 +118,12 @@ const optimizers = {
   },
   ForStatement(s) {
     s.expression = optimize(s.expression)
-    if (s.expression) {
+    if (!s.expression) {
       // repeat 0 times is a no-op
       return []
     }
     s.body = optimize(s.body)
-    return (s = optimize(s.expression))
+    return s
   },
   BinaryExpression(e) {
     e.left = optimize(e.left)
@@ -131,33 +135,31 @@ const optimizers = {
     } else if (e.op === 'or') {
       if (e.left === false) return e.right
       else if (e.right === false) return e.left
-    } else if (e.left.constructor === ast.Literal) {
-      // Numeric constant folding when left operand is constant
-      if (e.right.constructor === ast.Literal) {
-        if (e.op === '+') return e.left.value + e.right.value
-        else if (e.op === '-') return e.left.value - e.right.value
-        else if (e.op === '*') return e.left.value * e.right.value
-        else if (e.op === '/') return e.left.value / e.right.value
-        else if (e.op === '**') return e.left.value ** e.right.value
-        else if (e.op === '<') return e.left.value < e.right.value
-        else if (e.op === '<=') return e.left.value <= e.right.value
-        else if (e.op === 'onewith') return e.left.value === e.right.value
-        else if (e.op === '!onewith') return e.left.value !== e.right.value
-        else if (e.op === '>=') return e.left.value >= e.right.value
-        else if (e.op === '>') return e.left.value > e.right.value
-      } else if (e.left.value === 0 && e.op === '+') return e.right.value
-      else if (e.left.value === 1 && e.op === '*') return e.right.value
-      else if (e.left.value === 0 && e.op === '-')
-        return new ast.UnaryExpression('-', e.right.value)
-      else if (e.left.value === 1 && e.op === '**') return 1
-      else if (e.left.value === 0 && ['*', '/'].includes(e.op)) return 0
-    } else if (e.right.constructor === ast.Literal) {
+    } else if (e.left.constructor === Number) {
+      if (e.right.constructor === Number) {
+        if (e.op === '+') return e.left + e.right
+        else if (e.op === '-') return e.left - e.right
+        else if (e.op === '*') return e.left * e.right
+        else if (e.op === '/') return e.left / e.right
+        else if (e.op === '**') return e.left ** e.right
+        else if (e.op === '<') return e.left < e.right
+        else if (e.op === '<=') return e.left <= e.right
+        else if (e.op === 'onewith') return e.left === e.right
+        else if (e.op === '!onewith') return e.left !== e.right
+        else if (e.op === '>=') return e.left >= e.right
+        else if (e.op === '>') return e.left > e.right
+      } else if (e.left === 0 && e.op === '+') return e.right
+      else if (e.left === 1 && e.op === '*') return e.right
+      else if (e.left === 0 && e.op === '-')
+        return new ast.UnaryExpression('-', e.right)
+      else if (e.left === 1 && e.op === '**') return 1
+      else if (e.left === 0 && ['*', '/'].includes(e.op)) return 0
+    } else if (e.right.constructor === Number) {
       // Numeric constant folding when right operand is constant
-      if (e.op === '+') return e.left + e.right.value
-      else if (e.op === '-') return e.left - e.right.value
-      else if (['*', '/'].includes(e.op) && e.right.value === 1) return e.left
-      else if (e.op === '*' && e.right.value === 0) return 0
-      else if (e.op === '**' && e.right.value === 0) return 1
+      if (['+', '-'].includes(e.op) && e.right === 0) return e.left
+      else if (['*', '/'].includes(e.op) && e.right === 1) return e.left
+      else if (e.op === '*' && e.right === 0) return 0
+      else if (e.op === '**' && e.right === 0) return 1
     }
     return e
   },
@@ -167,9 +169,9 @@ const optimizers = {
       if (e.op === '-') {
         return -e.operand
       }
-      if (e.op === 'darth') {
-        return !e.operand
-      }
+    }
+    if (e.op === 'darth') {
+      return !e.operand
     }
     return e
   },
@@ -201,10 +203,6 @@ const optimizers = {
     return c
   },
   Literal(e) {
-    //e.value = optimize(e.value)
-    return e
-  },
-  BigInt(e) {
     return e
   },
   Number(e) {
