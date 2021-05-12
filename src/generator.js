@@ -14,7 +14,6 @@ export default function generate(program) {
   })(new Map())
 
   const gen = (node) => {
-    console.log(node.constructor.name)
     return generators[node.constructor.name](node)
   }
 
@@ -131,10 +130,10 @@ export default function generate(program) {
       output.push(callCode)
     },
     Literal(l) {
-      if (l.type === 'absolute') {
-        let bool = l.value === 'light' ? true : false
-        return bool
-      }
+      // if (l.type === 'absolute') {
+      //   let bool = l.value === 'light' ? true : false
+      //   return bool
+      // }
       return JSON.stringify(l.value)
     },
     Number(n) {
@@ -144,7 +143,7 @@ export default function generate(program) {
       return b
     },
     String(e) {
-      return e
+      return JSON.stringify(e)
     },
     Array(a) {
       return a.map(gen)

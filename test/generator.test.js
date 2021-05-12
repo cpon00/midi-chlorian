@@ -3,6 +3,7 @@ import util from 'util'
 import parse from '../src/parser.js'
 import analyze from '../src/analyzer.js'
 import generate from '../src/generator.js'
+import optimize from '../src/optimizer.js'
 
 function dedent(s) {
   return `${s}`.replace(/(?<=\n)\s+/g, '').trim()
@@ -19,7 +20,9 @@ const tests = [
     transmission onlyhope = "Obi-Wan"
     absolute t = light and dark
     absolute s = dark or light
-    absolute h = darth dark
+    absolute h = darth y
+    absolute i = darth light
+    cred j = -a
     `,
     expected: dedent`
       let y_1 = true
@@ -27,9 +30,11 @@ const tests = [
       let a_3 = 300
       let b_4 = -200
       let onlyhope_5 = "Obi-Wan"
-      let t_6 = true and false
-      let s_7 = false or true
-      let h_8 = !false
+      let t_6 = false
+      let s_7 = true
+      let h_8 = !y_1
+      let i_9 = false
+      let j_10 = -a_3
 
     `,
   },
@@ -253,14 +258,14 @@ const badTests = [
 describe('The code generator', () => {
   for (const test of tests) {
     it(`produces expected js output for ${test.name}`, () => {
-      const actual = generate(analyze(parse(test.source)))
+      const actual = generate(optimize(analyze(parse(test.source))))
       assert.deepStrictEqual(actual, test.expected)
     })
   }
   for (const test of badTests) {
     it(`throws on ${test.name}`, () => {
       assert.throws(
-        () => generate(analyze(parse(test.source))),
+        () => generate(optimize(analyze(parse(test.source)))),
         test.errorMessage
       )
     })

@@ -157,7 +157,7 @@ const optimizers = {
         return -e.operand
       }
     }
-    if (e.op === 'darth') {
+    if (e.op === 'darth' && (e.operand === true || e.operand === false)) {
       return !e.operand
     }
     return e
@@ -197,6 +197,9 @@ const optimizers = {
   },
 
   Literal(e) {
+    if (e.type === 'absolute') {
+      return e.value === 'light'
+    }
     return e.value
   },
 

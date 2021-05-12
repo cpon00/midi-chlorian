@@ -63,7 +63,7 @@ const tests = [
   ['optimizes 0-', new ast.BinaryExpression('-', 0, x), neg(x)],
   ['optimizes 1*', new ast.BinaryExpression('*', 1, x), x],
   ['folds negation', new ast.UnaryExpression('-', 8), -8],
-  ['optimizes darth', new ast.UnaryExpression('darth', 'light'), false],
+  ['optimizes darth', new ast.UnaryExpression('darth', true), false],
   ['optimizes 1**', new ast.BinaryExpression('**', 1, x), 1],
   ['optimizes **0', new ast.BinaryExpression('**', x, 0), 1],
   ['removes left false from ||', or(false, less(x, 1)), less(x, 1)],
