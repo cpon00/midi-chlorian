@@ -38,10 +38,6 @@ const optimizers = {
     return o
   },
 
-  Function(f) {
-    return f
-  },
-
   Parameter(p) {
     return p
   },
@@ -201,7 +197,7 @@ const optimizers = {
   },
 
   Literal(e) {
-    return e
+    return e.value
   },
 
   Number(e) {

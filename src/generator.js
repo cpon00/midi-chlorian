@@ -14,6 +14,7 @@ export default function generate(program) {
   })(new Map())
 
   const gen = (node) => {
+    console.log(node.constructor.name)
     return generators[node.constructor.name](node)
   }
 
@@ -136,12 +137,15 @@ export default function generate(program) {
       }
       return JSON.stringify(l.value)
     },
-    // Number(n) {
-    //   return n
-    // },
-    // String(e) {
-    //   return e
-    // },
+    Number(n) {
+      return n
+    },
+    Boolean(b) {
+      return b
+    },
+    String(e) {
+      return e
+    },
     Array(a) {
       return a.map(gen)
     },

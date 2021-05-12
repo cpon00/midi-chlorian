@@ -112,7 +112,7 @@ const tests = [
       new ast.CallStmt(new ast.Order('x', 'cred'), x),
       new ast.ForStatement(
         new ast.Command('y', 5),
-        eq,
+        eq(1, 'y'),
         new ast.Next(x, '++'),
         new ast.Print('nice')
       ),
